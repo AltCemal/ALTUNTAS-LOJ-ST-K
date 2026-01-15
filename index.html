@@ -39,6 +39,7 @@
     <meta property="og:description" content="Karayolu taşımacılığı, parsiyel ve komple yük taşıma, uluslararası lojistik hizmetleri. 20 yıllık deneyim." />
     <meta property="og:image" content="https://www.altuntasnakliyat.com/og-image.jpg" />
     <meta property="og:locale" content="tr_TR" />
+    <meta property="og:locale:alternate" content="en_US" />
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -54,6 +55,11 @@
     <meta name="geo.region" content="TR" />
     <meta name="geo.placename" content="İstanbul" />
     
+    <!-- Hreflang Alternates -->
+    <link rel="alternate" href="https://www.altuntasnakliyat.com/?lang=tr" hreflang="tr" />
+    <link rel="alternate" href="https://www.altuntasnakliyat.com/?lang=en" hreflang="en" />
+    <link rel="alternate" href="https://www.altuntasnakliyat.com/" hreflang="x-default" />
+
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
     {
@@ -124,6 +130,56 @@
               "description": "Türkiye ve Avrupa arası karayolu taşımacılığı"
             }
           }
+        ]
+      }
+    }
+    </script>
+
+    <!-- Schema.org JSON-LD (EN) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TransportationCompany",
+      "name": "Altuntas Logistics",
+      "alternateName": "Altuntaş Nakliyat",
+      "description": "Road freight services across Türkiye and Europe: LTL and FTL transport.",
+      "url": "https://www.altuntasnakliyat.com",
+      "logo": "https://www.altuntasnakliyat.com/logo.png",
+      "image": "https://www.altuntasnakliyat.com/og-image.jpg",
+      "inLanguage": "en",
+      "telephone": "+90-XXX-XXX-XX-XX",
+      "email": "info@altuntasnakliyat.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Ornek Mahallesi, Nakliyat Caddesi No:123",
+        "addressLocality": "Istanbul",
+        "addressCountry": "TR"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"
+        ],
+        "opens": "00:00",
+        "closes": "23:59"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "247"
+      },
+      "sameAs": [
+        "https://www.facebook.com/altuntasnakliyat",
+        "https://www.instagram.com/altuntasnakliyat",
+        "https://www.linkedin.com/company/altuntasnakliyat"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Logistics Services",
+        "itemListElement": [
+          {"@type": "Offer","itemOffered": {"@type": "Service","name": "Full Truck Load (FTL)","description": "Direct delivery with full trailer capacity"}},
+          {"@type": "Offer","itemOffered": {"@type": "Service","name": "Less Than Truckload (LTL)","description": "Cost-effective consolidated transport"}},
+          {"@type": "Offer","itemOffered": {"@type": "Service","name": "International Transport","description": "Road freight between Türkiye and Europe"}}
         ]
       }
     }
