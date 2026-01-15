@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.altuntasnakliyat.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Disallow admin or private paths if any
+# Disallow: /admin/
