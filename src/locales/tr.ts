@@ -7,7 +7,7 @@ const tr = {
   'nav.quote': 'Teklif Al',
 
   'hero.title': "Türkiye ve Avrupa'da Lojistik Çözümleri",
-  'hero.subtitle': 'Karayolu taşımacılığında 20 yıllık deneyimimizle, yüklerinizi güvenle taşıyoruz. Parsiyel ve komple yük taşımacılığında güvenilir çözüm ortağınız.',
+  'hero.subtitle': 'Karayolu taşımacılığında 70 yıllık deneyimimizle, yüklerinizi güvenle taşıyoruz. Parsiyel ve komple yük taşımacılığında güvenilir çözüm ortağınız.',
   'hero.cta.quote': 'Hemen Teklif Al',
   'hero.cta.services': 'Hizmetlerimiz',
 
@@ -80,7 +80,7 @@ const tr = {
   'testimonials.3.role': 'İnşaat Firması',
 
   'about.title': 'Hakkımızda',
-  'about.p1': "Altuntaş Nakliyat olarak 20 yıldır Türkiye ve Avrupa'da karayolu lojistik hizmetleri sunmaktayız. Modern tır filomuz, deneyimli sürücü kadromuz ve teknolojik altyapımızla, parsiyel ve komple yük taşımacılığında güvenilir çözüm ortağınızız.",
+  'about.p1': "Altuntaş Nakliyat olarak 70 yıldır Türkiye ve Avrupa'da karayolu lojistik hizmetleri sunmaktayız. Modern tır filomuz, deneyimli sürücü kadromuz ve teknolojik altyapımızla, parsiyel ve komple yük taşımacılığında güvenilir çözüm ortağınızız.",
   'about.p2': 'ISO 9001 kalite belgeli firmamız, CMR sigortası, GPS takip sistemi ve 7/24 operasyon merkezi ile müşterilerimize kesintisiz hizmet vermektedir. Tedarik zinciri yönetiminden depolamaya, uluslararası taşımadan özel yük çözümlerine kadar geniş hizmet yelpazemizle sektörün öncü firmalarından biriyiz.',
 
   'contact.title': 'İletişim',
