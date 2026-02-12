@@ -14,11 +14,17 @@ const en = {
   'seo.services.description': 'Altuntaş Logistics provides road transport, intercity freight and professional logistics solutions. Contact us for safe and on-time delivery.',
   'seo.about.description': 'Altuntaş Logistics delivers safe transport across Türkiye and Europe with 70 years of experience, a strong fleet and expert teams.',
   'seo.contact.description': 'Get in touch with Altuntaş Logistics for quotes and information via phone, email or the contact form.',
+  'seo.notfound.title': 'Page Not Found | Altuntaş Logistics',
+  'seo.notfound.description': 'The page you are looking for could not be found. Return to the homepage to explore our services.',
 
   'hero.title': 'Logistics Solutions in Türkiye and Europe',
   'hero.subtitle': 'With 70 years of road freight experience, we deliver your cargo safely. Your reliable partner for LTL and FTL transport.',
   'hero.cta.quote': 'Get a Quote',
   'hero.cta.services': 'Our Services',
+
+  'notfound.title': 'Page Not Found',
+  'notfound.description': 'The page you are looking for may have been moved, deleted, or never existed. You can return to the homepage to continue.',
+  'notfound.cta': 'Back to Home',
 
   'stats.title': 'Altuntaş Logistics in Numbers',
   'stats.years': 'Years of Experience',

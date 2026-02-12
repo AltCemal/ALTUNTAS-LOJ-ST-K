@@ -14,11 +14,17 @@ const tr = {
   'seo.services.description': 'Altuntaş Lojistik olarak karayolu taşımacılığı, şehirler arası nakliye ve profesyonel lojistik çözümleri sunuyoruz. Güvenli ve zamanında teslimat için bizimle iletişime geçin.',
   'seo.about.description': 'Altuntaş Lojistik olarak güvenli, hızlı ve profesyonel lojistik hizmetleri sunuyoruz. Deneyimli ekibimiz ve güçlü araç filomuz ile Türkiye genelinde hizmet vermekteyiz.',
   'seo.contact.description': 'Altuntaş Lojistik iletişim bilgileri. Türkiye geneli lojistik ve taşımacılık hizmetleri için bizimle hemen iletişime geçin.',
+  'seo.notfound.title': 'Sayfa Bulunamadı | Altuntaş Lojistik',
+  'seo.notfound.description': 'Aradığınız sayfa bulunamadı. Altuntaş Lojistik ana sayfasına dönerek hizmetlerimize ulaşabilirsiniz.',
 
   'hero.title': 'Türkiye Geneli Profesyonel Lojistik Hizmetleri',
   'hero.subtitle': 'Karayolu taşımacılığında 70 yıllık deneyimimizle, yüklerinizi güvenle taşıyoruz. Parsiyel ve komple yük taşımacılığında güvenilir çözüm ortağınız.',
   'hero.cta.quote': 'Hemen Teklif Al',
   'hero.cta.services': 'Hizmetlerimiz',
+
+  'notfound.title': 'Sayfa Bulunamadı',
+  'notfound.description': 'Aradığınız sayfa taşınmış, silinmiş veya hiç var olmamış olabilir. Ana sayfaya dönerek hizmetlerimizi inceleyebilirsiniz.',
+  'notfound.cta': 'Ana Sayfaya Dön',
 
   'stats.title': 'Rakamlarla Altuntaş Lojistik',
   'stats.years': 'Yıllık Deneyim',

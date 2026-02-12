@@ -21,6 +21,7 @@ function App() {
   const isServices = pathname === '/hizmetler'
   const isAbout = pathname === '/hakkimizda'
   const isContact = pathname === '/iletisim'
+  const isNotFound = !isHome && !isServices && !isAbout && !isContact
   const showHero = isHome
   const showStats = isHome
   const showFeatures = isHome
@@ -37,7 +38,9 @@ function App() {
         ? t('seo.about.title')
         : isContact
           ? t('seo.contact.title')
-          : t('seo.home.title')
+          : isNotFound
+            ? t('seo.notfound.title')
+            : t('seo.home.title')
 
     document.title = title
 
@@ -52,7 +55,9 @@ function App() {
         ? t('seo.about.description')
         : isContact
           ? t('seo.contact.description')
-          : t('seo.home.description')
+          : isNotFound
+            ? t('seo.notfound.description')
+            : t('seo.home.description')
 
     const descriptionTag = document.querySelector('meta[name="description"]')
     if (descriptionTag) {
@@ -95,7 +100,7 @@ function App() {
     if (twitterUrl) {
       twitterUrl.setAttribute('content', canonicalUrl)
     }
-  }, [isServices, isAbout, isContact, pathname, t])
+  }, [isServices, isAbout, isContact, isNotFound, pathname, t])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -298,6 +303,17 @@ ${formData.message}
       </header>
 
       <main role="main">
+        {isNotFound && (
+          <section className="py-20 bg-white" aria-label={t('notfound.title')}>
+            <div className="container mx-auto px-4 text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">{t('notfound.title')}</h1>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">{t('notfound.description')}</p>
+              <Link to="/" className="inline-flex items-center justify-center bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition">
+                {t('notfound.cta')}
+              </Link>
+            </div>
+          </section>
+        )}
         {(showHero || showStats) && (
           <section className="bg-gradient-to-r from-gray-900 to-black text-white">
             {/* Hero Section */}
