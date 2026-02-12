@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.altuntasnakliyat.com/sitemap.xml
+Sitemap: https://www.altuntaslojistik.com/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1

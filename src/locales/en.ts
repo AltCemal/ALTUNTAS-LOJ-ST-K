@@ -6,8 +6,17 @@ const en = {
   'nav.contact': 'Contact',
   'nav.quote': 'Get a Quote',
 
+  'seo.home.title': 'Altuntaş Logistics | Professional Transport Across Türkiye',
+  'seo.services.title': 'Our Logistics Services | Altuntaş Logistics',
+  'seo.about.title': 'About Us | Altuntaş Logistics',
+  'seo.contact.title': 'Contact | Altuntaş Logistics',
+  'seo.home.description': 'Altuntaş Logistics provides road transport, intercity freight and professional logistics solutions. Contact us for safe and on-time delivery.',
+  'seo.services.description': 'Altuntaş Logistics provides road transport, intercity freight and professional logistics solutions. Contact us for safe and on-time delivery.',
+  'seo.about.description': 'Altuntaş Logistics delivers safe transport across Türkiye and Europe with 70 years of experience, a strong fleet and expert teams.',
+  'seo.contact.description': 'Get in touch with Altuntaş Logistics for quotes and information via phone, email or the contact form.',
+
   'hero.title': 'Logistics Solutions in Türkiye and Europe',
-  'hero.subtitle': 'With 20 years of road freight experience, we deliver your cargo safely. Your reliable partner for LTL and FTL transport.',
+  'hero.subtitle': 'With 70 years of road freight experience, we deliver your cargo safely. Your reliable partner for LTL and FTL transport.',
   'hero.cta.quote': 'Get a Quote',
   'hero.cta.services': 'Our Services',
 
@@ -58,6 +67,38 @@ const en = {
   'services.consult.b2': 'Cost analysis',
   'services.consult.b3': 'Process design',
 
+  'services.page.h1': 'Our Logistics Services',
+  'services.page.intro': 'At Altuntaş Logistics, we provide safe, fast and professional logistics services across Türkiye. We prioritize customer satisfaction and manage transport processes with a planned, systematic approach. With an experienced team and a strong fleet, we deliver solutions for shipments of every size.',
+  'services.page.road.title': 'Road Transport',
+  'services.page.road.p1': 'We provide city and intercity road transport. We deliver your cargo on time with safe vehicles and professional drivers. With partial and full-load options, we offer suitable solutions for both individual and corporate customers.',
+  'services.page.intercity.title': 'Intercity Freight',
+  'services.page.intercity.p1': 'We run regular transport services to all regions of Türkiye. By planning loading, transport and delivery processes carefully, we minimize delays. With our secure shipping approach, your goods reach their destination without issues.',
+  'services.page.pro.title': 'Professional Logistics Solutions',
+  'services.page.pro.p1': 'Altuntaş Logistics offers not only transport but also logistics process management. We provide professional support in operations planning, route optimization and time management, aiming to deliver maximum safety and efficiency with cost advantages.',
+  'services.page.outro': 'For detailed information about our logistics services and tailored solutions, contact us. We continue to serve with a reliable, fast and quality transport approach.',
+
+  'home.page.p1': 'Altuntaş Logistics is an experienced logistics company providing safe, fast and professional transport services across Türkiye. We create solutions for all types of shipping needs with a customer satisfaction-focused service approach.',
+  'home.page.s1.title': 'Safe and Planned Transport',
+  'home.page.s1.p1': 'Planning is the most important factor in transport. At Altuntaş Logistics, we manage our operations carefully to deliver your cargo on time and safely.',
+  'home.page.s2.title': 'Service Network Across Türkiye',
+  'home.page.s2.p1': 'With our city and intercity transport services, we provide logistics solutions to all regions of Türkiye. With our professional driver team and modern fleet, we safely conduct transport operations.',
+
+  'about.page.h1': 'About Altuntaş Logistics',
+  'about.page.p1': 'Altuntaş Logistics operates in the transport sector with reliable and quality service. Since our establishment, we have professionally managed logistics processes by prioritizing customer satisfaction.',
+  'about.page.mission.title': 'Our Mission',
+  'about.page.mission.p1': 'Our mission is to provide safe, fast and cost-effective logistics solutions to our customers. Transparency and on-time delivery are our fundamental principles in transport processes.',
+  'about.page.vision.title': 'Our Vision',
+  'about.page.vision.p1': 'Our biggest goal is to be a preferred logistics company in Türkiye and internationally. We aim to make a difference in the industry through continuous improvement and innovative approaches.',
+  'about.page.team.title': 'Expert Team and Strong Fleet',
+  'about.page.team.p1': 'Thanks to our experienced team and modern fleet, we can provide specialized logistics services to different sectors. We continue to serve with safe shipping and professional process management.',
+
+  'contact.page.h1': 'Get in Touch With Us',
+  'contact.page.p1': 'For detailed information about our logistics and transport services, you can contact us. Our expert team is ready to provide the most suitable solutions for your needs.',
+  'contact.page.s1.title': 'Phone and Email',
+  'contact.page.s1.p1': 'You can reach us via phone, email or contact form. All requests are evaluated as soon as possible.',
+  'contact.page.s2.title': 'Fast and Reliable Support',
+  'contact.page.s2.p1': 'At Altuntaş Logistics, we place great importance on customer satisfaction. You can contact us for support with transport processes, price quotes and operation details.',
+
   'coverage.title': 'Service Coverage',
   'coverage.tr.title': 'Türkiye',
   'coverage.tr.desc': 'We serve all 81 provinces with regular transport.',
@@ -69,7 +110,7 @@ const en = {
   'coverage.eu.modalTitle': 'Europe - 45 Countries',
 
   'testimonials.title': 'What Our Clients Say',
-  'testimonials.1.text': 'We have worked with Altuntaş Logistics for 20 years. Reliable, on-time delivery and professional service. Highly recommended for LTL shipping.',
+  'testimonials.1.text': 'We have worked with Altuntaş Logistics for many years. Reliable, on-time delivery and professional service. Highly recommended for LTL shipping.',
   'testimonials.1.author': 'Mehmet Y.',
   'testimonials.1.role': 'Textile Company Owner',
   'testimonials.2.text': 'We always choose Altuntaş for our Europe shipments. With CMR insurance and tracking, we work with peace of mind.',
@@ -80,7 +121,7 @@ const en = {
   'testimonials.3.role': 'Construction Company',
 
   'about.title': 'About',
-  'about.p1': 'For 20 years, Altuntaş Logistics has provided road freight services in Türkiye and Europe. With our modern fleet, experienced drivers, and technology, we are your reliable partner for LTL and FTL.',
+  'about.p1': 'For 70 years, Altuntaş Logistics has provided road freight services in Türkiye and Europe. With our modern fleet, experienced drivers, and technology, we are your reliable partner for LTL and FTL.',
   'about.p2': 'ISO 9001 certified, with CMR insurance, GPS tracking, and 24/7 operations. From supply chain management to warehousing, international transport to special cargo, we are among the industry leaders.',
 
   'contact.title': 'Contact',
@@ -88,6 +129,7 @@ const en = {
   'contact.phone': 'Phone',
   'contact.email': 'Email',
   'contact.address': 'Address',
+  'contact.address.value': 'Ornek Mahallesi, Nakliyat Caddesi No:123\nIstanbul, Turkey',
   'form.title': 'Quote Request',
   'form.name': 'Full Name',
   'form.phone': 'Phone Number',

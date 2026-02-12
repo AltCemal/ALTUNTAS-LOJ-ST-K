@@ -195,13 +195,18 @@ ${formData.message}
               >
                 <FaInstagram className="text-2xl" />
               </a>
-              <a 
-                href="tel:+905325511574" 
-                className="hidden xl:flex items-center space-x-2 text-gray-700 hover:text-primary transition"
-              >
-                <FaPhone className="text-lg" />
-                <span className="font-semibold whitespace-nowrap">+90 532 551 15 74</span>
-              </a>
+              <div className="hidden xl:flex items-center space-x-2">
+                <a 
+                  href="tel:+905325511574" 
+                  className="text-gray-700 hover:text-primary transition"
+                >
+                  <FaPhone className="text-lg" />
+                </a>
+                <div className="flex flex-col text-sm">
+                  <a href="tel:+905325511574" className="text-gray-700 hover:text-primary transition font-semibold">+90 532 551 15 74</a>
+                  <a href="tel:+905419255561" className="text-gray-700 hover:text-primary transition font-semibold">+90 541 925 55 61</a>
+                </div>
+              </div>
             </div>
 
             {/* Mobile Icons */}
@@ -302,8 +307,8 @@ ${formData.message}
                   <h1 className="text-5xl font-bold mb-6">{t('hero.title')}</h1>
                   <p className="text-xl mb-8 max-w-2xl mx-auto">{t('hero.subtitle')}</p>
                   <div className="flex justify-center space-x-4">
-                    <NavLink to="/iletisim" className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-900 transition">{t('hero.cta.quote')}</NavLink>
-                    <NavLink to="/hizmetler" className="bg-white text-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">{t('hero.cta.services')}</NavLink>
+                    <Link to="/iletisim" className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-900 transition">{t('hero.cta.quote')}</Link>
+                    <Link to="/hizmetler" className="bg-white text-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">{t('hero.cta.services')}</Link>
                   </div>
                 </div>
               </div>
@@ -733,6 +738,7 @@ ${formData.message}
                   <div>
                     <h4 className="font-semibold">{t('contact.phone')}</h4>
                     <p className="text-gray-600">+90 532 551 15 74</p>
+                    <p className="text-gray-600">+90 541 925 55 61</p>
                   </div>
                 </div>
                 <div className="flex items-start">
@@ -746,7 +752,7 @@ ${formData.message}
                   <FaMapMarkerAlt className="text-primary text-xl mr-4 mt-1" />
                   <div>
                     <h4 className="font-semibold">{t('contact.address')}</h4>
-                    <p className="text-gray-600">Örnek Mahallesi, Nakliyat Caddesi No:123<br />İstanbul, Türkiye</p>
+                    <p className="text-gray-600 whitespace-pre-line">{t('contact.address.value')}</p>
                   </div>
                 </div>
               </div>
