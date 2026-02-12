@@ -1,5 +1,6 @@
 import { FaTruck, FaBox, FaBuilding, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaCheckCircle, FaShieldAlt, FaWhatsapp, FaInstagram, FaBars, FaTimes, FaStar, FaQuoteLeft, FaGlobeEurope } from 'react-icons/fa'
-import { useState, FormEvent } from 'react'
+import { useEffect, useState, FormEvent } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useI18n } from './i18n'
 import { locations } from './locales/locations'
 
@@ -14,6 +15,87 @@ function App() {
     email: '',
     message: ''
   })
+  const location = useLocation()
+  const pathname = location.pathname
+  const isHome = pathname === '/'
+  const isServices = pathname === '/hizmetler'
+  const isAbout = pathname === '/hakkimizda'
+  const isContact = pathname === '/iletisim'
+  const showHero = isHome
+  const showStats = isHome
+  const showFeatures = isHome
+  const showServices = isServices
+  const showCoverage = isServices
+  const showTestimonials = isHome
+  const showAbout = isAbout
+  const showContact = isContact
+
+  useEffect(() => {
+    const title = isServices
+      ? t('seo.services.title')
+      : isAbout
+        ? t('seo.about.title')
+        : isContact
+          ? t('seo.contact.title')
+          : t('seo.home.title')
+
+    document.title = title
+
+    const titleTag = document.querySelector('meta[name="title"]')
+    if (titleTag) {
+      titleTag.setAttribute('content', title)
+    }
+
+    const description = isServices
+      ? t('seo.services.description')
+      : isAbout
+        ? t('seo.about.description')
+        : isContact
+          ? t('seo.contact.description')
+          : t('seo.home.description')
+
+    const descriptionTag = document.querySelector('meta[name="description"]')
+    if (descriptionTag) {
+      descriptionTag.setAttribute('content', description)
+    }
+
+    const ogTitle = document.querySelector('meta[property="og:title"]')
+    if (ogTitle) {
+      ogTitle.setAttribute('content', title)
+    }
+
+    const ogDescription = document.querySelector('meta[property="og:description"]')
+    if (ogDescription) {
+      ogDescription.setAttribute('content', description)
+    }
+
+    const twitterTitle = document.querySelector('meta[property="twitter:title"]')
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', title)
+    }
+
+    const twitterDescription = document.querySelector('meta[property="twitter:description"]')
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', description)
+    }
+
+    const baseUrl = 'https://www.altuntaslojistik.com'
+    const canonicalUrl = `${baseUrl}${pathname}${window.location.search}`
+    const canonical = document.querySelector('link[rel="canonical"]')
+    if (canonical) {
+      canonical.setAttribute('href', canonicalUrl)
+    }
+
+    const ogUrl = document.querySelector('meta[property="og:url"]')
+    if (ogUrl) {
+      ogUrl.setAttribute('content', canonicalUrl)
+    }
+
+    const twitterUrl = document.querySelector('meta[property="twitter:url"]')
+    if (twitterUrl) {
+      twitterUrl.setAttribute('content', canonicalUrl)
+    }
+  }, [isServices, isAbout, isContact, pathname, t])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -72,10 +154,10 @@ ${formData.message}
             
             {/* Desktop Menu */}
             <div className="hidden lg:flex space-x-6 flex-1 justify-center">
-              <a href="#anasayfa" className="text-gray-700 hover:text-primary transition">{t('nav.home')}</a>
-              <a href="#hizmetler" className="text-gray-700 hover:text-primary transition">{t('nav.services')}</a>
-              <a href="#hakkimizda" className="text-gray-700 hover:text-primary transition">{t('nav.about')}</a>
-              <a href="#iletisim" className="text-gray-700 hover:text-primary transition">{t('nav.contact')}</a>
+              <Link to="/" className="text-gray-700 hover:text-primary transition">{t('nav.home')}</Link>
+              <Link to="/hizmetler" className="text-gray-700 hover:text-primary transition">{t('nav.services')}</Link>
+              <Link to="/hakkimizda" className="text-gray-700 hover:text-primary transition">{t('nav.about')}</Link>
+              <Link to="/iletisim" className="text-gray-700 hover:text-primary transition">{t('nav.contact')}</Link>
             </div>
             
             {/* Desktop Right Side */}
@@ -92,14 +174,14 @@ ${formData.message}
                   aria-label="English"
                 >EN</button>
               </div>
-              <a href="#iletisim" className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+              <Link to="/iletisim" className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition">
                 {t('nav.quote')}
-              </a>
+              </Link>
               <a 
                 href="https://wa.me/905325511574" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-green-600 hover:text-green-700 transition"
+                className="text-gray-800 hover:text-black transition"
                 aria-label="WhatsApp"
               >
                 <FaWhatsapp className="text-2xl" />
@@ -108,7 +190,7 @@ ${formData.message}
                 href="https://instagram.com/altuntasnakliyat" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-pink-600 hover:text-pink-700 transition"
+                className="text-gray-800 hover:text-black transition"
                 aria-label="Instagram"
               >
                 <FaInstagram className="text-2xl" />
@@ -128,7 +210,7 @@ ${formData.message}
                 href="https://wa.me/905325511574" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-green-600 hover:text-green-700 transition"
+                className="text-gray-800 hover:text-black transition"
                 aria-label="WhatsApp"
               >
                 <FaWhatsapp className="text-2xl" />
@@ -147,42 +229,42 @@ ${formData.message}
           {isMenuOpen && (
             <div className="lg:hidden mt-4 pb-4 border-t border-gray-200">
               <div className="flex flex-col space-y-3 pt-4">
-                <a 
-                  href="#anasayfa" 
+                <Link 
+                  to="/" 
                   className="text-gray-700 hover:text-primary transition py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.home')}
-                </a>
-                <a 
-                  href="#hizmetler" 
+                </Link>
+                <Link 
+                  to="/hizmetler" 
                   className="text-gray-700 hover:text-primary transition py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.services')}
-                </a>
-                <a 
-                  href="#hakkimizda" 
+                </Link>
+                <Link 
+                  to="/hakkimizda" 
                   className="text-gray-700 hover:text-primary transition py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.about')}
-                </a>
-                <a 
-                  href="#iletisim" 
+                </Link>
+                <Link 
+                  to="/iletisim" 
                   className="text-gray-700 hover:text-primary transition py-2"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.contact')}
-                </a>
+                </Link>
                 <div className="flex items-center space-x-4 pt-2">
-                  <a 
-                    href="#iletisim" 
-                    className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                  <Link 
+                    to="/iletisim" 
+                    className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {t('nav.quote')}
-                  </a>
+                  </Link>
                   <div className="ml-auto flex items-center border rounded-lg overflow-hidden">
                     <button onClick={() => setLang('tr')} className={`px-3 py-2 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
                     <button onClick={() => setLang('en')} className={`px-3 py-2 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
@@ -191,7 +273,7 @@ ${formData.message}
                     href="https://instagram.com/altuntasnakliyat" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-pink-600 hover:text-pink-700 transition"
+                    className="text-gray-800 hover:text-black transition"
                     aria-label="Instagram"
                   >
                     <FaInstagram className="text-2xl" />
@@ -211,70 +293,79 @@ ${formData.message}
       </header>
 
       <main role="main">
-        {/* Hero Section */}
-        <section id="anasayfa" className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20" aria-label={t('nav.home')}>
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">{t('hero.title')}</h1>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">{t('hero.subtitle')}</p>
-          <div className="flex justify-center space-x-4">
-            <a href="#iletisim" className="bg-secondary text-white px-8 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition">{t('hero.cta.quote')}</a>
-            <a href="#hizmetler" className="bg-white text-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">{t('hero.cta.services')}</a>
-          </div>
-        </div>
-      </section>
+        {(showHero || showStats) && (
+          <section className="bg-gradient-to-r from-gray-900 to-black text-white">
+            {/* Hero Section */}
+            {showHero && (
+              <div id="anasayfa" className="py-20" aria-label={t('nav.home')}>
+                <div className="container mx-auto px-4 text-center">
+                  <h1 className="text-5xl font-bold mb-6">{t('hero.title')}</h1>
+                  <p className="text-xl mb-8 max-w-2xl mx-auto">{t('hero.subtitle')}</p>
+                  <div className="flex justify-center space-x-4">
+                    <NavLink to="/iletisim" className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-900 transition">{t('hero.cta.quote')}</NavLink>
+                    <NavLink to="/hizmetler" className="bg-white text-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">{t('hero.cta.services')}</NavLink>
+                  </div>
+                </div>
+              </div>
+            )}
 
-        {/* Stats Section - Rakamlarla Altuntaş */}
-        <section className="py-16 bg-primary text-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-center mb-12">{t('stats.title')}</h2>
-            <div className="grid md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-5xl font-bold mb-2">20+</div>
-                <div className="text-xl text-blue-100">{t('stats.years')}</div>
+            {/* Stats Section - Rakamlarla Altuntaş */}
+            {showStats && (
+              <div className="py-16">
+                <div className="container mx-auto px-4">
+                  <h2 className="text-4xl font-bold text-center mb-12">{t('stats.title')}</h2>
+                  <div className="grid md:grid-cols-4 gap-8">
+                    <div className="text-center">
+                      <div className="text-5xl font-bold mb-2">70+</div>
+                      <div className="text-xl text-gray-200">{t('stats.years')}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-5xl font-bold mb-2">50+</div>
+                      <div className="text-xl text-gray-200">{t('stats.fleet')}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-5xl font-bold mb-2">10,000+</div>
+                      <div className="text-xl text-gray-200">{t('stats.customers')}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-5xl font-bold mb-2">45</div>
+                      <div className="text-xl text-gray-200">{t('stats.countries')}</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-5xl font-bold mb-2">50+</div>
-                <div className="text-xl text-blue-100">{t('stats.fleet')}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-5xl font-bold mb-2">10,000+</div>
-                <div className="text-xl text-blue-100">{t('stats.customers')}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-5xl font-bold mb-2">45</div>
-                <div className="text-xl text-blue-100">{t('stats.countries')}</div>
-              </div>
-            </div>
-          </div>
-        </section>
+            )}
+          </section>
+        )}
 
         {/* Features */}
+        {showFeatures && (
         <section className="py-16 bg-white" aria-label="Features">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FaTruck className="text-primary text-2xl" />
               </div>
               <h3 className="font-bold text-lg mb-2">{t('features.fleet.title')}</h3>
               <p className="text-gray-600">{t('features.fleet.desc')}</p>
             </div>
             <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FaShieldAlt className="text-primary text-2xl" />
               </div>
               <h3 className="font-bold text-lg mb-2">{t('features.insurance.title')}</h3>
               <p className="text-gray-600">{t('features.insurance.desc')}</p>
             </div>
             <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FaClock className="text-primary text-2xl" />
               </div>
               <h3 className="font-bold text-lg mb-2">{t('features.ontime.title')}</h3>
               <p className="text-gray-600">{t('features.ontime.desc')}</p>
             </div>
             <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FaCheckCircle className="text-primary text-2xl" />
               </div>
               <h3 className="font-bold text-lg mb-2">{t('features.tracking.title')}</h3>
@@ -283,11 +374,43 @@ ${formData.message}
           </div>
         </div>
       </section>
+      )}
+
+      {isHome && (
+        <section className="py-12 bg-white" aria-label={t('nav.home')}>
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-gray-700 text-lg leading-relaxed space-y-6">
+              <p>{t('home.page.p1')}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{t('home.page.s1.title')}</h2>
+              <p>{t('home.page.s1.p1')}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{t('home.page.s2.title')}</h2>
+              <p>{t('home.page.s2.p1')}</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Services */}
+      {showServices && (
       <section id="hizmetler" className="py-16 bg-gray-100" aria-label={t('services.title')}>
         <div className="container mx-auto px-4">
+          {isServices && (
+            <h1 className="text-4xl md:text-5xl font-bold text-center mb-6">{t('services.page.h1')}</h1>
+          )}
           <h2 className="text-4xl font-bold text-center mb-12">{t('services.title')}</h2>
+
+          {isServices && (
+            <div className="max-w-4xl mx-auto text-gray-700 text-lg leading-relaxed space-y-6 mb-12">
+              <p>{t('services.page.intro')}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{t('services.page.road.title')}</h2>
+              <p>{t('services.page.road.p1')}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{t('services.page.intercity.title')}</h2>
+              <p>{t('services.page.intercity.p1')}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{t('services.page.pro.title')}</h2>
+              <p>{t('services.page.pro.p1')}</p>
+              <p>{t('services.page.outro')}</p>
+            </div>
+          )}
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition">
               <FaTruck className="text-primary text-5xl mb-4" />
@@ -295,15 +418,15 @@ ${formData.message}
               <p className="text-gray-600 mb-4">{t('services.ftl.desc')}</p>
               <ul className="space-y-2">
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.ftl.b1')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.ftl.b2')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.ftl.b3')}
                 </li>
               </ul>
@@ -315,15 +438,15 @@ ${formData.message}
               <p className="text-gray-600 mb-4">{t('services.ltl.desc')}</p>
               <ul className="space-y-2">
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.ltl.b1')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.ltl.b2')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.ltl.b3')}
                 </li>
               </ul>
@@ -335,15 +458,15 @@ ${formData.message}
               <p className="text-gray-600 mb-4">{t('services.intl.desc')}</p>
               <ul className="space-y-2">
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.intl.b1')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.intl.b2')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.intl.b3')}
                 </li>
               </ul>
@@ -357,15 +480,15 @@ ${formData.message}
               <p className="text-gray-600 mb-4">{t('services.storage.desc')}</p>
               <ul className="space-y-2">
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.storage.b1')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.storage.b2')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.storage.b3')}
                 </li>
               </ul>
@@ -377,15 +500,15 @@ ${formData.message}
               <p className="text-gray-600 mb-4">{t('services.special.desc')}</p>
               <ul className="space-y-2">
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.special.b1')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.special.b2')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.special.b3')}
                 </li>
               </ul>
@@ -397,15 +520,15 @@ ${formData.message}
               <p className="text-gray-600 mb-4">{t('services.consult.desc')}</p>
               <ul className="space-y-2">
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.consult.b1')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.consult.b2')}
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <FaCheckCircle className="text-gray-700 mr-2" />
                   {t('services.consult.b3')}
                 </li>
               </ul>
@@ -413,8 +536,10 @@ ${formData.message}
           </div>
         </div>
       </section>
+      )}
 
       {/* Service Coverage Map */}
+      {showCoverage && (
       <section className="py-16 bg-gray-100">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12">{t('coverage.title')}</h2>
@@ -427,7 +552,7 @@ ${formData.message}
               <p className="text-gray-600 mb-6">{t('coverage.tr.desc')}</p>
               <button
                 onClick={() => setIsTurkeyModalOpen(true)}
-                className="w-full bg-primary text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+                className="w-full bg-primary text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition font-semibold"
               >
                 {t('coverage.tr.button')}
               </button>
@@ -441,7 +566,7 @@ ${formData.message}
               <p className="text-gray-600 mb-6">{t('coverage.eu.desc')}</p>
               <button
                 onClick={() => setIsEuropeModalOpen(true)}
-                className="w-full bg-primary text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+                className="w-full bg-primary text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition font-semibold"
               >
                 {t('coverage.eu.button')}
               </button>
@@ -449,9 +574,10 @@ ${formData.message}
           </div>
         </div>
       </section>
+      )}
 
       {/* Turkey Cities Modal */}
-      {isTurkeyModalOpen && (
+      {showCoverage && isTurkeyModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={() => setIsTurkeyModalOpen(false)}>
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
@@ -470,7 +596,7 @@ ${formData.message}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {locations[lang].turkeyCities.map((city) => (
                   <div key={city} className="flex items-center bg-gray-50 p-3 rounded-lg">
-                    <FaCheckCircle className="text-green-500 mr-2 flex-shrink-0" />
+                    <FaCheckCircle className="text-gray-700 mr-2 flex-shrink-0" />
                     <span className="text-gray-700">{city}</span>
                   </div>
                 ))}
@@ -481,7 +607,7 @@ ${formData.message}
       )}
 
       {/* Europe Countries Modal */}
-      {isEuropeModalOpen && (
+      {showCoverage && isEuropeModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={() => setIsEuropeModalOpen(false)}>
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
@@ -500,7 +626,7 @@ ${formData.message}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {locations[lang].europeCountries.map((country) => (
                   <div key={country} className="flex items-center bg-gray-50 p-3 rounded-lg">
-                    <FaCheckCircle className="text-green-500 mr-2 flex-shrink-0" />
+                    <FaCheckCircle className="text-gray-700 mr-2 flex-shrink-0" />
                     <span className="text-gray-700">{country}</span>
                   </div>
                 ))}
@@ -511,6 +637,7 @@ ${formData.message}
       )}
 
       {/* Testimonials */}
+      {showTestimonials && (
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-12">{t('testimonials.title')}</h2>
@@ -519,7 +646,7 @@ ${formData.message}
               <FaQuoteLeft className="text-primary text-3xl mb-4 opacity-20 absolute top-4 left-4" />
               <div className="flex mb-3 pt-8">
                 {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} className="text-yellow-400" />
+                  <FaStar key={i} className="text-gray-400" />
                 ))}
               </div>
               <p className="text-gray-700 mb-4 italic">"{t('testimonials.1.text')}"</p>
@@ -531,7 +658,7 @@ ${formData.message}
               <FaQuoteLeft className="text-primary text-3xl mb-4 opacity-20 absolute top-4 left-4" />
               <div className="flex mb-3 pt-8">
                 {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} className="text-yellow-400" />
+                  <FaStar key={i} className="text-gray-400" />
                 ))}
               </div>
               <p className="text-gray-700 mb-4 italic">"{t('testimonials.2.text')}"</p>
@@ -543,7 +670,7 @@ ${formData.message}
               <FaQuoteLeft className="text-primary text-3xl mb-4 opacity-20 absolute top-4 left-4" />
               <div className="flex mb-3 pt-8">
                 {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} className="text-yellow-400" />
+                  <FaStar key={i} className="text-gray-400" />
                 ))}
               </div>
               <p className="text-gray-700 mb-4 italic">"{t('testimonials.3.text')}"</p>
@@ -553,22 +680,50 @@ ${formData.message}
           </div>
         </div>
       </section>
+      )}
 
       {/* About */}
+      {showAbout && (
       <section id="hakkimizda" className="py-16 bg-gray-100" aria-label={t('about.title')}>
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-bold mb-6">{t('about.title')}</h2>
-            <p className="text-lg text-gray-700 mb-6">{t('about.p1')}</p>
-            <p className="text-lg text-gray-700">{t('about.p2')}</p>
-          </div>
+          {isAbout ? (
+            <div className="max-w-4xl mx-auto text-gray-700 text-lg leading-relaxed space-y-6">
+              <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-6">{t('about.page.h1')}</h1>
+              <p>{t('about.page.p1')}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{t('about.page.mission.title')}</h2>
+              <p>{t('about.page.mission.p1')}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{t('about.page.vision.title')}</h2>
+              <p>{t('about.page.vision.p1')}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{t('about.page.team.title')}</h2>
+              <p>{t('about.page.team.p1')}</p>
+            </div>
+          ) : (
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-4xl font-bold mb-6">{t('about.title')}</h2>
+              <p className="text-lg text-gray-700 mb-6">{t('about.p1')}</p>
+              <p className="text-lg text-gray-700">{t('about.p2')}</p>
+            </div>
+          )}
         </div>
       </section>
+      )}
 
       {/* Contact */}
+      {showContact && (
       <section id="iletisim" className="py-16 bg-gray-100" aria-label={t('contact.title')}>
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">{t('contact.title')}</h2>
+          {isContact ? (
+            <div className="max-w-4xl mx-auto text-gray-700 text-lg leading-relaxed space-y-6 mb-12">
+              <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900">{t('contact.page.h1')}</h1>
+              <p>{t('contact.page.p1')}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{t('contact.page.s1.title')}</h2>
+              <p>{t('contact.page.s1.p1')}</p>
+              <h2 className="text-2xl font-bold text-gray-900">{t('contact.page.s2.title')}</h2>
+              <p>{t('contact.page.s2.p1')}</p>
+            </div>
+          ) : (
+            <h2 className="text-4xl font-bold text-center mb-12">{t('contact.title')}</h2>
+          )}
           <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
             <div>
               <h3 className="text-2xl font-bold mb-6">{t('contact.reach')}</h3>
@@ -584,7 +739,7 @@ ${formData.message}
                   <FaEnvelope className="text-primary text-xl mr-4 mt-1" />
                   <div>
                     <h4 className="font-semibold">{t('contact.email')}</h4>
-                    <p className="text-gray-600">info@altuntasnakliyat.com</p>
+                    <p className="text-gray-600">info@altuntaslojistik.com</p>
                   </div>
                 </div>
                 <div className="flex items-start">
@@ -638,7 +793,7 @@ ${formData.message}
                 ></textarea>
                 <button 
                   type="submit" 
-                  className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition flex items-center justify-center space-x-2"
+                  className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-900 transition flex items-center justify-center space-x-2"
                 >
                   <span>{t('form.submit')}</span>
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -650,6 +805,7 @@ ${formData.message}
           </div>
         </div>
       </section>
+      )}
       </main>
 
       {/* Footer */}
@@ -672,7 +828,7 @@ ${formData.message}
         href="https://wa.me/905XXXXXXXXX"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-all hover:scale-110 z-50 group"
+        className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-900 transition-all hover:scale-110 z-50 group"
         aria-label="WhatsApp"
       >
         <FaWhatsapp className="text-3xl" />
