@@ -14,6 +14,12 @@ export default defineConfig({
       staticDir: path.join(__dirname, 'dist'),
       routes: ['/', '/hizmetler', '/hakkimizda', '/iletisim', '/404'],
       renderer: new JSDOMRenderer(),
+      postProcess(renderedRoute) {
+        if (renderedRoute.route === '/404') {
+          renderedRoute.outputPath = path.join(__dirname, 'dist', '404.html')
+        }
+        return renderedRoute
+      },
     }),
   ],
 })
