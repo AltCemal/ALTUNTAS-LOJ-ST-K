@@ -96,7 +96,7 @@ ${formData.message}
                 {t('nav.quote')}
               </a>
               <a 
-                href="https://wa.me/905XXXXXXXXX" 
+                href="https://wa.me/905325511574" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-green-600 hover:text-green-700 transition"
@@ -114,18 +114,18 @@ ${formData.message}
                 <FaInstagram className="text-2xl" />
               </a>
               <a 
-                href="tel:+905XXXXXXXXX" 
+                href="tel:+905325511574" 
                 className="hidden xl:flex items-center space-x-2 text-gray-700 hover:text-primary transition"
               >
                 <FaPhone className="text-lg" />
-                <span className="font-semibold whitespace-nowrap">+90 XXX XXX XX XX</span>
+                <span className="font-semibold whitespace-nowrap">+90 532 551 15 74</span>
               </a>
             </div>
 
             {/* Mobile Icons */}
             <div className="flex lg:hidden items-center space-x-3">
               <a 
-                href="https://wa.me/905XXXXXXXXX" 
+                href="https://wa.me/905325511574" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-green-600 hover:text-green-700 transition"
@@ -577,7 +577,7 @@ ${formData.message}
                   <FaPhone className="text-primary text-xl mr-4 mt-1" />
                   <div>
                     <h4 className="font-semibold">{t('contact.phone')}</h4>
-                    <p className="text-gray-600">+90 XXX XXX XX XX</p>
+                    <p className="text-gray-600">+90 532 551 15 74</p>
                   </div>
                 </div>
                 <div className="flex items-start">
