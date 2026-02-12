@@ -187,7 +187,7 @@ ${formData.message}
                 <FaWhatsapp className="text-2xl" />
               </a>
               <a 
-                href="https://instagram.com/altuntasnakliyat" 
+                href="https://instagram.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-800 hover:text-black transition"
@@ -275,7 +275,7 @@ ${formData.message}
                     <button onClick={() => setLang('en')} className={`px-3 py-2 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
                   </div>
                   <a 
-                    href="https://instagram.com/altuntasnakliyat" 
+                    href="https://instagram.com" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-gray-800 hover:text-black transition"
