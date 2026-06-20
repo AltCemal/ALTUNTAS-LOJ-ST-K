@@ -361,9 +361,9 @@ ${formData.message}
                     {t('nav.quote')}
                   </Link>
                   <div className="ml-auto flex items-center border rounded-lg overflow-hidden">
-                    <button onClick={() => setLang('tr')} className={`px-3 py-2 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
-                    <button onClick={() => setLang('en')} className={`px-3 py-2 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
-                    <button onClick={() => setLang('de')} className={`px-3 py-2 text-sm ${lang === 'de' ? 'bg-primary text-white' : 'text-gray-700'}`}>DE</button>
+                    <button onClick={() => setLang('tr')} aria-label="Türkçe" className={`px-4 py-3 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
+                    <button onClick={() => setLang('en')} aria-label="English" className={`px-4 py-3 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
+                    <button onClick={() => setLang('de')} aria-label="Deutsch" className={`px-4 py-3 text-sm ${lang === 'de' ? 'bg-primary text-white' : 'text-gray-700'}`}>DE</button>
                   </div>
                   <a 
                     href="https://www.instagram.com/altuntaslojistik" 
@@ -717,7 +717,8 @@ ${formData.message}
               </h3>
               <button
                 onClick={() => setIsTurkeyModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
+                className="text-gray-500 hover:text-gray-700 text-2xl p-2"
+                aria-label="Kapat"
               >
                 <FaTimes />
               </button>
@@ -748,7 +749,8 @@ ${formData.message}
               </h3>
               <button
                 onClick={() => setIsEuropeModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
+                className="text-gray-500 hover:text-gray-700 text-2xl p-2"
+                aria-label="Kapat"
               >
                 <FaTimes />
               </button>
@@ -888,42 +890,58 @@ ${formData.message}
             <div>
               <h3 className="text-2xl font-bold mb-6">{t('form.title')}</h3>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <input 
-                  type="text" 
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder={t('form.name')} 
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
-                />
-                <input 
-                  type="tel" 
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder={t('form.phone')} 
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
-                />
-                <input 
-                  type="email" 
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder={t('form.email')} 
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
-                />
-                <textarea 
-                  rows={4} 
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder={t('form.message')} 
-                  required
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
-                ></textarea>
+                <div>
+                  <label htmlFor="form-name" className="sr-only">{t('form.name')}</label>
+                  <input 
+                    id="form-name"
+                    type="text" 
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder={t('form.name')} 
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="form-phone" className="sr-only">{t('form.phone')}</label>
+                  <input 
+                    id="form-phone"
+                    type="tel" 
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder={t('form.phone')} 
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="form-email" className="sr-only">{t('form.email')}</label>
+                  <input 
+                    id="form-email"
+                    type="email" 
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder={t('form.email')} 
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="form-message" className="sr-only">{t('form.message')}</label>
+                  <textarea 
+                    id="form-message"
+                    rows={4} 
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder={t('form.message')} 
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
+                  ></textarea>
+                </div>
                 <button 
                   type="submit" 
                   className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-900 transition flex items-center justify-center space-x-2"
