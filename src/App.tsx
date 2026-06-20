@@ -1,14 +1,28 @@
 import { FaTruck, FaBox, FaBuilding, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaCheckCircle, FaShieldAlt, FaWhatsapp, FaInstagram, FaBars, FaTimes, FaStar, FaQuoteLeft, FaGlobeEurope } from 'react-icons/fa'
-import { useEffect, useState, FormEvent } from 'react'
+import { useEffect, useState, FormEvent, lazy, Suspense } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useI18n } from './i18n'
-import { locations } from './locales/locations'
+
+const ServiceLandingSection = lazy(() => import('./components/ServiceLandingSection'))
+
+type Locations = {
+  turkeyCities: string[]
+  europeCountries: string[]
+}
+
+type LocationMap = {
+  tr: Locations
+  en: Locations
+  de: Locations
+}
 
 function App() {
   const { t, lang, setLang } = useI18n()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isTurkeyModalOpen, setIsTurkeyModalOpen] = useState(false)
   const [isEuropeModalOpen, setIsEuropeModalOpen] = useState(false)
+  const [renderDeferredHomeSections, setRenderDeferredHomeSections] = useState(false)
+  const [locationsData, setLocationsData] = useState<LocationMap | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -29,10 +43,10 @@ function App() {
   const isNotFound = !isHome && !isServices && !isAbout && !isContact && !isServiceLandingPage
   const showHero = isHome
   const showStats = isHome
-  const showFeatures = isHome
+  const showFeatures = isHome && renderDeferredHomeSections
   const showServices = isServices
   const showCoverage = isServices
-  const showTestimonials = isHome
+  const showTestimonials = isHome && renderDeferredHomeSections
   const showAbout = isAbout
   const showContact = isContact
   const servicePages = [
@@ -124,6 +138,31 @@ function App() {
       twitterUrl.setAttribute('content', canonicalUrl)
     }
   }, [isServices, isAbout, isContact, isPartialTransport, isFullLoadTransport, isInternationalRoadTransport, isTurkeyGermanyLogistics, isNotFound, pathname, t])
+
+  useEffect(() => {
+    if (!isHome) {
+      setRenderDeferredHomeSections(false)
+      return
+    }
+
+    const timerId = window.setTimeout(() => {
+      setRenderDeferredHomeSections(true)
+    }, 350)
+
+    return () => window.clearTimeout(timerId)
+  }, [isHome])
+
+  useEffect(() => {
+    if (!showCoverage || locationsData) return
+
+    import('./locales/locations')
+      .then((module) => {
+        setLocationsData(module.locations as LocationMap)
+      })
+      .catch(() => {
+        setLocationsData(null)
+      })
+  }, [showCoverage, locationsData])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -606,74 +645,9 @@ ${formData.message}
       )}
 
       {isServiceLandingPage && currentServicePageKey && (
-        <section className="py-16 bg-white" aria-label={t(`servicePages.${currentServicePageKey}.h1`)}>
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{t(`servicePages.${currentServicePageKey}.h1`)}</h1>
-              <p className="text-gray-700 text-lg leading-relaxed mb-6">{t(`servicePages.${currentServicePageKey}.intro`)}</p>
-
-              <div className="bg-gray-100 rounded-lg p-6 mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t(`servicePages.${currentServicePageKey}.benefitsTitle`)}</h2>
-                <ul className="space-y-3">
-                  <li className="flex items-start text-gray-700">
-                    <FaCheckCircle className="text-primary mr-3 mt-1" />
-                    {t(`servicePages.${currentServicePageKey}.benefit1`)}
-                  </li>
-                  <li className="flex items-start text-gray-700">
-                    <FaCheckCircle className="text-primary mr-3 mt-1" />
-                    {t(`servicePages.${currentServicePageKey}.benefit2`)}
-                  </li>
-                  <li className="flex items-start text-gray-700">
-                    <FaCheckCircle className="text-primary mr-3 mt-1" />
-                    {t(`servicePages.${currentServicePageKey}.benefit3`)}
-                  </li>
-                </ul>
-              </div>
-
-              <div className="mb-10">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t(`servicePages.${currentServicePageKey}.detailsTitle`)}</h2>
-                <p className="text-gray-700 text-lg leading-relaxed mb-4">{t(`servicePages.${currentServicePageKey}.details1`)}</p>
-                <p className="text-gray-700 text-lg leading-relaxed">{t(`servicePages.${currentServicePageKey}.details2`)}</p>
-              </div>
-
-              <div className="mb-10">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t(`servicePages.${currentServicePageKey}.faqTitle`)}</h2>
-                <div className="space-y-5">
-                  <div className="border border-gray-200 rounded-lg p-5">
-                    <h3 className="font-semibold text-lg text-gray-900 mb-2">{t(`servicePages.${currentServicePageKey}.faq1q`)}</h3>
-                    <p className="text-gray-700">{t(`servicePages.${currentServicePageKey}.faq1a`)}</p>
-                  </div>
-                  <div className="border border-gray-200 rounded-lg p-5">
-                    <h3 className="font-semibold text-lg text-gray-900 mb-2">{t(`servicePages.${currentServicePageKey}.faq2q`)}</h3>
-                    <p className="text-gray-700">{t(`servicePages.${currentServicePageKey}.faq2a`)}</p>
-                  </div>
-                  <div className="border border-gray-200 rounded-lg p-5">
-                    <h3 className="font-semibold text-lg text-gray-900 mb-2">{t(`servicePages.${currentServicePageKey}.faq3q`)}</h3>
-                    <p className="text-gray-700">{t(`servicePages.${currentServicePageKey}.faq3a`)}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-black text-white rounded-lg p-8 text-center">
-                <h2 className="text-2xl font-bold mb-3">{t('servicePages.common.ctaTitle')}</h2>
-                <p className="text-gray-200 mb-6">{t(`servicePages.${currentServicePageKey}.ctaText`)}</p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link to="/iletisim" className="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
-                    {t('servicePages.common.ctaContact')}
-                  </Link>
-                  <a
-                    href="https://wa.me/905325511574"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="border border-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-black transition"
-                  >
-                    {t('servicePages.common.ctaWhatsapp')}
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <Suspense fallback={<section className="py-16 bg-white"><div className="container mx-auto px-4"><div className="max-w-4xl mx-auto text-center text-gray-500">{t('services.title')}...</div></div></section>}>
+          <ServiceLandingSection servicePageKey={currentServicePageKey} t={t} />
+        </Suspense>
       )}
 
       {/* Service Coverage Map */}
@@ -732,13 +706,14 @@ ${formData.message}
             </div>
             <div className="p-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {locations[lang].turkeyCities.map((city) => (
+                {(locationsData?.[lang]?.turkeyCities ?? []).map((city) => (
                   <div key={city} className="flex items-center bg-gray-50 p-3 rounded-lg">
                     <FaCheckCircle className="text-gray-700 mr-2 flex-shrink-0" />
                     <span className="text-gray-700">{city}</span>
                   </div>
                 ))}
               </div>
+              {!locationsData && <p className="text-gray-500 mt-4">{t('services.title')}...</p>}
             </div>
           </div>
         </div>
@@ -762,13 +737,14 @@ ${formData.message}
             </div>
             <div className="p-6">
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {locations[lang].europeCountries.map((country) => (
+                {(locationsData?.[lang]?.europeCountries ?? []).map((country) => (
                   <div key={country} className="flex items-center bg-gray-50 p-3 rounded-lg">
                     <FaCheckCircle className="text-gray-700 mr-2 flex-shrink-0" />
                     <span className="text-gray-700">{country}</span>
                   </div>
                 ))}
               </div>
+              {!locationsData && <p className="text-gray-500 mt-4">{t('services.title')}...</p>}
             </div>
           </div>
         </div>
