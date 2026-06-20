@@ -229,11 +229,14 @@ ${formData.message}
         <nav className="container mx-auto px-4 py-4" aria-label={t('nav.home')}>
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center space-x-3">
-              <img 
-                src="/logo.png" 
-                alt="Altuntaş Lojistik Logo" 
-                className="h-12 md:h-16 w-auto"
-              />
+              <picture>
+                <source srcSet="/logo.webp" type="image/webp" />
+                <img 
+                  src="/logo.png" 
+                  alt="Altuntaş Lojistik Logo" 
+                  className="h-12 md:h-16 w-auto"
+                />
+              </picture>
               <div className="text-xl md:text-2xl font-bold text-gray-800 whitespace-nowrap hidden sm:block">{t('brand.name')}</div>
             </div>
             
@@ -963,11 +966,14 @@ ${formData.message}
       <footer className="bg-gray-800 text-white py-8" role="contentinfo">
         <div className="container mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-3 mb-4">
-            <img 
-              src="/logo.png" 
-              alt="Altuntaş Lojistik Logo" 
-              className="h-16 w-auto"
-            />
+            <picture>
+              <source srcSet="/logo.webp" type="image/webp" />
+              <img 
+                src="/logo.png" 
+                alt="Altuntaş Lojistik Logo" 
+                className="h-16 w-auto"
+              />
+            </picture>
           </div>
           <p className="text-gray-400 mb-4">{t('footer.tagline')}</p>
           <p className="text-gray-300 text-sm">{t('footer.copy')}</p>
