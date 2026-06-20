@@ -122,7 +122,7 @@ function App() {
     }
 
     const baseUrl = 'https://www.altuntaslojistik.com'
-    const canonicalUrl = `${baseUrl}${pathname}`
+    const canonicalUrl = `${baseUrl}${pathname}?lang=${lang}`
     const canonical = document.querySelector('link[rel="canonical"]')
     if (canonical) {
       canonical.setAttribute('href', canonicalUrl)
@@ -137,7 +137,25 @@ function App() {
     if (twitterUrl) {
       twitterUrl.setAttribute('content', canonicalUrl)
     }
-  }, [isServices, isAbout, isContact, isPartialTransport, isFullLoadTransport, isInternationalRoadTransport, isTurkeyGermanyLogistics, isNotFound, pathname, t])
+
+    const alternates = [
+      { hreflang: 'tr', href: `${baseUrl}${pathname}?lang=tr` },
+      { hreflang: 'en', href: `${baseUrl}${pathname}?lang=en` },
+      { hreflang: 'de', href: `${baseUrl}${pathname}?lang=de` },
+      { hreflang: 'x-default', href: `${baseUrl}${pathname}` }
+    ]
+
+    alternates.forEach(({ hreflang, href }) => {
+      let altLink = document.querySelector(`link[rel="alternate"][hreflang="${hreflang}"]`) as HTMLLinkElement | null
+      if (!altLink) {
+        altLink = document.createElement('link')
+        altLink.setAttribute('rel', 'alternate')
+        altLink.setAttribute('hreflang', hreflang)
+        document.head.appendChild(altLink)
+      }
+      altLink.setAttribute('href', href)
+    })
+  }, [isServices, isAbout, isContact, isPartialTransport, isFullLoadTransport, isInternationalRoadTransport, isTurkeyGermanyLogistics, isNotFound, lang, pathname, t])
 
   useEffect(() => {
     if (!isHome) {
