@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import tr from './locales/tr'
 import en from './locales/en'
+import de from './locales/de'
 
-type Lang = 'tr' | 'en'
+type Lang = 'tr' | 'en' | 'de'
 
 type I18nContextType = {
   lang: Lang
@@ -12,14 +13,14 @@ type I18nContextType = {
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined)
 
-const translations: Record<Lang, Record<string, string>> = { tr, en }
+const translations: Record<Lang, Record<string, string>> = { tr, en, de }
 
 export const I18nProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [lang, setLangState] = useState<Lang>('tr')
 
   useEffect(() => {
     const fromUrl = new URLSearchParams(window.location.search).get('lang') as Lang | null
-    if (fromUrl === 'tr' || fromUrl === 'en') {
+    if (fromUrl === 'tr' || fromUrl === 'en' || fromUrl === 'de') {
       setLangState(fromUrl)
       document.documentElement.lang = fromUrl
       localStorage.setItem('lang', fromUrl)

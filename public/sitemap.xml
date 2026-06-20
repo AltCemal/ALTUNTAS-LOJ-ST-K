@@ -7,6 +7,7 @@
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.altuntaslojistik.com/?lang=tr"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.altuntaslojistik.com/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.altuntaslojistik.com/?lang=de"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.altuntaslojistik.com/"/>
   </url>
   <url>
@@ -16,6 +17,7 @@
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.altuntaslojistik.com/hizmetler?lang=tr"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.altuntaslojistik.com/hizmetler?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.altuntaslojistik.com/hizmetler?lang=de"/>
   </url>
   <url>
     <loc>https://www.altuntaslojistik.com/hakkimizda</loc>
@@ -24,13 +26,51 @@
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.altuntaslojistik.com/hakkimizda?lang=tr"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.altuntaslojistik.com/hakkimizda?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.altuntaslojistik.com/hakkimizda?lang=de"/>
   </url>
   <url>
     <loc>https://www.altuntaslojistik.com/iletisim</loc>
-    <lastmod>2026-02-12</lastmod>
+    <lastmod>2026-06-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="tr" href="https://www.altuntaslojistik.com/iletisim?lang=tr"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.altuntaslojistik.com/iletisim?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.altuntaslojistik.com/iletisim?lang=de"/>
+  </url>
+  <url>
+    <loc>https://www.altuntaslojistik.com/parsiyel-tasimacilik</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.altuntaslojistik.com/parsiyel-tasimacilik?lang=tr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.altuntaslojistik.com/parsiyel-tasimacilik?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.altuntaslojistik.com/parsiyel-tasimacilik?lang=de"/>
+  </url>
+  <url>
+    <loc>https://www.altuntaslojistik.com/komple-yuk-tasimaciligi</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.altuntaslojistik.com/komple-yuk-tasimaciligi?lang=tr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.altuntaslojistik.com/komple-yuk-tasimaciligi?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.altuntaslojistik.com/komple-yuk-tasimaciligi?lang=de"/>
+  </url>
+  <url>
+    <loc>https://www.altuntaslojistik.com/uluslararasi-karayolu-tasimaciligi</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.altuntaslojistik.com/uluslararasi-karayolu-tasimaciligi?lang=tr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.altuntaslojistik.com/uluslararasi-karayolu-tasimaciligi?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.altuntaslojistik.com/uluslararasi-karayolu-tasimaciligi?lang=de"/>
+  </url>
+  <url>
+    <loc>https://www.altuntaslojistik.com/turkiye-almanya-lojistik</loc>
+    <lastmod>2026-06-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://www.altuntaslojistik.com/turkiye-almanya-lojistik?lang=tr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.altuntaslojistik.com/turkiye-almanya-lojistik?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://www.altuntaslojistik.com/turkiye-almanya-lojistik?lang=de"/>
   </url>
 </urlset>

@@ -12,7 +12,17 @@ export default defineConfig({
     react(),
     vitePrerender({
       staticDir: path.join(__dirname, 'dist'),
-      routes: ['/', '/hizmetler', '/hakkimizda', '/iletisim', '/404'],
+      routes: [
+        '/',
+        '/hizmetler',
+        '/hakkimizda',
+        '/iletisim',
+        '/parsiyel-tasimacilik',
+        '/komple-yuk-tasimaciligi',
+        '/uluslararasi-karayolu-tasimaciligi',
+        '/turkiye-almanya-lojistik',
+        '/404',
+      ],
       renderer: new JSDOMRenderer(),
       postProcess(renderedRoute) {
         if (renderedRoute.route === '/404') {

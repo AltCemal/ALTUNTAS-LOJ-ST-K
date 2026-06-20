@@ -21,7 +21,12 @@ function App() {
   const isServices = pathname === '/hizmetler'
   const isAbout = pathname === '/hakkimizda'
   const isContact = pathname === '/iletisim'
-  const isNotFound = !isHome && !isServices && !isAbout && !isContact
+  const isPartialTransport = pathname === '/parsiyel-tasimacilik'
+  const isFullLoadTransport = pathname === '/komple-yuk-tasimaciligi'
+  const isInternationalRoadTransport = pathname === '/uluslararasi-karayolu-tasimaciligi'
+  const isTurkeyGermanyLogistics = pathname === '/turkiye-almanya-lojistik'
+  const isServiceLandingPage = isPartialTransport || isFullLoadTransport || isInternationalRoadTransport || isTurkeyGermanyLogistics
+  const isNotFound = !isHome && !isServices && !isAbout && !isContact && !isServiceLandingPage
   const showHero = isHome
   const showStats = isHome
   const showFeatures = isHome
@@ -30,17 +35,43 @@ function App() {
   const showTestimonials = isHome
   const showAbout = isAbout
   const showContact = isContact
+  const servicePages = [
+    { path: '/parsiyel-tasimacilik', key: 'partial' },
+    { path: '/komple-yuk-tasimaciligi', key: 'full' },
+    { path: '/uluslararasi-karayolu-tasimaciligi', key: 'international' },
+    { path: '/turkiye-almanya-lojistik', key: 'germany' }
+  ] as const
+
+  const currentServicePageKey = isPartialTransport
+    ? 'partial'
+    : isFullLoadTransport
+      ? 'full'
+      : isInternationalRoadTransport
+        ? 'international'
+        : isTurkeyGermanyLogistics
+          ? 'germany'
+          : null
 
   useEffect(() => {
-    const title = isServices
-      ? t('seo.services.title')
+    const seoPrefix = isServices
+      ? 'seo.services'
       : isAbout
-        ? t('seo.about.title')
+        ? 'seo.about'
         : isContact
-          ? t('seo.contact.title')
-          : isNotFound
-            ? t('seo.notfound.title')
-            : t('seo.home.title')
+          ? 'seo.contact'
+          : isPartialTransport
+            ? 'seo.partial'
+            : isFullLoadTransport
+              ? 'seo.full'
+              : isInternationalRoadTransport
+                ? 'seo.international'
+                : isTurkeyGermanyLogistics
+                  ? 'seo.germany'
+                  : isNotFound
+                    ? 'seo.notfound'
+                    : 'seo.home'
+
+    const title = t(`${seoPrefix}.title`)
 
     document.title = title
 
@@ -49,15 +80,7 @@ function App() {
       titleTag.setAttribute('content', title)
     }
 
-    const description = isServices
-      ? t('seo.services.description')
-      : isAbout
-        ? t('seo.about.description')
-        : isContact
-          ? t('seo.contact.description')
-          : isNotFound
-            ? t('seo.notfound.description')
-            : t('seo.home.description')
+    const description = t(`${seoPrefix}.description`)
 
     const descriptionTag = document.querySelector('meta[name="description"]')
     if (descriptionTag) {
@@ -85,7 +108,7 @@ function App() {
     }
 
     const baseUrl = 'https://www.altuntaslojistik.com'
-    const canonicalUrl = `${baseUrl}${pathname}${window.location.search}`
+    const canonicalUrl = `${baseUrl}${pathname}`
     const canonical = document.querySelector('link[rel="canonical"]')
     if (canonical) {
       canonical.setAttribute('href', canonicalUrl)
@@ -100,7 +123,7 @@ function App() {
     if (twitterUrl) {
       twitterUrl.setAttribute('content', canonicalUrl)
     }
-  }, [isServices, isAbout, isContact, isNotFound, pathname, t])
+  }, [isServices, isAbout, isContact, isPartialTransport, isFullLoadTransport, isInternationalRoadTransport, isTurkeyGermanyLogistics, isNotFound, pathname, t])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -178,6 +201,11 @@ ${formData.message}
                   className={`px-3 py-2 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}`}
                   aria-label="English"
                 >EN</button>
+                <button
+                  onClick={() => setLang('de')}
+                  className={`px-3 py-2 text-sm ${lang === 'de' ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+                  aria-label="Deutsch"
+                >DE</button>
               </div>
               <Link to="/iletisim" className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition">
                 {t('nav.quote')}
@@ -192,7 +220,7 @@ ${formData.message}
                 <FaWhatsapp className="text-2xl" />
               </a>
               <a 
-                href="https://instagram.com" 
+                href="https://www.instagram.com/altuntaslojistik" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-800 hover:text-black transition"
@@ -278,9 +306,10 @@ ${formData.message}
                   <div className="ml-auto flex items-center border rounded-lg overflow-hidden">
                     <button onClick={() => setLang('tr')} className={`px-3 py-2 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
                     <button onClick={() => setLang('en')} className={`px-3 py-2 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
+                    <button onClick={() => setLang('de')} className={`px-3 py-2 text-sm ${lang === 'de' ? 'bg-primary text-white' : 'text-gray-700'}`}>DE</button>
                   </div>
                   <a 
-                    href="https://instagram.com" 
+                    href="https://www.instagram.com/altuntaslojistik" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-gray-800 hover:text-black transition"
@@ -289,7 +318,7 @@ ${formData.message}
                     <FaInstagram className="text-2xl" />
                   </a>
                   <a 
-                    href="tel:+905XXXXXXXXX" 
+                    href="tel:+905325511574" 
                     className="text-gray-700 hover:text-primary transition"
                     aria-label="Telefon"
                   >
@@ -555,8 +584,96 @@ ${formData.message}
               </ul>
             </div>
           </div>
+
+          <div className="mt-12">
+            <h2 className="text-3xl font-bold text-center mb-8">{t('serviceLinks.title')}</h2>
+            <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              {servicePages.map((page) => (
+                <Link
+                  key={page.path}
+                  to={page.path}
+                  className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition border border-gray-200"
+                >
+                  <h3 className="text-2xl font-bold mb-3 text-gray-900">{t(`serviceLinks.${page.key}.title`)}</h3>
+                  <p className="text-gray-600 mb-4">{t(`serviceLinks.${page.key}.description`)}</p>
+                  <span className="text-primary font-semibold">{t('serviceLinks.cta')}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
+      )}
+
+      {isServiceLandingPage && currentServicePageKey && (
+        <section className="py-16 bg-white" aria-label={t(`servicePages.${currentServicePageKey}.h1`)}>
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">{t(`servicePages.${currentServicePageKey}.h1`)}</h1>
+              <p className="text-gray-700 text-lg leading-relaxed mb-6">{t(`servicePages.${currentServicePageKey}.intro`)}</p>
+
+              <div className="bg-gray-100 rounded-lg p-6 mb-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t(`servicePages.${currentServicePageKey}.benefitsTitle`)}</h2>
+                <ul className="space-y-3">
+                  <li className="flex items-start text-gray-700">
+                    <FaCheckCircle className="text-primary mr-3 mt-1" />
+                    {t(`servicePages.${currentServicePageKey}.benefit1`)}
+                  </li>
+                  <li className="flex items-start text-gray-700">
+                    <FaCheckCircle className="text-primary mr-3 mt-1" />
+                    {t(`servicePages.${currentServicePageKey}.benefit2`)}
+                  </li>
+                  <li className="flex items-start text-gray-700">
+                    <FaCheckCircle className="text-primary mr-3 mt-1" />
+                    {t(`servicePages.${currentServicePageKey}.benefit3`)}
+                  </li>
+                </ul>
+              </div>
+
+              <div className="mb-10">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t(`servicePages.${currentServicePageKey}.detailsTitle`)}</h2>
+                <p className="text-gray-700 text-lg leading-relaxed mb-4">{t(`servicePages.${currentServicePageKey}.details1`)}</p>
+                <p className="text-gray-700 text-lg leading-relaxed">{t(`servicePages.${currentServicePageKey}.details2`)}</p>
+              </div>
+
+              <div className="mb-10">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">{t(`servicePages.${currentServicePageKey}.faqTitle`)}</h2>
+                <div className="space-y-5">
+                  <div className="border border-gray-200 rounded-lg p-5">
+                    <h3 className="font-semibold text-lg text-gray-900 mb-2">{t(`servicePages.${currentServicePageKey}.faq1q`)}</h3>
+                    <p className="text-gray-700">{t(`servicePages.${currentServicePageKey}.faq1a`)}</p>
+                  </div>
+                  <div className="border border-gray-200 rounded-lg p-5">
+                    <h3 className="font-semibold text-lg text-gray-900 mb-2">{t(`servicePages.${currentServicePageKey}.faq2q`)}</h3>
+                    <p className="text-gray-700">{t(`servicePages.${currentServicePageKey}.faq2a`)}</p>
+                  </div>
+                  <div className="border border-gray-200 rounded-lg p-5">
+                    <h3 className="font-semibold text-lg text-gray-900 mb-2">{t(`servicePages.${currentServicePageKey}.faq3q`)}</h3>
+                    <p className="text-gray-700">{t(`servicePages.${currentServicePageKey}.faq3a`)}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-black text-white rounded-lg p-8 text-center">
+                <h2 className="text-2xl font-bold mb-3">{t('servicePages.common.ctaTitle')}</h2>
+                <p className="text-gray-200 mb-6">{t(`servicePages.${currentServicePageKey}.ctaText`)}</p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <Link to="/iletisim" className="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition">
+                    {t('servicePages.common.ctaContact')}
+                  </Link>
+                  <a
+                    href="https://wa.me/905325511574"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="border border-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-black transition"
+                  >
+                    {t('servicePages.common.ctaWhatsapp')}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       )}
 
       {/* Service Coverage Map */}
@@ -841,13 +958,13 @@ ${formData.message}
             />
           </div>
           <p className="text-gray-400 mb-4">{t('footer.tagline')}</p>
-          <p className="text-gray-500 text-sm">{t('footer.copy')}</p>
+          <p className="text-gray-300 text-sm">{t('footer.copy')}</p>
         </div>
       </footer>
 
       {/* WhatsApp Float Button */}
       <a
-        href="https://wa.me/905XXXXXXXXX"
+        href="https://wa.me/905325511574"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-900 transition-all hover:scale-110 z-50 group"

@@ -1,0 +1,120 @@
+import en from './en'
+
+const de = {
+  ...en,
+  'brand.name': 'ALTUNTAS LOGISTIK',
+  'nav.home': 'Startseite',
+  'nav.services': 'Leistungen',
+  'nav.about': 'Ueber uns',
+  'nav.contact': 'Kontakt',
+  'nav.quote': 'Angebot anfordern',
+
+  'seo.home.title': 'Altuntas Logistik | Professioneller Transport in der Tuerkei',
+  'seo.services.title': 'Unsere Logistikleistungen | Altuntas Logistik',
+  'seo.about.title': 'Ueber uns | Altuntas Logistik',
+  'seo.contact.title': 'Kontakt | Altuntas Logistik',
+  'seo.partial.title': 'Teilladungstransport | Altuntas Logistik',
+  'seo.full.title': 'Komplettladungstransport | Altuntas Logistik',
+  'seo.international.title': 'Internationaler Strassengueterverkehr | Altuntas Logistik',
+  'seo.germany.title': 'Tuerkei-Deutschland Logistiklinie | Altuntas Logistik',
+  'seo.home.description': 'Altuntas Logistik bietet Strassentransport, interstaedtischen Frachtverkehr und professionelle Logistikloesungen. Kontaktieren Sie uns fuer sichere und puenktliche Lieferungen.',
+  'seo.services.description': 'Altuntas Logistik bietet Strassentransport, interstaedtischen Frachtverkehr und professionelle Logistikloesungen. Kontaktieren Sie uns fuer sichere und puenktliche Lieferungen.',
+  'seo.about.description': 'Altuntas Logistik liefert sichere Transporte in der Tuerkei und Europa mit 70 Jahren Erfahrung, starkem Fuhrpark und Experten-Team.',
+  'seo.contact.description': 'Kontaktieren Sie Altuntas Logistik fuer Angebote und Informationen per Telefon, E-Mail oder Kontaktformular.',
+  'seo.partial.description': 'Unser Teilladungsservice bietet kosteneffiziente, planbare und zuverlaessige Transporte auf Tuerkei- und Europa-Routen.',
+  'seo.full.description': 'Unser Komplettladungsservice bietet dedizierte Fahrzeugplanung, schnellen Versand und puenktliche Lieferung fuer Ihre Komplettsendungen.',
+  'seo.international.description': 'Wir steuern Ihre internationalen Strassentransporte aus der Tuerkei nach Europa mit klarer Planung, operativer Kontrolle und Sendungstransparenz.',
+  'seo.germany.description': 'Auf der Tuerkei-Deutschland-Linie bieten wir regelmaessige Teil- und Komplettladungsoperationen mit schneller Angebotserstellung und aktivem Tracking.',
+  'seo.notfound.title': 'Seite nicht gefunden | Altuntas Logistik',
+  'seo.notfound.description': 'Die gesuchte Seite wurde nicht gefunden. Kehren Sie zur Startseite zurueck, um unsere Leistungen zu entdecken.',
+
+  'hero.title': 'Logistikloesungen in der Tuerkei und Europa',
+  'hero.subtitle': 'Mit 70 Jahren Erfahrung im Strassengueterverkehr liefern wir Ihre Fracht sicher. Ihr verlaesslicher Partner fuer Teil- und Komplettladungen.',
+  'hero.cta.quote': 'Jetzt Angebot erhalten',
+  'hero.cta.services': 'Unsere Leistungen',
+
+  'notfound.title': 'Seite nicht gefunden',
+  'notfound.description': 'Die gesuchte Seite wurde moeglicherweise verschoben, geloescht oder hat nie existiert. Kehren Sie zur Startseite zurueck.',
+  'notfound.cta': 'Zur Startseite',
+
+  'stats.title': 'Altuntas Logistik in Zahlen',
+  'stats.years': 'Jahre Erfahrung',
+  'stats.fleet': 'Fahrzeugflotte',
+  'stats.customers': 'Zufriedene Kunden',
+  'stats.countries': 'Bediente Laender',
+
+  'features.fleet.title': 'Grosse Flotte',
+  'features.fleet.desc': 'Moderne LKW und Zugmaschinen',
+  'features.insurance.title': 'CMR-Versicherung',
+  'features.insurance.desc': 'Alle Frachten unter CMR-Schutz',
+  'features.ontime.title': 'Puenktliche Lieferung',
+  'features.ontime.desc': 'Schnelle Lieferung mit Routenoptimierung',
+  'features.tracking.title': 'Tracking-System',
+  'features.tracking.desc': 'Echtzeit-Tracking und Reporting',
+
+  'services.title': 'Unsere Leistungen',
+  'services.ftl.title': 'Komplettladung (FTL)',
+  'services.ltl.title': 'Teilladung (LTL)',
+  'services.intl.title': 'Internationaler Transport',
+  'services.storage.title': 'Lagerung & Distribution',
+  'services.special.title': 'Spezialfracht',
+  'services.consult.title': 'Logistikberatung',
+
+  'services.page.h1': 'Unsere Logistikleistungen',
+  'services.page.intro': 'Bei Altuntas Logistik bieten wir sichere, schnelle und professionelle Logistikleistungen in der gesamten Tuerkei. Mit einem geplanten und systematischen Ansatz liefern wir Loesungen fuer Sendungen jeder Groesse.',
+  'services.page.road.title': 'Strassentransport',
+  'services.page.intercity.title': 'Interstaedtische Fracht',
+  'services.page.pro.title': 'Professionelle Logistikloesungen',
+
+  'serviceLinks.title': 'Unsere Nischen-Logistikseiten',
+  'serviceLinks.cta': 'Details ansehen →',
+
+  'servicePages.common.ctaTitle': 'Schnelles Angebot und Einsatzplanung',
+  'servicePages.common.ctaContact': 'Kontakt aufnehmen',
+  'servicePages.common.ctaWhatsapp': 'Per WhatsApp schreiben',
+
+  'home.page.s1.title': 'Sicherer und geplanter Transport',
+  'home.page.s2.title': 'Servicenetz in der gesamten Tuerkei',
+
+  'about.page.h1': 'Ueber Altuntas Logistik',
+  'about.page.mission.title': 'Unsere Mission',
+  'about.page.vision.title': 'Unsere Vision',
+  'about.page.team.title': 'Erfahrenes Team und starke Flotte',
+
+  'contact.page.h1': 'Kontaktieren Sie uns',
+  'contact.page.s1.title': 'Telefon und E-Mail',
+  'contact.page.s2.title': 'Schneller und zuverlaessiger Support',
+
+  'coverage.title': 'Leistungsgebiet',
+  'coverage.tr.title': 'Tuerkei',
+  'coverage.tr.desc': 'Wir bedienen alle 81 Provinzen mit regelmaessigen Transporten.',
+  'coverage.tr.button': '81 Provinzen anzeigen →',
+  'coverage.tr.modalTitle': 'Tuerkei - 81 Provinzen',
+  'coverage.eu.title': 'Europa',
+  'coverage.eu.desc': 'Internationaler Transport in 45 europaeische Laender.',
+  'coverage.eu.button': '45 Laender anzeigen →',
+  'coverage.eu.modalTitle': 'Europa - 45 Laender',
+
+  'testimonials.title': 'Was unsere Kunden sagen',
+
+  'about.title': 'Ueber uns',
+  'contact.title': 'Kontakt',
+  'contact.reach': 'Kontaktieren Sie uns',
+  'contact.phone': 'Telefon',
+  'contact.email': 'E-Mail',
+  'contact.address': 'Adresse',
+  'contact.address.value': 'Derecik, Nakliyeciler Sitesi\n55090 Ilkadim/Samsun, Tuerkei',
+
+  'form.title': 'Angebotsanfrage',
+  'form.name': 'Vollstaendiger Name',
+  'form.phone': 'Telefonnummer',
+  'form.email': 'E-Mail-Adresse',
+  'form.message': 'Ihre Nachricht (Route, von-nach, Frachtdetails etc.)',
+  'form.submit': 'Per WhatsApp senden',
+
+  'footer.tagline': 'Sichere und professionelle Transportleistungen',
+  'footer.copy': '© 2026 Altuntas Logistik. Alle Rechte vorbehalten.',
+  'whatsapp.tooltip': 'Jetzt schreiben',
+}
+
+export default de
