@@ -2,6 +2,7 @@ import { FaTruck, FaBox, FaBuilding, FaPhone, FaEnvelope, FaMapMarkerAlt, FaCloc
 import { useEffect, useState, FormEvent, lazy, Suspense } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useI18n } from './i18n'
+import NotFound from './components/NotFound'
 
 const ServiceLandingSection = lazy(() => import('./components/ServiceLandingSection'))
 
@@ -187,6 +188,67 @@ function App() {
         setLocationsData(null)
       })
   }, [showCoverage, locationsData])
+
+  // Inject extended schema markup
+  useEffect(() => {
+    const schemaData = {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://www.altuntaslojistik.com/#LocalBusiness",
+          "name": "Altuntaş Lojistik",
+          "image": "https://www.altuntaslojistik.com/logo.png",
+          "description": "Samsun merkezli, Türkiye genelinde güvenli ve profesyonel taşımacılık hizmetleri",
+          "telephone": "+905325511574",
+          "email": "info@altuntaslojistik.com",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Derecik, Nakliyeciler Sitesi",
+            "postalCode": "55090",
+            "addressLocality": "Samsun",
+            "addressRegion": "TR",
+            "addressCountry": "TR"
+          },
+          "url": "https://www.altuntaslojistik.com",
+          "areaServed": { "@type": "Country", "name": "TR" },
+          "priceRange": "$$"
+        },
+        ...(isServices || isServiceLandingPage ? [
+          { "@type": "Service", "@id": "https://www.altuntaslojistik.com/parsiyel-tasimacilik#Service", "name": "Parsiyel Taşımacılık", "description": "Komple yük kapasitesini kullanmayan, kısmi yüklerin ekonomik taşınması", "provider": { "@type": "Organization", "name": "Altuntaş Lojistik" }, "areaServed": "TR" },
+          { "@type": "Service", "@id": "https://www.altuntaslojistik.com/komple-yuk-tasimaciligi#Service", "name": "Komple Yük Taşımacılığı", "description": "Tüm tır kapasitesini kullanan büyük hacimli yüklerin taşınması", "provider": { "@type": "Organization", "name": "Altuntaş Lojistik" }, "areaServed": "TR" },
+          { "@type": "Service", "@id": "https://www.altuntaslojistik.com/uluslararasi-karayolu-tasimaciligi#Service", "name": "Uluslararası Karayolu Taşımacılığı", "description": "Türkiye'den Avrupa'ya kapıdan kapıya taşımacılık hizmeti", "provider": { "@type": "Organization", "name": "Altuntaş Lojistik" }, "areaServed": ["TR", "EU"] },
+          { "@type": "Service", "@id": "https://www.altuntaslojistik.com/turkiye-almanya-lojistik#Service", "name": "Türkiye-Almanya Lojistik", "description": "Türkiye ile Almanya arasında düzenli ve güvenilir taşımacılık hizmeti", "provider": { "@type": "Organization", "name": "Altuntaş Lojistik" }, "areaServed": ["TR", "DE"] }
+        ] : []),
+        ...(isServiceLandingPage ? [
+          {
+            "@type": "FAQPage",
+            "@id": `https://www.altuntaslojistik.com${pathname}#FAQPage`,
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": currentServicePageKey === 'partial' ? "Parsiyel taşımacılık ne kadar ucuz?" : currentServicePageKey === 'full' ? "Komple yük taşımacılığı için minimum yük var mı?" : currentServicePageKey === 'international' ? "Uluslararası taşımacılıkta gümrük işlemleri nerede yapılır?" : "Türkiye-Almanya taşımacılığında ne kadar zaman sürer?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": currentServicePageKey === 'partial' ? "Parsiyel taşımacılık, komple taşımacılığa göre ekonomik bir çözümdür." : currentServicePageKey === 'full' ? "Komple yük taşımacılığı tüm kamyon kapasitesi için en az 20 ton yük taşıyabilir." : currentServicePageKey === 'international' ? "Gümrük işlemleri hem çıkış ülkesinde hem de varış ülkesinde yapılır." : "Türkiye-Almanya rotu ortalama 5-7 gün sürmektedir."
+                }
+              }
+            ]
+          }
+        ] : []),
+        { "@type": "ContactPoint", "@id": "https://www.altuntaslojistik.com/#ContactPoint", "contactType": "Customer Service", "telephone": "+905325511574", "email": "info@altuntaslojistik.com", "url": "https://wa.me/905325511574" }
+      ]
+    }
+
+    const existingSchema = document.querySelector('script[data-schema="extended"]')
+    if (existingSchema) existingSchema.remove()
+
+    const schemaScript = document.createElement('script')
+    schemaScript.type = 'application/ld+json'
+    schemaScript.setAttribute('data-schema', 'extended')
+    schemaScript.textContent = JSON.stringify(schemaData)
+    document.head.appendChild(schemaScript)
+  }, [isServices, isServiceLandingPage, isPartialTransport, isFullLoadTransport, isInternationalRoadTransport, isTurkeyGermanyLogistics, pathname, currentServicePageKey])
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -398,17 +460,7 @@ ${formData.message}
       </header>
 
       <main role="main">
-        {isNotFound && (
-          <section className="py-20 bg-white" aria-label={t('notfound.title')}>
-            <div className="container mx-auto px-4 text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">{t('notfound.title')}</h1>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">{t('notfound.description')}</p>
-              <Link to="/" className="inline-flex items-center justify-center bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-900 transition">
-                {t('notfound.cta')}
-              </Link>
-            </div>
-          </section>
-        )}
+        {isNotFound && <NotFound />}
         {(showHero || showStats) && (
           <section className="bg-gradient-to-r from-gray-900 to-black text-white">
             {/* Hero Section */}
