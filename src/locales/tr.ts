@@ -16,7 +16,7 @@ const tr = {
   'seo.germany.title': 'Türkiye Almanya Lojistik Hattı | Altuntaş Lojistik',
   'seo.home.description': 'Altuntaş Lojistik olarak karayolu taşımacılığı, şehirler arası nakliye ve profesyonel lojistik çözümleri sunuyoruz. Güvenli ve zamanında teslimat için bizimle iletişime geçin.',
   'seo.services.description': 'Altuntaş Lojistik olarak karayolu taşımacılığı, şehirler arası nakliye ve profesyonel lojistik çözümleri sunuyoruz. Güvenli ve zamanında teslimat için bizimle iletişime geçin.',
-  'seo.about.description': 'Samsun\'da nakliye, depolama ve lojistik hizmetleri. Altuntaş Lojistik, güvenli ulaştırma, deneyimli ekip, modern filo ve Türkiye geneli hizmet sağlayan profesyonel lojistik çözümleri.',
+  'seo.about.description': 'Samsun\'da uluslararası nakliye ve lojistik hizmetleri. Altuntaş Lojistik, güvenli taşımacılık, deneyimli ekip, modern filo ve Türkiye-Avrupa hatlarında profesyonel lojistik çözümleri.',
   'seo.contact.description': 'Altuntaş Lojistik iletişim bilgileri. Türkiye geneli lojistik ve taşımacılık hizmetleri için bizimle hemen iletişime geçin.',
   'seo.partial.description': 'Parsiyel taşımacılık hizmetimiz ile Türkiye ve Avrupa hatlarında ekonomik, düzenli ve güvenli sevkiyat çözümleri sunuyoruz.',
   'seo.full.description': 'Komple yük taşımacılığı hizmetimizle tek araca özel hızlı çıkış, güvenli taşıma ve zamanında teslimat sağlıyoruz.',
