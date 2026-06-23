@@ -123,10 +123,16 @@ function App() {
 
     const baseUrl = 'https://www.altuntaslojistik.com'
     const canonicalUrl = `${baseUrl}${pathname}?lang=${lang}`
-    const canonical = document.querySelector('link[rel="canonical"]')
-    if (canonical) {
-      canonical.setAttribute('href', canonicalUrl)
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+    
+    // Create canonical if it doesn't exist
+    if (!canonical) {
+      canonical = document.createElement('link') as HTMLLinkElement
+      canonical.rel = 'canonical'
+      document.head.appendChild(canonical)
     }
+    
+    canonical.setAttribute('href', canonicalUrl)
 
     const ogUrl = document.querySelector('meta[property="og:url"]')
     if (ogUrl) {
