@@ -497,10 +497,12 @@ ${formData.message}
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-gray-700 text-lg leading-relaxed space-y-6">
               <p>{t('home.page.p1')}</p>
-              <h2 className="text-2xl font-bold text-gray-900">{t('home.page.s1.title')}</h2>
-              <p>{t('home.page.s1.p1')}</p>
-              <h2 className="text-2xl font-bold text-gray-900">{t('home.page.s2.title')}</h2>
-              <p>{t('home.page.s2.p1')}</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('home.page.s1.title')}</h2>
+              <p className="mb-4">{t('home.page.s1.p1')}</p>
+              <p className="mb-6"><Link to="/hizmetler" className="text-primary font-semibold hover:underline">{t('nav.services')} →</Link></p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('home.page.s2.title')}</h2>
+              <p className="mb-4">{t('home.page.s2.p1')}</p>
+              <p><Link to="/hakkimizda" className="text-primary font-semibold hover:underline">{t('nav.about')} →</Link></p>
             </div>
           </div>
         </section>
@@ -970,19 +972,60 @@ ${formData.message}
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-8" role="contentinfo">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <picture>
-              <source srcSet="/logo.webp" type="image/webp" />
-              <img 
-                src="/logo.png" 
-                alt="Altuntaş Lojistik Logo" 
-                className="h-16 w-auto"
-              />
-            </picture>
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            {/* Brand */}
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
+                <picture>
+                  <source srcSet="/logo.webp" type="image/webp" />
+                  <img 
+                    src="/logo.png" 
+                    alt="Altuntaş Lojistik Logo" 
+                    className="h-12 w-auto"
+                  />
+                </picture>
+              </div>
+              <p className="text-gray-400 mb-4">{t('footer.tagline')}</p>
+              <p className="text-gray-300 text-sm">{t('footer.copy')}</p>
+            </div>
+            
+            {/* Services Links */}
+            <div>
+              <h4 className="text-lg font-bold mb-4">{t('nav.services')}</h4>
+              <ul className="space-y-2">
+                <li><Link to="/parsiyel-tasimacilik" className="text-gray-400 hover:text-white transition">{t('serviceLinks.partial.title')}</Link></li>
+                <li><Link to="/komple-yuk-tasimaciligi" className="text-gray-400 hover:text-white transition">{t('serviceLinks.full.title')}</Link></li>
+                <li><Link to="/uluslararasi-karayolu-tasimaciligi" className="text-gray-400 hover:text-white transition">{t('serviceLinks.international.title')}</Link></li>
+                <li><Link to="/turkiye-almanya-lojistik" className="text-gray-400 hover:text-white transition">{t('serviceLinks.germany.title')}</Link></li>
+              </ul>
+            </div>
+            
+            {/* Company Links */}
+            <div>
+              <h4 className="text-lg font-bold mb-4">{t('footer.company')}</h4>
+              <ul className="space-y-2">
+                <li><Link to="/" className="text-gray-400 hover:text-white transition">{t('nav.home')}</Link></li>
+                <li><Link to="/hakkimizda" className="text-gray-400 hover:text-white transition">{t('nav.about')}</Link></li>
+                <li><Link to="/hizmetler" className="text-gray-400 hover:text-white transition">{t('nav.services')}</Link></li>
+                <li><Link to="/iletisim" className="text-gray-400 hover:text-white transition">{t('nav.contact')}</Link></li>
+              </ul>
+            </div>
+            
+            {/* Contact Links */}
+            <div>
+              <h4 className="text-lg font-bold mb-4">{t('footer.contact')}</h4>
+              <ul className="space-y-2">
+                <li><a href="tel:+905325511574" className="text-gray-400 hover:text-white transition">+90 532 551 1574</a></li>
+                <li><a href="mailto:info@altuntaslojistik.com" className="text-gray-400 hover:text-white transition">info@altuntaslojistik.com</a></li>
+                <li><a href="https://wa.me/905325511574" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition">WhatsApp</a></li>
+              </ul>
+            </div>
           </div>
-          <p className="text-gray-400 mb-4">{t('footer.tagline')}</p>
-          <p className="text-gray-300 text-sm">{t('footer.copy')}</p>
+          
+          <div className="border-t border-gray-700 pt-8 text-center">
+            <p className="text-gray-400 text-sm">&copy; 2026 Altuntaş Lojistik. Tüm Hakları Saklıdır.</p>
+          </div>
         </div>
       </footer>
 

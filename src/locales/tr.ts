@@ -239,7 +239,8 @@ const tr = {
   'form.submit': 'WhatsApp ile Gönder',
 
   'footer.tagline': 'Güvenli ve profesyonel taşımacılık hizmetleri',
-  'footer.copy': '© 2026 Altuntaş Lojistik. Tüm hakları saklıdır.',
+  'footer.company': 'Şirketi Keşfet',
+  'footer.contact': 'İletişim Bilgileri',
   'whatsapp.tooltip': 'Hemen Yaz',
 }
 
