@@ -6,10 +6,10 @@ const tr = {
   'nav.contact': 'İletişim',
   'nav.quote': 'Teklif Al',
 
-  'seo.home.title': 'Altuntaş Lojistik | Türkiye Geneli Güvenli ve Hızlı Taşımacılık',
-  'seo.services.title': 'Lojistik Hizmetlerimiz | Altuntaş Lojistik',
+  'seo.home.title': 'Samsun Taşımacılık & Lojistik | Altuntaş - Türkiye Geneli Na kliye',
+  'seo.services.title': 'Taşımacılık Hizmetleri: Parsiyel, Komple Yük, Uluslararası | Altuntaş',
   'seo.about.title': 'Hakkımızda | Altuntaş Lojistik',
-  'seo.contact.title': 'İletişim | Altuntaş Lojistik',
+  'seo.contact.title': 'İletişim: Samsun Lojistik Teklifi & Operasyon Takibi | Altuntaş',
   'seo.partial.title': 'Parsiyel Taşımacılık | Altuntaş Lojistik',
   'seo.full.title': 'Komple Yük Taşımacılığı | Altuntaş Lojistik',
   'seo.international.title': 'Uluslararası Karayolu Taşımacılığı | Altuntaş Lojistik',
@@ -81,7 +81,7 @@ const tr = {
   'services.consult.b2': 'Maliyet analizi',
   'services.consult.b3': 'Süreç tasarımı',
 
-  'services.page.h1': 'Lojistik Hizmetlerimiz',
+  'services.page.h1': 'Taşımacılık Hizmetleri: Parsiyel, Komple Yük & Uluslararası Na kliye',
   'services.page.intro': 'Altuntaş Lojistik olarak Türkiye genelinde güvenli, hızlı ve profesyonel lojistik hizmetleri sunuyoruz. Müşteri memnuniyetini ön planda tutarak, taşımacılık süreçlerini planlı ve sistemli bir şekilde yönetiyoruz. Deneyimli ekibimiz ve güçlü araç filomuz ile her ölçekteki nakliye ihtiyacına çözüm üretiyoruz.',
   'services.page.road.title': 'Karayolu Taşımacılığı',
   'services.page.road.p1': 'Karayolu taşımacılığı alanında şehir içi ve şehirler arası nakliye hizmeti sağlıyoruz. Yüklerinizi güvenli araçlarımız ve profesyonel sürücülerimiz ile zamanında teslim ediyoruz. Parsiyel ve komple taşımacılık seçeneklerimiz sayesinde hem bireysel hem kurumsal müşterilerimize uygun çözümler sunuyoruz.',
@@ -193,7 +193,7 @@ const tr = {
   'about.page.team.title': 'Deneyimli Kadro ve Güçlü Filo',
   'about.page.team.p1': 'Deneyimli ekibimiz ve modern araç filomuz sayesinde farklı sektörlere özel lojistik hizmetler sunabiliyoruz. Güvenli nakliye ve profesyonel süreç yönetimi ile hizmet vermeye devam ediyoruz.',
 
-  'contact.page.h1': 'Bizimle İletişime Geçin',
+  'contact.page.h1': 'Lojistik Teklifi & Takip: Samsun Merkezli Operasyon',
   'contact.page.p1': 'Lojistik ve taşımacılık hizmetlerimiz hakkında detaylı bilgi almak için bizimle iletişime geçebilirsiniz. Uzman ekibimiz ihtiyaçlarınıza en uygun çözümleri sunmak için hazırdır.',
   'contact.page.s1.title': 'Telefon ve E-posta',
   'contact.page.s1.p1': 'Telefon, e-posta veya iletişim formu aracılığıyla bize ulaşabilirsiniz. Tüm talepleriniz en kısa sürede değerlendirilir.',
