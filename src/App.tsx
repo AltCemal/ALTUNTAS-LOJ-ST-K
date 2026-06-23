@@ -122,6 +122,33 @@ function App() {
       twitterDescription.setAttribute('content', description)
     }
 
+    // Dynamic OG Tags (og:image, og:type, og:locale)
+    const ogImage = document.querySelector('meta[property="og:image"]')
+    if (ogImage) {
+      ogImage.setAttribute('content', 'https://www.altuntaslojistik.com/logo.png')
+    }
+
+    const ogType = document.querySelector('meta[property="og:type"]')
+    if (ogType) {
+      ogType.setAttribute('content', 'website')
+    }
+
+    const ogLocale = document.querySelector('meta[property="og:locale"]')
+    if (ogLocale) {
+      ogLocale.setAttribute('content', lang === 'tr' ? 'tr_TR' : lang === 'en' ? 'en_US' : 'de_DE')
+    }
+
+    // Dynamic Twitter Card Tags (twitter:image, twitter:card)
+    const twitterImage = document.querySelector('meta[name="twitter:image"]')
+    if (twitterImage) {
+      twitterImage.setAttribute('content', 'https://www.altuntaslojistik.com/logo.png')
+    }
+
+    const twitterCard = document.querySelector('meta[name="twitter:card"]')
+    if (twitterCard) {
+      twitterCard.setAttribute('content', 'summary_large_image')
+    }
+
     const baseUrl = 'https://www.altuntaslojistik.com'
     const canonicalUrl = `${baseUrl}${pathname}?lang=${lang}`
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
