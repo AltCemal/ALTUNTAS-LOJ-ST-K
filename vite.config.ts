@@ -24,7 +24,7 @@ export default defineConfig({
         '/404',
       ],
       renderer: new JSDOMRenderer(),
-      postProcess(renderedRoute) {
+      postProcess(renderedRoute: any) {
         if (renderedRoute.route === '/404') {
           renderedRoute.outputPath = path.join(__dirname, 'dist', '404.html')
         }
