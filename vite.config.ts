@@ -21,15 +21,8 @@ export default defineConfig({
         '/komple-yuk-tasimaciligi',
         '/uluslararasi-karayolu-tasimaciligi',
         '/turkiye-almanya-lojistik',
-        '/404',
       ],
       renderer: new JSDOMRenderer(),
-      postProcess(renderedRoute: any) {
-        if (renderedRoute.route === '/404') {
-          renderedRoute.outputPath = path.join(__dirname, 'dist', '404.html')
-        }
-        return renderedRoute
-      },
     }),
   ],
   build: {

@@ -102,6 +102,14 @@ function App() {
       descriptionTag.setAttribute('content', description)
     }
 
+    let robotsTag = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null
+    if (!robotsTag) {
+      robotsTag = document.createElement('meta')
+      robotsTag.setAttribute('name', 'robots')
+      document.head.appendChild(robotsTag)
+    }
+    robotsTag.setAttribute('content', isNotFound ? 'noindex, follow' : 'index, follow')
+
     const ogTitle = document.querySelector('meta[property="og:title"]')
     if (ogTitle) {
       ogTitle.setAttribute('content', title)
