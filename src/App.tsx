@@ -340,7 +340,6 @@ ${formData.message}
                   width="256"
                   height="256"
                   decoding="async"
-                  fetchPriority="high"
                   className="h-12 md:h-16 w-auto"
                 />
               </picture>
