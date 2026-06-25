@@ -239,6 +239,8 @@ const en = {
   'form.submit': 'Send via WhatsApp',
 
   'footer.tagline': 'Safe and professional transport services',
+  'footer.company': 'Explore Company',
+  'footer.contact': 'Contact Information',
   'footer.copy': '© 2026 Altuntaş Logistics. All rights reserved.',
   'whatsapp.tooltip': 'Chat Now',
 }

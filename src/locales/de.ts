@@ -113,6 +113,8 @@ const de = {
   'form.submit': 'Per WhatsApp senden',
 
   'footer.tagline': 'Sichere und professionelle Transportleistungen',
+  'footer.company': 'Unternehmen entdecken',
+  'footer.contact': 'Kontaktinformationen',
   'footer.copy': '© 2026 Altuntas Logistik. Alle Rechte vorbehalten.',
   'whatsapp.tooltip': 'Jetzt schreiben',
 }
