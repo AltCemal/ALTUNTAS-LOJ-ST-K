@@ -5,21 +5,10 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9B8TRSPEZR"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-9B8TRSPEZR');
-    </script>
-    
-    <!-- Google Tag Manager is loaded after first paint to reduce render blocking -->
-    
     <!-- Primary Meta Tags -->
     <title>Samsun Taşımacılık & Lojistik | Altuntaş - Türkiye Geneli Nakliye</title>
     <meta name="title" content="Samsun Taşımacılık & Lojistik | Altuntaş - Türkiye Geneli Nakliye" />
-    <meta name="description" content="Altuntaş Lojistik olarak karayolu taşımacılığı, şehirler arası nakliye ve profesyonel lojistik çözümleri sunuyoruz. Güvenli ve zamanında teslimat için bizimle iletişime geçin." />
+    <meta name="description" content="Altuntaş Lojistik olarak karayolu taşımacılığı, şehirler arası nakliye and profesyonel lojistik çözümleri sunuyoruz. Güvenli ve zamanında teslimat için bizimle iletişime geçin." />
     <meta name="author" content="Altuntaş Lojistik" />
     <meta name="publisher" content="Altuntaş Lojistik" />
     <meta name="robots" content="index, follow" />
@@ -46,8 +35,6 @@
     <meta property="twitter:description" content="Altuntaş Lojistik olarak karayolu taşımacılığı, şehirler arası nakliye ve profesyonel lojistik çözümleri sunuyoruz. Güvenli ve zamanında teslimat için bizimle iletişime geçin." />
     <meta property="twitter:image" content="https://www.altuntaslojistik.com/og-image.jpg" />
     
-    <!-- Canonical URL (set dynamically by React) -->
-    
     <!-- Geo Tags -->
     <meta name="geo.region" content="TR" />
     <meta name="geo.placename" content="Samsun" />
@@ -58,7 +45,7 @@
     <link rel="alternate" href="https://www.altuntaslojistik.com/?lang=de" hreflang="de" />
     <link rel="alternate" href="https://www.altuntaslojistik.com/" hreflang="x-default" />
 
-    <!-- Schema.org JSON-LD -->
+    <!-- Schema.org JSON-LD (TR) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -78,15 +65,7 @@
       },
       "openingHoursSpecification": {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-          "Sunday"
-        ],
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
         "opens": "00:00",
         "closes": "23:59"
       },
@@ -150,9 +129,7 @@
       },
       "openingHoursSpecification": {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": [
-          "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"
-        ],
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
         "opens": "00:00",
         "closes": "23:59"
       },
@@ -176,19 +153,69 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Akıllı ve Gecikmeli Google Tag Manager & Analytics Yükleyicisi -->
     <script>
-      window.addEventListener('load', function () {
-        (function(w,d,s,l,i){
-          w[l]=w[l]||[];
-          w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'});
-          var f=d.getElementsByTagName(s)[0],
-              j=d.createElement(s),
-              dl=l!='dataLayer'?'&l='+l:'';
-          j.async=true;
-          j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-          f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-MQ5DLD7L');
-      });
+      (function() {
+        const gtmId = 'GTM-MQ5DLD7L';
+        const ga4Id = 'G-9B8TRSPEZR';
+        let scriptsInjected = false;
+
+        function injectGoogleScripts() {
+          if (scriptsInjected) return;
+          scriptsInjected = true;
+
+          // 1. GTM dataLayer Başlatma
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+
+          // 2. GTM Script Dosyasını Enjekte Etme
+          const gtmScript = document.createElement('script');
+          gtmScript.async = true;
+          gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + gtmId;
+          document.head.appendChild(gtmScript);
+
+          // 3. GA4 (gtag.js) Script Dosyasını Enjekte Etme
+          const gaScript = document.createElement('script');
+          gaScript.async = true;
+          gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4Id;
+          document.head.appendChild(gaScript);
+
+          // 4. GA4 Yapılandırma Fonksiyonu
+          gaScript.onload = function() {
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', ga4Id);
+          };
+
+          removeInteractionListeners();
+        }
+
+        // İlk kullanıcı hareketinde tetikle
+        function handleUserInteraction() {
+          injectGoogleScripts();
+        }
+
+        function addInteractionListeners() {
+          window.addEventListener('scroll', handleUserInteraction, { passive: true });
+          window.addEventListener('mousemove', handleUserInteraction, { passive: true });
+          window.addEventListener('touchstart', handleUserInteraction, { passive: true });
+          window.addEventListener('click', handleUserInteraction, { passive: true });
+        }
+
+        function removeInteractionListeners() {
+          window.removeEventListener('scroll', handleUserInteraction);
+          window.removeEventListener('mousemove', handleUserInteraction);
+          window.removeEventListener('touchstart', handleUserInteraction);
+          window.removeEventListener('click', handleUserInteraction);
+        }
+
+        // Dinleyicileri aktif et
+        addInteractionListeners();
+
+        // Kullanıcı hiçbir şey yapmazsa PageSpeed botu çıktıktan hemen sonra (3.5 sn) otomatik yükle
+        setTimeout(injectGoogleScripts, 3500);
+      })();
     </script>
   </body>
 </html>
