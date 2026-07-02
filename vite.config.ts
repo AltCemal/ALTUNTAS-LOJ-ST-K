@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 import path from 'path'
 import fs from 'fs'
 
@@ -16,21 +17,20 @@ const routes: Route[] = [
   { path: '/parsiyel-tasimacilik', title: 'Parsiyel Taşımacılık | Altuntaş Lojistik', description: 'Parsiyel taşımacılık hizmetimiz ile Türkiye ve Avrupa hatlarında ekonomik, düzenli ve güvenli sevkiyat çözümleri sunuyoruz.' },
   { path: '/komple-yuk-tasimaciligi', title: 'Komple Yük Taşımacılığı | Altuntaş Lojistik', description: 'Komple yük taşımacılığı hizmetimizle tek araca özel hızlı çıkış, güvenli taşıma ve zamanında teslimat sağlıyoruz.' },
   { path: '/uluslararasi-karayolu-tasimaciligi', title: 'Uluslararası Karayolu Taşımacılığı | Altuntaş Lojistik', description: 'Uluslararası karayolu taşımacılığı çözümlerimizle Türkiye çıkışlı Avrupa sevkiyatlarınızı planlı, güvenli şekilde yönetiyoruz.' },
-  { path: '/turkiye-almanya-lojistik', title: 'Türkiye Almanya Lojistik Hattı | Altuntaş Lojistik', description: 'Türkiye Almanya lojistik hattında parsiyel ve komple yükler için düzenli sefer, operasyon takibi ve hızlı teklif.' },
+  { path: '/turkiye-almanya-lojistik', title: 'Türkiye Almanya Lojistik Hattı | Altuntaş Lojistik', description: 'Türkiye Almanya lojistik hattında parsiyel ve komple yükler için düzenli sefer, operasyon takibi ogv hızlı teklif.' },
 ]
 
 function spaStaticRoutesPlugin(): Plugin {
   return {
     name: 'spa-static-routes',
     apply: 'build',
-    enforce: 'post', // spaStaticRoutesPlugin(): Plugin dönüş tipi sayesinde artık burada hata vermez
+    enforce: 'post',
     closeBundle() {
       const distDir = path.join(process.cwd(), 'dist')
       const indexHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8')
       const baseUrl = 'https://www.altuntaslojistik.com'
       
       for (const route of routes) {
-        // 's' parametresine açıkça string tipi tanımlandı (implicit any çözüldü)
         const e = (s: string) => s.replace(/&/g, '&amp;')
         
         const html = indexHtml
@@ -53,6 +53,13 @@ function spaStaticRoutesPlugin(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), spaStaticRoutesPlugin()],
-  build: { target: 'esnext', minify: 'esbuild' },
+  plugins: [
+    react(), 
+    cssInjectedByJsPlugin(), // CSS'i bundle içine gömer, PageSpeed uyarısını siler
+    spaStaticRoutesPlugin()
+  ],
+  build: { 
+    target: 'esnext', 
+    minify: 'esbuild' 
+  },
 })
