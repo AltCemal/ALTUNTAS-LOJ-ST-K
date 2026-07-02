@@ -102,7 +102,7 @@ function App() {
             <div className="flex items-center space-x-3">
               <picture>
                 <source srcSet="/logo.webp" type="image/webp" />
-                <img src="/logo.png" alt="Altuntaş Lojistik Logo" width="256" height="256" decoding="async" className="h-12 md:h-16 w-auto" />
+                <img src="/logo.png" alt="Altuntaş Lojistik Logo" width="64" height="64" decoding="async" className="h-12 md:h-16 w-auto" />
               </picture>
               <div className="text-xl md:text-2xl font-bold text-gray-800 whitespace-nowrap hidden sm:block">{t('brand.name')}</div>
             </div>
@@ -184,7 +184,7 @@ function App() {
             <div>
               <picture>
                 <source srcSet="/logo.webp" type="image/webp" />
-                <img src="/logo.png" alt="Altuntaş Lojistik Logo" width="256" height="256" loading="lazy" decoding="async" className="h-12 w-auto mb-4" />
+                <img src="/logo.png" alt="Altuntaş Lojistik Logo" width="64" height="64" loading="lazy" decoding="async" className="h-12 w-auto mb-4" />
               </picture>
               <p className="text-gray-400 mb-4">{t('footer.tagline')}</p>
               <p className="text-gray-300 text-sm">{t('footer.copy')}</p>

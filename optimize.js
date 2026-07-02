@@ -1,28 +1,11 @@
 import sharp from 'sharp';
 import fs from 'fs';
 
-let inputPath = '';
-
-// Olası tüm konumları ve isimleri kontrol et
-if (fs.existsSync('logo-2.png')) {
-  inputPath = 'logo-2.png';
-} else if (fs.existsSync('public/logo-2.png')) {
-  inputPath = 'public/logo-2.png';
-} else if (fs.existsSync('logo.png')) {
-  inputPath = 'logo.png';
-} else if (fs.existsSync('public/logo.png')) {
-  inputPath = 'public/logo.png';
-}
-
-if (!inputPath) {
-  console.error('❌ Hata: logo-2.png veya logo.png dosyası projenizde bulunamadı!');
-  console.log('Lütfen logonuzu VS Code\'da projenin ana klasörüne "logo-2.png" adıyla sürükleyip bırakın.');
-  process.exit(1);
-}
+let inputPath = fs.existsSync('public/logo.png') ? 'public/logo.png' : 'logo.png';
 
 sharp(inputPath)
-  .resize(160, 160)
-  .webp({ quality: 80 })
+  .resize(128, 128) // Görüntülenen alanın tam 2 katı (Kusursuz netlik)
+  .webp({ quality: 65, alphaQuality: 70 }) // Sıkıştırma oranını biraz artırdık
   .toFile('public/logo.webp')
-  .then(() => console.log(`✓ Logo (${inputPath}) başarıyla 1-3 KiB boyutuna optimize edildi ve public/logo.webp konumuna yazıldı!`))
+  .then(() => console.log('✓ Logo daha agresif şekilde (128x128) optimize edildi!'))
   .catch(err => console.error(err));
