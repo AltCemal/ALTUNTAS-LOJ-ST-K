@@ -1,37 +1,24 @@
-import { FaTruck, FaBox, FaBuilding, FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock, FaCheckCircle, FaShieldAlt, FaWhatsapp, FaInstagram, FaBars, FaTimes, FaStar, FaQuoteLeft, FaGlobeEurope } from 'react-icons/fa'
-import { useEffect, useState, FormEvent, lazy, Suspense } from 'react'
+import { FaPhone, FaWhatsapp, FaInstagram, FaBars, FaTimes } from 'react-icons/fa'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useI18n } from './i18n'
 import NotFound from './components/NotFound'
 
+// Lazy Loading Pages
+const Home = lazy(() => import('./pages/Home'))
+const Services = lazy(() => import('./pages/Services'))
+const About = lazy(() => import('./pages/About'))
+const Contact = lazy(() => import('./pages/Contact'))
 const ServiceLandingSection = lazy(() => import('./components/ServiceLandingSection'))
-
-type Locations = {
-  turkeyCities: string[]
-  europeCountries: string[]
-}
-
-type LocationMap = {
-  tr: Locations
-  en: Locations
-  de: Locations
-}
 
 function App() {
   const { t, lang, setLang } = useI18n()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isTurkeyModalOpen, setIsTurkeyModalOpen] = useState(false)
-  const [isEuropeModalOpen, setIsEuropeModalOpen] = useState(false)
   const [renderDeferredHomeSections, setRenderDeferredHomeSections] = useState(false)
-  const [locationsData, setLocationsData] = useState<LocationMap | null>(null)
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    message: ''
-  })
+  
   const location = useLocation()
   const pathname = location.pathname
+  
   const isHome = pathname === '/'
   const isServices = pathname === '/hizmetler'
   const isAbout = pathname === '/hakkimizda'
@@ -42,20 +29,6 @@ function App() {
   const isTurkeyGermanyLogistics = pathname === '/turkiye-almanya-lojistik'
   const isServiceLandingPage = isPartialTransport || isFullLoadTransport || isInternationalRoadTransport || isTurkeyGermanyLogistics
   const isNotFound = !isHome && !isServices && !isAbout && !isContact && !isServiceLandingPage
-  const showHero = isHome
-  const showStats = isHome
-  const showFeatures = isHome && renderDeferredHomeSections
-  const showServices = isServices
-  const showCoverage = isServices
-  const showTestimonials = isHome && renderDeferredHomeSections
-  const showAbout = isAbout
-  const showContact = isContact
-  const servicePages = [
-    { path: '/parsiyel-tasimacilik', key: 'partial' },
-    { path: '/komple-yuk-tasimaciligi', key: 'full' },
-    { path: '/uluslararasi-karayolu-tasimaciligi', key: 'international' },
-    { path: '/turkiye-almanya-lojistik', key: 'germany' }
-  ] as const
 
   const currentServicePageKey = isPartialTransport
     ? 'partial'
@@ -67,40 +40,18 @@ function App() {
           ? 'germany'
           : null
 
+  // Dynamic SEO Injector Effect
   useEffect(() => {
-    const seoPrefix = isServices
-      ? 'seo.services'
-      : isAbout
-        ? 'seo.about'
-        : isContact
-          ? 'seo.contact'
-          : isPartialTransport
-            ? 'seo.partial'
-            : isFullLoadTransport
-              ? 'seo.full'
-              : isInternationalRoadTransport
-                ? 'seo.international'
-                : isTurkeyGermanyLogistics
-                  ? 'seo.germany'
-                  : isNotFound
-                    ? 'seo.notfound'
-                    : 'seo.home'
-
+    const seoPrefix = isServices ? 'seo.services' : isAbout ? 'seo.about' : isContact ? 'seo.contact' : isPartialTransport ? 'seo.partial' : isFullLoadTransport ? 'seo.full' : isInternationalRoadTransport ? 'seo.international' : isTurkeyGermanyLogistics ? 'seo.germany' : isNotFound ? 'seo.notfound' : 'seo.home'
     const title = t(`${seoPrefix}.title`)
-
     document.title = title
 
     const titleTag = document.querySelector('meta[name="title"]')
-    if (titleTag) {
-      titleTag.setAttribute('content', title)
-    }
+    if (titleTag) titleTag.setAttribute('content', title)
 
     const description = t(`${seoPrefix}.description`)
-
     const descriptionTag = document.querySelector('meta[name="description"]')
-    if (descriptionTag) {
-      descriptionTag.setAttribute('content', description)
-    }
+    if (descriptionTag) descriptionTag.setAttribute('content', description)
 
     let robotsTag = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null
     if (!robotsTag) {
@@ -110,220 +61,37 @@ function App() {
     }
     robotsTag.setAttribute('content', isNotFound ? 'noindex, follow' : 'index, follow')
 
-    const ogTitle = document.querySelector('meta[property="og:title"]')
-    if (ogTitle) {
-      ogTitle.setAttribute('content', title)
-    }
-
-    const ogDescription = document.querySelector('meta[property="og:description"]')
-    if (ogDescription) {
-      ogDescription.setAttribute('content', description)
-    }
-
-    const twitterTitle = document.querySelector('meta[property="twitter:title"]')
-    if (twitterTitle) {
-      twitterTitle.setAttribute('content', title)
-    }
-
-    const twitterDescription = document.querySelector('meta[property="twitter:description"]')
-    if (twitterDescription) {
-      twitterDescription.setAttribute('content', description)
-    }
-
-    // Dynamic OG Tags (og:image, og:type, og:locale)
-    const ogImage = document.querySelector('meta[property="og:image"]')
-    if (ogImage) {
-      ogImage.setAttribute('content', 'https://www.altuntaslojistik.com/logo.png')
-    }
-
-    const ogType = document.querySelector('meta[property="og:type"]')
-    if (ogType) {
-      ogType.setAttribute('content', 'website')
-    }
-
-    const ogLocale = document.querySelector('meta[property="og:locale"]')
-    if (ogLocale) {
-      ogLocale.setAttribute('content', lang === 'tr' ? 'tr_TR' : lang === 'en' ? 'en_US' : 'de_DE')
-    }
-
-    // Dynamic Twitter Card Tags (twitter:image, twitter:card)
-    const twitterImage = document.querySelector('meta[name="twitter:image"]')
-    if (twitterImage) {
-      twitterImage.setAttribute('content', 'https://www.altuntaslojistik.com/logo.png')
-    }
-
-    const twitterCard = document.querySelector('meta[name="twitter:card"]')
-    if (twitterCard) {
-      twitterCard.setAttribute('content', 'summary_large_image')
-    }
+    const tags = [
+      { sel: 'meta[property="og:title"]', val: title },
+      { sel: 'meta[property="og:description"]', val: description },
+      { sel: 'meta[property="twitter:title"]', val: title },
+      { sel: 'meta[property="twitter:description"]', val: description }
+    ]
+    tags.forEach(t => {
+      const el = document.querySelector(t.sel)
+      if (el) el.setAttribute('content', t.val)
+    })
 
     const baseUrl = 'https://www.altuntaslojistik.com'
     const canonicalUrl = `${baseUrl}${pathname}?lang=${lang}`
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
-    
-    // Create canonical if it doesn't exist
     if (!canonical) {
-      canonical = document.createElement('link') as HTMLLinkElement
+      canonical = document.createElement('link')
       canonical.rel = 'canonical'
       document.head.appendChild(canonical)
     }
-    
     canonical.setAttribute('href', canonicalUrl)
-
-    const ogUrl = document.querySelector('meta[property="og:url"]')
-    if (ogUrl) {
-      ogUrl.setAttribute('content', canonicalUrl)
-    }
-
-    const twitterUrl = document.querySelector('meta[property="twitter:url"]')
-    if (twitterUrl) {
-      twitterUrl.setAttribute('content', canonicalUrl)
-    }
-
-    const alternates = [
-      { hreflang: 'tr', href: `${baseUrl}${pathname}?lang=tr` },
-      { hreflang: 'en', href: `${baseUrl}${pathname}?lang=en` },
-      { hreflang: 'de', href: `${baseUrl}${pathname}?lang=de` },
-      { hreflang: 'x-default', href: `${baseUrl}${pathname}` }
-    ]
-
-    alternates.forEach(({ hreflang, href }) => {
-      let altLink = document.querySelector(`link[rel="alternate"][hreflang="${hreflang}"]`) as HTMLLinkElement | null
-      if (!altLink) {
-        altLink = document.createElement('link')
-        altLink.setAttribute('rel', 'alternate')
-        altLink.setAttribute('hreflang', hreflang)
-        document.head.appendChild(altLink)
-      }
-      altLink.setAttribute('href', href)
-    })
   }, [isServices, isAbout, isContact, isPartialTransport, isFullLoadTransport, isInternationalRoadTransport, isTurkeyGermanyLogistics, isNotFound, lang, pathname, t])
 
+  // Deferred loading strategy for home animations
   useEffect(() => {
     if (!isHome) {
       setRenderDeferredHomeSections(false)
       return
     }
-
-    const timerId = window.setTimeout(() => {
-      setRenderDeferredHomeSections(true)
-    }, 350)
-
+    const timerId = window.setTimeout(() => setRenderDeferredHomeSections(true), 350)
     return () => window.clearTimeout(timerId)
   }, [isHome])
-
-  useEffect(() => {
-    if (!showCoverage || locationsData) return
-
-    import('./locales/locations')
-      .then((module) => {
-        setLocationsData(module.locations as LocationMap)
-      })
-      .catch(() => {
-        setLocationsData(null)
-      })
-  }, [showCoverage, locationsData])
-
-  // Inject extended schema markup
-  useEffect(() => {
-    const schemaData = {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "LocalBusiness",
-          "@id": "https://www.altuntaslojistik.com/#LocalBusiness",
-          "name": "Altuntaş Lojistik",
-          "image": "https://www.altuntaslojistik.com/logo.png",
-          "description": "Samsun merkezli, Türkiye genelinde güvenli ve profesyonel taşımacılık hizmetleri",
-          "telephone": "+905325511574",
-          "email": "info@altuntaslojistik.com",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Derecik, Nakliyeciler Sitesi",
-            "postalCode": "55090",
-            "addressLocality": "Samsun",
-            "addressRegion": "TR",
-            "addressCountry": "TR"
-          },
-          "url": "https://www.altuntaslojistik.com",
-          "areaServed": { "@type": "Country", "name": "TR" },
-          "priceRange": "$$"
-        },
-        ...(isServices || isServiceLandingPage ? [
-          { "@type": "Service", "@id": "https://www.altuntaslojistik.com/parsiyel-tasimacilik#Service", "name": "Parsiyel Taşımacılık", "description": "Komple yük kapasitesini kullanmayan, kısmi yüklerin ekonomik taşınması", "provider": { "@type": "Organization", "name": "Altuntaş Lojistik" }, "areaServed": "TR" },
-          { "@type": "Service", "@id": "https://www.altuntaslojistik.com/komple-yuk-tasimaciligi#Service", "name": "Komple Yük Taşımacılığı", "description": "Tüm tır kapasitesini kullanan büyük hacimli yüklerin taşınması", "provider": { "@type": "Organization", "name": "Altuntaş Lojistik" }, "areaServed": "TR" },
-          { "@type": "Service", "@id": "https://www.altuntaslojistik.com/uluslararasi-karayolu-tasimaciligi#Service", "name": "Uluslararası Karayolu Taşımacılığı", "description": "Türkiye'den Avrupa'ya kapıdan kapıya taşımacılık hizmeti", "provider": { "@type": "Organization", "name": "Altuntaş Lojistik" }, "areaServed": ["TR", "EU"] },
-          { "@type": "Service", "@id": "https://www.altuntaslojistik.com/turkiye-almanya-lojistik#Service", "name": "Türkiye-Almanya Lojistik", "description": "Türkiye ile Almanya arasında düzenli ve güvenilir taşımacılık hizmeti", "provider": { "@type": "Organization", "name": "Altuntaş Lojistik" }, "areaServed": ["TR", "DE"] }
-        ] : []),
-        ...(isServiceLandingPage ? [
-          {
-            "@type": "FAQPage",
-            "@id": `https://www.altuntaslojistik.com${pathname}#FAQPage`,
-            "mainEntity": [
-              {
-                "@type": "Question",
-                "name": currentServicePageKey === 'partial' ? "Parsiyel taşımacılık ne kadar ucuz?" : currentServicePageKey === 'full' ? "Komple yük taşımacılığı için minimum yük var mı?" : currentServicePageKey === 'international' ? "Uluslararası taşımacılıkta gümrük işlemleri nerede yapılır?" : "Türkiye-Almanya taşımacılığında ne kadar zaman sürer?",
-                "acceptedAnswer": {
-                  "@type": "Answer",
-                  "text": currentServicePageKey === 'partial' ? "Parsiyel taşımacılık, komple taşımacılığa göre ekonomik bir çözümdür." : currentServicePageKey === 'full' ? "Komple yük taşımacılığı tüm kamyon kapasitesi için en az 20 ton yük taşıyabilir." : currentServicePageKey === 'international' ? "Gümrük işlemleri hem çıkış ülkesinde hem de varış ülkesinde yapılır." : "Türkiye-Almanya rotu ortalama 5-7 gün sürmektedir."
-                }
-              }
-            ]
-          }
-        ] : []),
-        { "@type": "ContactPoint", "@id": "https://www.altuntaslojistik.com/#ContactPoint", "contactType": "Customer Service", "telephone": "+905325511574", "email": "info@altuntaslojistik.com", "url": "https://wa.me/905325511574" }
-      ]
-    }
-
-    const existingSchema = document.querySelector('script[data-schema="extended"]')
-    if (existingSchema) existingSchema.remove()
-
-    const schemaScript = document.createElement('script')
-    schemaScript.type = 'application/ld+json'
-    schemaScript.setAttribute('data-schema', 'extended')
-    schemaScript.textContent = JSON.stringify(schemaData)
-    document.head.appendChild(schemaScript)
-  }, [isServices, isServiceLandingPage, isPartialTransport, isFullLoadTransport, isInternationalRoadTransport, isTurkeyGermanyLogistics, pathname, currentServicePageKey])
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    
-    // WhatsApp numarası (başında + ve ülke kodu ile)
-    const whatsappNumber = '905325511574' // Gerçek numaranızı buraya yazın
-    
-    // Mesaj formatı
-    const whatsappMessage = `
-*Yeni Teklif Talebi*
-
-*Ad Soyad:* ${formData.name}
-*Telefon:* ${formData.phone}
-*E-posta:* ${formData.email}
-
-*Mesaj:*
-${formData.message}
-    `.trim()
-    
-    // WhatsApp URL'i oluştur
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`
-    
-    // WhatsApp'ı aç
-    window.open(whatsappUrl, '_blank')
-    
-    // Formu temizle
-    setFormData({
-      name: '',
-      phone: '',
-      email: '',
-      message: ''
-    })
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -334,14 +102,7 @@ ${formData.message}
             <div className="flex items-center space-x-3">
               <picture>
                 <source srcSet="/logo.webp" type="image/webp" />
-                <img 
-                  src="/logo.png" 
-                  alt="Altuntaş Lojistik Logo" 
-                  width="256"
-                  height="256"
-                  decoding="async"
-                  className="h-12 md:h-16 w-auto"
-                />
+                <img src="/logo.png" alt="Altuntaş Lojistik Logo" width="256" height="256" decoding="async" className="h-12 md:h-16 w-auto" />
               </picture>
               <div className="text-xl md:text-2xl font-bold text-gray-800 whitespace-nowrap hidden sm:block">{t('brand.name')}</div>
             </div>
@@ -357,75 +118,29 @@ ${formData.message}
             {/* Desktop Right Side */}
             <div className="hidden lg:flex items-center space-x-3">
               <div className="flex items-center border rounded-lg overflow-hidden">
-                <button
-                  onClick={() => setLang('tr')}
-                  className={`px-3 py-2 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}`}
-                  aria-label="Türkçe"
-                >TR</button>
-                <button
-                  onClick={() => setLang('en')}
-                  className={`px-3 py-2 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}`}
-                  aria-label="English"
-                >EN</button>
-                <button
-                  onClick={() => setLang('de')}
-                  className={`px-3 py-2 text-sm ${lang === 'de' ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}`}
-                  aria-label="Deutsch"
-                >DE</button>
+                <button onClick={() => setLang('tr')} className={`px-3 py-2 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
+                <button onClick={() => setLang('en')} className={`px-3 py-2 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
+                <button onClick={() => setLang('de')} className={`px-3 py-2 text-sm ${lang === 'de' ? 'bg-primary text-white' : 'text-gray-700'}`}>DE</button>
               </div>
-              <Link to="/iletisim" className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition">
-                {t('nav.quote')}
-              </Link>
-              <a 
-                href="https://wa.me/905325511574" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-800 hover:text-black transition"
-                aria-label="WhatsApp"
-              >
-                <FaWhatsapp className="text-2xl" />
-              </a>
-              <a 
-                href="https://www.instagram.com/altuntaslojistik" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-800 hover:text-black transition"
-                aria-label="Instagram"
-              >
-                <FaInstagram className="text-2xl" />
-              </a>
+              <Link to="/iletisim" className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition">{t('nav.quote')}</Link>
+              <a href="https://wa.me/905325511574" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="WhatsApp"><FaWhatsapp className="text-2xl" /></a>
+              <a href="https://www.instagram.com/altuntaslojistik" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="Instagram"><FaInstagram className="text-2xl" /></a>
+              
               <div className="hidden xl:flex items-center space-x-2">
-                <a 
-                  href="tel:+905325511574" 
-                  className="text-gray-700 hover:text-primary transition"
-                >
+                <a href="tel:+905325511574" className="text-gray-700 hover:text-primary transition">
                   <FaPhone className="text-lg" />
                 </a>
                 <div className="flex flex-col text-sm">
-                  <a href="tel:+905325511574" className="text-gray-700 hover:text-primary transition font-semibold">+90 532 551 15 74</a>
-                  <a href="tel:+905419255561" className="text-gray-700 hover:text-primary transition font-semibold">+90 541 925 55 61</a>
+                  <a href="tel:+905325511574" className="text-gray-700 font-semibold hover:text-primary transition">+90 532 551 15 74</a>
+                  <a href="tel:+905419255561" className="text-gray-700 font-semibold hover:text-primary transition">+90 541 925 55 61</a>
                 </div>
               </div>
             </div>
 
             {/* Mobile Icons */}
             <div className="flex lg:hidden items-center space-x-3">
-              <a 
-                href="https://wa.me/905325511574" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-800 hover:text-black transition"
-                aria-label="WhatsApp"
-              >
-                <FaWhatsapp className="text-2xl" />
-              </a>
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-gray-700 hover:text-primary transition p-2"
-                aria-label="Menü"
-              >
-                {isMenuOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}
-              </button>
+              <a href="https://wa.me/905325511574" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="WhatsApp"><FaWhatsapp className="text-2xl" /></a>
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-700 p-2" aria-label="Menü">{isMenuOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}</button>
             </div>
           </div>
 
@@ -433,63 +148,19 @@ ${formData.message}
           {isMenuOpen && (
             <div className="lg:hidden mt-4 pb-4 border-t border-gray-200">
               <div className="flex flex-col space-y-3 pt-4">
-                <Link 
-                  to="/" 
-                  className="text-gray-700 hover:text-primary transition py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('nav.home')}
-                </Link>
-                <Link 
-                  to="/hizmetler" 
-                  className="text-gray-700 hover:text-primary transition py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('nav.services')}
-                </Link>
-                <Link 
-                  to="/hakkimizda" 
-                  className="text-gray-700 hover:text-primary transition py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('nav.about')}
-                </Link>
-                <Link 
-                  to="/iletisim" 
-                  className="text-gray-700 hover:text-primary transition py-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('nav.contact')}
-                </Link>
+                <Link to="/" className="text-gray-700 hover:text-primary transition py-2" onClick={() => setIsMenuOpen(false)}>{t('nav.home')}</Link>
+                <Link to="/hizmetler" className="text-gray-700 hover:text-primary transition py-2" onClick={() => setIsMenuOpen(false)}>{t('nav.services')}</Link>
+                <Link to="/hakkimizda" className="text-gray-700 hover:text-primary transition py-2" onClick={() => setIsMenuOpen(false)}>{t('nav.about')}</Link>
+                <Link to="/iletisim" className="text-gray-700 hover:text-primary transition py-2" onClick={() => setIsMenuOpen(false)}>{t('nav.contact')}</Link>
                 <div className="flex items-center space-x-4 pt-2">
-                  <Link 
-                    to="/iletisim" 
-                    className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {t('nav.quote')}
-                  </Link>
+                  <Link to="/iletisim" className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition" onClick={() => setIsMenuOpen(false)}>{t('nav.quote')}</Link>
                   <div className="ml-auto flex items-center border rounded-lg overflow-hidden">
-                    <button onClick={() => setLang('tr')} aria-label="Türkçe" className={`px-4 py-3 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
-                    <button onClick={() => setLang('en')} aria-label="English" className={`px-4 py-3 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
-                    <button onClick={() => setLang('de')} aria-label="Deutsch" className={`px-4 py-3 text-sm ${lang === 'de' ? 'bg-primary text-white' : 'text-gray-700'}`}>DE</button>
+                    <button onClick={() => setLang('tr')} className={`px-4 py-3 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
+                    <button onClick={() => setLang('en')} className={`px-4 py-3 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
+                    <button onClick={() => setLang('de')} className={`px-4 py-3 text-sm ${lang === 'de' ? 'bg-primary text-white' : 'text-gray-700'}`}>DE</button>
                   </div>
-                  <a 
-                    href="https://www.instagram.com/altuntaslojistik" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-gray-800 hover:text-black transition"
-                    aria-label="Instagram"
-                  >
-                    <FaInstagram className="text-2xl" />
-                  </a>
-                  <a 
-                    href="tel:+905325511574" 
-                    className="text-gray-700 hover:text-primary transition"
-                    aria-label="Telefon"
-                  >
-                    <FaPhone className="text-xl" />
-                  </a>
+                  <a href="https://www.instagram.com/altuntaslojistik" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="Instagram"><FaInstagram className="text-2xl" /></a>
+                  <a href="tel:+905325511574" className="text-gray-700 hover:text-primary transition" aria-label="Telefon"><FaPhone className="text-xl" /></a>
                 </div>
               </div>
             </div>
@@ -497,640 +168,61 @@ ${formData.message}
         </nav>
       </header>
 
+      {/* Main Content */}
       <main role="main">
-        {isNotFound && <NotFound />}
-        {(showHero || showStats) && (
-          <section className="bg-gradient-to-r from-gray-900 to-black text-white">
-            {/* Hero Section */}
-            {showHero && (
-              <div id="anasayfa" className="py-20" aria-label={t('nav.home')}>
-                <div className="container mx-auto px-4 text-center">
-                  <h1 className="text-5xl font-bold mb-6">{t('hero.title')}</h1>
-                  <p className="text-xl mb-8 max-w-2xl mx-auto">{t('hero.subtitle')}</p>
-                  <div className="flex justify-center space-x-4">
-                    <Link to="/iletisim" className="bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-900 transition">{t('hero.cta.quote')}</Link>
-                    <Link to="/hizmetler" className="bg-white text-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">{t('hero.cta.services')}</Link>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Stats Section - Rakamlarla Altuntaş */}
-            {showStats && (
-              <div className="py-16">
-                <div className="container mx-auto px-4">
-                  <h2 className="text-4xl font-bold text-center mb-12">{t('stats.title')}</h2>
-                  <div className="grid md:grid-cols-4 gap-8">
-                    <div className="text-center">
-                      <div className="text-5xl font-bold mb-2">70+</div>
-                      <div className="text-xl text-gray-200">{t('stats.years')}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-5xl font-bold mb-2">50+</div>
-                      <div className="text-xl text-gray-200">{t('stats.fleet')}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-5xl font-bold mb-2">10,000+</div>
-                      <div className="text-xl text-gray-200">{t('stats.customers')}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-5xl font-bold mb-2">45</div>
-                      <div className="text-xl text-gray-200">{t('stats.countries')}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* Features */}
-        {showFeatures && (
-        <section className="py-16 bg-white" aria-label="Features">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaTruck className="text-primary text-2xl" />
-              </div>
-              <h3 className="font-bold text-lg mb-2">{t('features.fleet.title')}</h3>
-              <p className="text-gray-600">{t('features.fleet.desc')}</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaShieldAlt className="text-primary text-2xl" />
-              </div>
-              <h3 className="font-bold text-lg mb-2">{t('features.insurance.title')}</h3>
-              <p className="text-gray-600">{t('features.insurance.desc')}</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaClock className="text-primary text-2xl" />
-              </div>
-              <h3 className="font-bold text-lg mb-2">{t('features.ontime.title')}</h3>
-              <p className="text-gray-600">{t('features.ontime.desc')}</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaCheckCircle className="text-primary text-2xl" />
-              </div>
-              <h3 className="font-bold text-lg mb-2">{t('features.tracking.title')}</h3>
-              <p className="text-gray-600">{t('features.tracking.desc')}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      )}
-
-      {isHome && (
-        <section className="py-12 bg-white" aria-label={t('nav.home')}>
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-gray-700 text-lg leading-relaxed space-y-6">
-              <p>{t('home.page.p1')}</p>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('home.page.s1.title')}</h2>
-              <p className="mb-4">{t('home.page.s1.p1')}</p>
-              <p className="mb-6"><Link to="/hizmetler" className="text-primary font-semibold hover:underline">{t('nav.services')} →</Link></p>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('home.page.s2.title')}</h2>
-              <p className="mb-4">{t('home.page.s2.p1')}</p>
-              <p><Link to="/hakkimizda" className="text-primary font-semibold hover:underline">{t('nav.about')} →</Link></p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Services */}
-      {showServices && (
-      <section id="hizmetler" className="py-16 bg-gray-100" aria-label={t('services.title')}>
-        <div className="container mx-auto px-4">
-          {isServices && (
-            <h1 className="text-4xl md:text-5xl font-bold text-center mb-6">{t('services.page.h1')}</h1>
+        <Suspense fallback={<div className="py-20 text-center text-gray-500 font-semibold">{t('services.title')}...</div>}>
+          {isNotFound && <NotFound />}
+          {isHome && <Home t={t} renderDeferredHomeSections={renderDeferredHomeSections} />}
+          {isServices && <Services t={t} lang={lang} />}
+          {isAbout && <About t={t} />}
+          {isContact && <Contact t={t} />}
+          {isServiceLandingPage && currentServicePageKey && (
+            <ServiceLandingSection servicePageKey={currentServicePageKey} t={t} />
           )}
-          <h2 className="text-4xl font-bold text-center mb-12">{t('services.title')}</h2>
-
-          {isServices && (
-            <div className="max-w-4xl mx-auto text-gray-700 text-lg leading-relaxed space-y-6 mb-12">
-              <p>{t('services.page.intro')}</p>
-              <h2 className="text-2xl font-bold text-gray-900">{t('services.page.road.title')}</h2>
-              <p>{t('services.page.road.p1')}</p>
-              <h2 className="text-2xl font-bold text-gray-900">{t('services.page.intercity.title')}</h2>
-              <p>{t('services.page.intercity.p1')}</p>
-              <h2 className="text-2xl font-bold text-gray-900">{t('services.page.pro.title')}</h2>
-              <p>{t('services.page.pro.p1')}</p>
-              <p>{t('services.page.outro')}</p>
-            </div>
-          )}
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition">
-              <FaTruck className="text-primary text-5xl mb-4" />
-              <h3 className="text-2xl font-bold mb-4">{t('services.ftl.title')}</h3>
-              <p className="text-gray-600 mb-4">{t('services.ftl.desc')}</p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.ftl.b1')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.ftl.b2')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.ftl.b3')}
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition">
-              <FaBox className="text-primary text-5xl mb-4" />
-              <h3 className="text-2xl font-bold mb-4">{t('services.ltl.title')}</h3>
-              <p className="text-gray-600 mb-4">{t('services.ltl.desc')}</p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.ltl.b1')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.ltl.b2')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.ltl.b3')}
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition">
-              <FaBuilding className="text-primary text-5xl mb-4" />
-              <h3 className="text-2xl font-bold mb-4">{t('services.intl.title')}</h3>
-              <p className="text-gray-600 mb-4">{t('services.intl.desc')}</p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.intl.b1')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.intl.b2')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.intl.b3')}
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 mt-8">
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition">
-              <FaBox className="text-primary text-5xl mb-4" />
-              <h3 className="text-2xl font-bold mb-4">{t('services.storage.title')}</h3>
-              <p className="text-gray-600 mb-4">{t('services.storage.desc')}</p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.storage.b1')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.storage.b2')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.storage.b3')}
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition">
-              <FaTruck className="text-primary text-5xl mb-4" />
-              <h3 className="text-2xl font-bold mb-4">{t('services.special.title')}</h3>
-              <p className="text-gray-600 mb-4">{t('services.special.desc')}</p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.special.b1')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.special.b2')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.special.b3')}
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition">
-              <FaBox className="text-primary text-5xl mb-4" />
-              <h3 className="text-2xl font-bold mb-4">{t('services.consult.title')}</h3>
-              <p className="text-gray-600 mb-4">{t('services.consult.desc')}</p>
-              <ul className="space-y-2">
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.consult.b1')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.consult.b2')}
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <FaCheckCircle className="text-gray-700 mr-2" />
-                  {t('services.consult.b3')}
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-12">
-            <h2 className="text-3xl font-bold text-center mb-8">{t('serviceLinks.title')}</h2>
-            <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-              {servicePages.map((page) => (
-                <Link
-                  key={page.path}
-                  to={page.path}
-                  className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition border border-gray-200"
-                >
-                  <h3 className="text-2xl font-bold mb-3 text-gray-900">{t(`serviceLinks.${page.key}.title`)}</h3>
-                  <p className="text-gray-600 mb-4">{t(`serviceLinks.${page.key}.description`)}</p>
-                  <span className="text-primary font-semibold">{t('serviceLinks.cta')}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-      )}
-
-      {isServiceLandingPage && currentServicePageKey && (
-        <Suspense fallback={<section className="py-16 bg-white"><div className="container mx-auto px-4"><div className="max-w-4xl mx-auto text-center text-gray-500">{t('services.title')}...</div></div></section>}>
-          <ServiceLandingSection servicePageKey={currentServicePageKey} t={t} />
         </Suspense>
-      )}
-
-      {/* Service Coverage Map */}
-      {showCoverage && (
-      <section className="py-16 bg-gray-100">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">{t('coverage.title')}</h2>
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="flex items-center mb-6">
-                <FaMapMarkerAlt className="text-primary text-3xl mr-3" />
-                <h3 className="text-2xl font-bold">{t('coverage.tr.title')}</h3>
-              </div>
-              <p className="text-gray-600 mb-6">{t('coverage.tr.desc')}</p>
-              <button
-                onClick={() => setIsTurkeyModalOpen(true)}
-                className="w-full bg-primary text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition font-semibold"
-              >
-                {t('coverage.tr.button')}
-              </button>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-lg p-8">
-              <div className="flex items-center mb-6">
-                <FaGlobeEurope className="text-primary text-3xl mr-3" />
-                <h3 className="text-2xl font-bold">{t('coverage.eu.title')}</h3>
-              </div>
-              <p className="text-gray-600 mb-6">{t('coverage.eu.desc')}</p>
-              <button
-                onClick={() => setIsEuropeModalOpen(true)}
-                className="w-full bg-primary text-white px-6 py-3 rounded-lg hover:bg-gray-900 transition font-semibold"
-              >
-                {t('coverage.eu.button')}
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-      )}
-
-      {/* Turkey Cities Modal */}
-      {showCoverage && isTurkeyModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={() => setIsTurkeyModalOpen(false)}>
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-              <h3 className="text-2xl font-bold flex items-center">
-                <FaMapMarkerAlt className="text-primary mr-3" />
-                {t('coverage.tr.modalTitle')}
-              </h3>
-              <button
-                onClick={() => setIsTurkeyModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl p-2"
-                aria-label="Kapat"
-              >
-                <FaTimes />
-              </button>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {(locationsData?.[lang]?.turkeyCities ?? []).map((city) => (
-                  <div key={city} className="flex items-center bg-gray-50 p-3 rounded-lg">
-                    <FaCheckCircle className="text-gray-700 mr-2 flex-shrink-0" />
-                    <span className="text-gray-700">{city}</span>
-                  </div>
-                ))}
-              </div>
-              {!locationsData && <p className="text-gray-500 mt-4">{t('services.title')}...</p>}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Europe Countries Modal */}
-      {showCoverage && isEuropeModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" onClick={() => setIsEuropeModalOpen(false)}>
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-              <h3 className="text-2xl font-bold flex items-center">
-                <FaGlobeEurope className="text-primary mr-3" />
-                {t('coverage.eu.modalTitle')}
-              </h3>
-              <button
-                onClick={() => setIsEuropeModalOpen(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl p-2"
-                aria-label="Kapat"
-              >
-                <FaTimes />
-              </button>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {(locationsData?.[lang]?.europeCountries ?? []).map((country) => (
-                  <div key={country} className="flex items-center bg-gray-50 p-3 rounded-lg">
-                    <FaCheckCircle className="text-gray-700 mr-2 flex-shrink-0" />
-                    <span className="text-gray-700">{country}</span>
-                  </div>
-                ))}
-              </div>
-              {!locationsData && <p className="text-gray-500 mt-4">{t('services.title')}...</p>}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Testimonials */}
-      {showTestimonials && (
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-12">{t('testimonials.title')}</h2>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="bg-gray-50 rounded-lg p-6 shadow-lg relative">
-              <FaQuoteLeft className="text-primary text-3xl mb-4 opacity-20 absolute top-4 left-4" />
-              <div className="flex mb-3 pt-8">
-                {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} className="text-gray-400" />
-                ))}
-              </div>
-              <p className="text-gray-700 mb-4 italic">"{t('testimonials.1.text')}"</p>
-              <div className="font-semibold text-gray-800">{t('testimonials.1.author')}</div>
-              <div className="text-sm text-gray-500">{t('testimonials.1.role')}</div>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-6 shadow-lg relative">
-              <FaQuoteLeft className="text-primary text-3xl mb-4 opacity-20 absolute top-4 left-4" />
-              <div className="flex mb-3 pt-8">
-                {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} className="text-gray-400" />
-                ))}
-              </div>
-              <p className="text-gray-700 mb-4 italic">"{t('testimonials.2.text')}"</p>
-              <div className="font-semibold text-gray-800">{t('testimonials.2.author')}</div>
-              <div className="text-sm text-gray-500">{t('testimonials.2.role')}</div>
-            </div>
-
-            <div className="bg-gray-50 rounded-lg p-6 shadow-lg relative">
-              <FaQuoteLeft className="text-primary text-3xl mb-4 opacity-20 absolute top-4 left-4" />
-              <div className="flex mb-3 pt-8">
-                {[...Array(5)].map((_, i) => (
-                  <FaStar key={i} className="text-gray-400" />
-                ))}
-              </div>
-              <p className="text-gray-700 mb-4 italic">"{t('testimonials.3.text')}"</p>
-              <div className="font-semibold text-gray-800">{t('testimonials.3.author')}</div>
-              <div className="text-sm text-gray-500">{t('testimonials.3.role')}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-      )}
-
-      {/* About */}
-      {showAbout && (
-      <section id="hakkimizda" className="py-16 bg-gray-100" aria-label={t('about.title')}>
-        <div className="container mx-auto px-4">
-          {isAbout ? (
-            <div className="max-w-4xl mx-auto text-gray-700 text-lg leading-relaxed space-y-6">
-              <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900 mb-6">{t('about.page.h1')}</h1>
-              <p>{t('about.page.p1')}</p>
-              <h2 className="text-2xl font-bold text-gray-900">{t('about.page.mission.title')}</h2>
-              <p>{t('about.page.mission.p1')}</p>
-              <h2 className="text-2xl font-bold text-gray-900">{t('about.page.vision.title')}</h2>
-              <p>{t('about.page.vision.p1')}</p>
-              <h2 className="text-2xl font-bold text-gray-900">{t('about.page.team.title')}</h2>
-              <p>{t('about.page.team.p1')}</p>
-            </div>
-          ) : (
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-4xl font-bold mb-6">{t('about.title')}</h2>
-              <p className="text-lg text-gray-700 mb-6">{t('about.p1')}</p>
-              <p className="text-lg text-gray-700">{t('about.p2')}</p>
-            </div>
-          )}
-        </div>
-      </section>
-      )}
-
-      {/* Contact */}
-      {showContact && (
-      <section id="iletisim" className="py-16 bg-gray-100" aria-label={t('contact.title')}>
-        <div className="container mx-auto px-4">
-          {isContact ? (
-            <div className="max-w-4xl mx-auto text-gray-700 text-lg leading-relaxed space-y-6 mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-900">{t('contact.page.h1')}</h1>
-              <p>{t('contact.page.p1')}</p>
-              <h2 className="text-2xl font-bold text-gray-900">{t('contact.page.s1.title')}</h2>
-              <p>{t('contact.page.s1.p1')}</p>
-              <h2 className="text-2xl font-bold text-gray-900">{t('contact.page.s2.title')}</h2>
-              <p>{t('contact.page.s2.p1')}</p>
-            </div>
-          ) : (
-            <h2 className="text-4xl font-bold text-center mb-12">{t('contact.title')}</h2>
-          )}
-          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-            <div>
-              <h3 className="text-2xl font-bold mb-6">{t('contact.reach')}</h3>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <FaPhone className="text-primary text-xl mr-4 mt-1" />
-                  <div>
-                    <h4 className="font-semibold">{t('contact.phone')}</h4>
-                    <p className="text-gray-600">+90 532 551 15 74</p>
-                    <p className="text-gray-600">+90 541 925 55 61</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <FaEnvelope className="text-primary text-xl mr-4 mt-1" />
-                  <div>
-                    <h4 className="font-semibold">{t('contact.email')}</h4>
-                    <p className="text-gray-600">info@altuntaslojistik.com</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <FaMapMarkerAlt className="text-primary text-xl mr-4 mt-1" />
-                  <div>
-                    <h4 className="font-semibold">{t('contact.address')}</h4>
-                    <p className="text-gray-600 whitespace-pre-line">{t('contact.address.value')}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-bold mb-6">{t('form.title')}</h3>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="form-name" className="sr-only">{t('form.name')}</label>
-                  <input 
-                    id="form-name"
-                    type="text" 
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder={t('form.name')} 
-                    required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="form-phone" className="sr-only">{t('form.phone')}</label>
-                  <input 
-                    id="form-phone"
-                    type="tel" 
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder={t('form.phone')} 
-                    required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="form-email" className="sr-only">{t('form.email')}</label>
-                  <input 
-                    id="form-email"
-                    type="email" 
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder={t('form.email')} 
-                    required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="form-message" className="sr-only">{t('form.message')}</label>
-                  <textarea 
-                    id="form-message"
-                    rows={4} 
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder={t('form.message')} 
-                    required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-primary"
-                  ></textarea>
-                </div>
-                <button 
-                  type="submit" 
-                  className="w-full bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-900 transition flex items-center justify-center space-x-2"
-                >
-                  <span>{t('form.submit')}</span>
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                  </svg>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
-      )}
       </main>
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-8" role="contentinfo">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
-            {/* Brand */}
             <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <picture>
-                  <source srcSet="/logo.webp" type="image/webp" />
-                  <img 
-                    src="/logo.png" 
-                    alt="Altuntaş Lojistik Logo" 
-                    width="256"
-                    height="256"
-                    loading="lazy"
-                    decoding="async"
-                    className="h-12 w-auto"
-                  />
-                </picture>
-              </div>
+              <picture>
+                <source srcSet="/logo.webp" type="image/webp" />
+                <img src="/logo.png" alt="Altuntaş Lojistik Logo" width="256" height="256" loading="lazy" decoding="async" className="h-12 w-auto mb-4" />
+              </picture>
               <p className="text-gray-400 mb-4">{t('footer.tagline')}</p>
               <p className="text-gray-300 text-sm">{t('footer.copy')}</p>
             </div>
-            
-            {/* Services Links */}
             <div>
               <h4 className="text-lg font-bold mb-4">{t('nav.services')}</h4>
-              <ul className="space-y-2">
-                <li><Link to="/parsiyel-tasimacilik" className="text-gray-400 hover:text-white transition">{t('serviceLinks.partial.title')}</Link></li>
-                <li><Link to="/komple-yuk-tasimaciligi" className="text-gray-400 hover:text-white transition">{t('serviceLinks.full.title')}</Link></li>
-                <li><Link to="/uluslararasi-karayolu-tasimaciligi" className="text-gray-400 hover:text-white transition">{t('serviceLinks.international.title')}</Link></li>
-                <li><Link to="/turkiye-almanya-lojistik" className="text-gray-400 hover:text-white transition">{t('serviceLinks.germany.title')}</Link></li>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link to="/parsiyel-tasimacilik" className="hover:text-white">{t('serviceLinks.partial.title')}</Link></li>
+                <li><Link to="/komple-yuk-tasimaciligi" className="hover:text-white">{t('serviceLinks.full.title')}</Link></li>
+                <li><Link to="/uluslararasi-karayolu-tasimaciligi" className="hover:text-white">{t('serviceLinks.international.title')}</Link></li>
+                <li><Link to="/turkiye-almanya-lojistik" className="hover:text-white">{t('serviceLinks.germany.title')}</Link></li>
               </ul>
             </div>
-            
-            {/* Company Links */}
             <div>
               <h4 className="text-lg font-bold mb-4">{t('footer.company')}</h4>
-              <ul className="space-y-2">
-                <li><Link to="/" className="text-gray-400 hover:text-white transition">{t('nav.home')}</Link></li>
-                <li><Link to="/hakkimizda" className="text-gray-400 hover:text-white transition">{t('nav.about')}</Link></li>
-                <li><Link to="/hizmetler" className="text-gray-400 hover:text-white transition">{t('nav.services')}</Link></li>
-                <li><Link to="/iletisim" className="text-gray-400 hover:text-white transition">{t('nav.contact')}</Link></li>
+              <ul className="space-y-2 text-gray-400">
+                <li><Link to="/" className="hover:text-white">{t('nav.home')}</Link></li>
+                <li><Link to="/hakkimizda" className="hover:text-white">{t('nav.about')}</Link></li>
               </ul>
             </div>
-            
-            {/* Contact Links */}
             <div>
               <h4 className="text-lg font-bold mb-4">{t('footer.contact')}</h4>
-              <ul className="space-y-2">
-                <li><a href="tel:+905325511574" className="text-gray-400 hover:text-white transition">+90 532 551 1574</a></li>
-                <li><a href="mailto:info@altuntaslojistik.com" className="text-gray-400 hover:text-white transition">info@altuntaslojistik.com</a></li>
-                <li><a href="https://wa.me/905325511574" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition">WhatsApp</a></li>
+              <ul className="space-y-2 text-gray-400">
+                <li><a href="tel:+905325511574" className="hover:text-white">+90 532 551 1574</a></li>
+                <li><a href="mailto:info@altuntaslojistik.com" className="hover:text-white">info@altuntaslojistik.com</a></li>
               </ul>
             </div>
-          </div>
-          
-          <div className="border-t border-gray-700 pt-8 text-center">
-            <p className="text-gray-400 text-sm">{t('footer.all_rights_reserved')}</p>
           </div>
         </div>
       </footer>
 
-      {/* WhatsApp Float Button */}
-      <a
-        href="https://wa.me/905325511574"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-900 transition-all hover:scale-110 z-50 group"
-        aria-label="WhatsApp"
-      >
+      {/* Floating WhatsApp Button */}
+      <a href="https://wa.me/905325511574" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-900 transition-all hover:scale-110 z-50 group" aria-label="WhatsApp">
         <FaWhatsapp className="text-3xl" />
         <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
           {t('whatsapp.tooltip')}
