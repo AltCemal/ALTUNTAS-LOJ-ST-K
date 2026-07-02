@@ -1,15 +1,15 @@
 import { FaPhone, FaWhatsapp, FaInstagram, FaBars, FaTimes } from 'react-icons/fa'
-import { useEffect, useState, lazy, Suspense } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useI18n } from './i18n'
 import NotFound from './components/NotFound'
 
-// Lazy Loading Pages
-const Home = lazy(() => import('./pages/Home'))
-const Services = lazy(() => import('./pages/Services'))
-const About = lazy(() => import('./pages/About'))
-const Contact = lazy(() => import('./pages/Contact'))
-const ServiceLandingSection = lazy(() => import('./components/ServiceLandingSection'))
+// Doğrudan (Eager) Import - Küçük projelerde en yüksek performansı bu sağlar
+import Home from './pages/Home'
+import Services from './pages/Services'
+import About from './pages/About'
+import Contact from './pages/Contact'
+import ServiceLandingSection from './components/ServiceLandingSection'
 
 function App() {
   const { t, lang, setLang } = useI18n()
@@ -107,7 +107,6 @@ function App() {
               <div className="text-xl md:text-2xl font-bold text-gray-800 whitespace-nowrap hidden sm:block">{t('brand.name')}</div>
             </div>
             
-            {/* Desktop Menu */}
             <div className="hidden lg:flex space-x-6 flex-1 justify-center">
               <Link to="/" className="text-gray-700 hover:text-primary transition">{t('nav.home')}</Link>
               <Link to="/hizmetler" className="text-gray-700 hover:text-primary transition">{t('nav.services')}</Link>
@@ -115,7 +114,6 @@ function App() {
               <Link to="/iletisim" className="text-gray-700 hover:text-primary transition">{t('nav.contact')}</Link>
             </div>
             
-            {/* Desktop Right Side */}
             <div className="hidden lg:flex items-center space-x-3">
               <div className="flex items-center border rounded-lg overflow-hidden">
                 <button onClick={() => setLang('tr')} className={`px-3 py-2 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
@@ -137,7 +135,6 @@ function App() {
               </div>
             </div>
 
-            {/* Mobile Icons */}
             <div className="flex lg:hidden items-center space-x-3">
               <a href="https://wa.me/905325511574" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="WhatsApp"><FaWhatsapp className="text-2xl" /></a>
               <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-700 p-2" aria-label="Menü">{isMenuOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}</button>
@@ -168,18 +165,16 @@ function App() {
         </nav>
       </header>
 
-      {/* Main Content */}
+      {/* Main Content (Suspense kalktı çünkü artık kodlar eager yükleniyor) */}
       <main role="main">
-        <Suspense fallback={<div className="py-20 text-center text-gray-500 font-semibold">{t('services.title')}...</div>}>
-          {isNotFound && <NotFound />}
-          {isHome && <Home t={t} renderDeferredHomeSections={renderDeferredHomeSections} />}
-          {isServices && <Services t={t} lang={lang} />}
-          {isAbout && <About t={t} />}
-          {isContact && <Contact t={t} />}
-          {isServiceLandingPage && currentServicePageKey && (
-            <ServiceLandingSection servicePageKey={currentServicePageKey} t={t} />
-          )}
-        </Suspense>
+        {isNotFound && <NotFound />}
+        {isHome && <Home t={t} renderDeferredHomeSections={renderDeferredHomeSections} />}
+        {isServices && <Services t={t} lang={lang} />}
+        {isAbout && <About t={t} />}
+        {isContact && <Contact t={t} />}
+        {isServiceLandingPage && currentServicePageKey && (
+          <ServiceLandingSection servicePageKey={currentServicePageKey} t={t} />
+        )}
       </main>
 
       {/* Footer */}
@@ -213,7 +208,7 @@ function App() {
             <div>
               <h4 className="text-lg font-bold mb-4">{t('footer.contact')}</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="tel:+905325511574" className="hover:text-white">+90 532 551 1574</a></li>
+                <li><a href="tel:+905325511574" className="hover:text-white">+90 532 551 15 74</a></li>
                 <li><a href="mailto:info@altuntaslojistik.com" className="hover:text-white">info@altuntaslojistik.com</a></li>
               </ul>
             </div>
