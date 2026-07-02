@@ -73,7 +73,10 @@ function App() {
     })
 
     const baseUrl = 'https://www.altuntaslojistik.com'
-    const canonicalUrl = `${baseUrl}${pathname}?lang=${lang}`
+    
+    // FIX: Ana dil (TR) seçiliyken temiz ana URL'i vererek hreflang-canonical çakışmasını çözer
+    const canonicalUrl = lang === 'tr' ? `${baseUrl}${pathname}` : `${baseUrl}${pathname}?lang=${lang}`
+    
     let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
     if (!canonical) {
       canonical = document.createElement('link')
@@ -165,7 +168,7 @@ function App() {
         </nav>
       </header>
 
-      {/* Main Content (Suspense kalktı çünkü artık kodlar eager yükleniyor) */}
+      {/* Main Content */}
       <main role="main">
         {isNotFound && <NotFound />}
         {isHome && <Home t={t} renderDeferredHomeSections={renderDeferredHomeSections} />}
