@@ -5,7 +5,7 @@ import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url)
 const vitePrerender = require('vite-plugin-prerender')
-const JSDOMRenderer = require('@prerenderer/renderer-jsdom')
+const PuppeteerRenderer = require('@prerenderer/renderer-puppeteer')
 
 export default defineConfig({
   plugins: [
@@ -22,7 +22,7 @@ export default defineConfig({
         '/uluslararasi-karayolu-tasimaciligi',
         '/turkiye-almanya-lojistik',
       ],
-      renderer: new JSDOMRenderer(),
+      renderer: new PuppeteerRenderer({ renderAfterTime: 5000, headless: true }),
     }),
   ],
   build: {

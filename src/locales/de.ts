@@ -171,6 +171,8 @@ const de = {
   'footer.contact': 'Kontaktinformationen',
   'footer.copy': '© 2026 Altuntas Logistik. Alle Rechte vorbehalten.',
   'whatsapp.tooltip': 'Jetzt schreiben',
+  'footer.all_rights_reserved': 'Alle Rechte vorbehalten.',
+
 }
 
 export default de

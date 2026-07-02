@@ -1118,7 +1118,7 @@ ${formData.message}
           </div>
           
           <div className="border-t border-gray-700 pt-8 text-center">
-            <p className="text-gray-400 text-sm">&copy; 2026 Altuntaş Lojistik. Tüm Hakları Saklıdır.</p>
+            <p className="text-gray-400 text-sm">{t('footer.all_rights_reserved')}</p>
           </div>
         </div>
       </footer>

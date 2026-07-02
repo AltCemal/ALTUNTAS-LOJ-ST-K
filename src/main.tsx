@@ -14,3 +14,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </BrowserRouter>
   </React.StrictMode>,
 )
+
+// Notify prerenderer that the app is ready
+document.dispatchEvent(new Event('render-event'))
