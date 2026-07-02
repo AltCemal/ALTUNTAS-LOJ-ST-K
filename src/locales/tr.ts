@@ -61,7 +61,7 @@ const tr = {
   'services.ltl.b2': 'Düzenli seferler',
   'services.ltl.b3': 'Konsolidasyon',
   'services.intl.title': 'Uluslararası Karayolu Taşımacılığı',
-  'services.intl.desc': 'Uluslararası karayolu taşımacılık - Türkiye\'den Avrupa\'ya kapıdan kapıya nakliyat hizmeti. Güm rük işlemleri, TIR karnesi ve operasyon takibi dahil.',
+  'services.intl.desc': 'Uluslararası karayolu taşımacılık - Türkiye\'den Avrupa\'ya kapıdan kapıya nakliyat hizmeti. Gümrük işlemleri, TIR karnesi ve operasyon takibi dahil.',
   'services.intl.b1': 'Tüm Avrupa',
   'services.intl.b2': 'Gümrük danışmanlığı',
   'services.intl.b3': 'TIR karnesi',
@@ -81,7 +81,7 @@ const tr = {
   'services.consult.b2': 'Maliyet analizi',
   'services.consult.b3': 'Süreç tasarımı',
 
-  'services.page.h1': 'Taşımacılık Hizmetleri: Parsiyel, Komple Yük & Uluslararası Na kliye',
+  'services.page.h1': 'Taşımacılık Hizmetleri: Parsiyel, Komple Yük & Uluslararası Nakliye',
   'services.page.intro': 'Altuntaş Lojistik - Samsun merkezli lojistik hizmetleri. Parsiyel, komple yük ve uluslararası taşımacılık hizmetleriyle Türkiye genelinde güvenli, hızlı ve profesyonel na kliye sağlıyoruz. Müşteri memnuniyetini ön planda tutarak, taşımacılık süreçlerini planlı ve sistemli bir şekilde yönetiyoruz.',
   'services.page.road.title': 'Karayolu Taşımacılığı Hizmeti',
   'services.page.road.p1': 'Samsun merkezli karayolu taşımacılığı hizmetleri - şehir içi ve şehirler arası nakliye operasyonları. Yüklerinizi güvenli araçlarımız ve profesyonel sürücelerimiz ile zamanında teslim ediyoruz. Parsiyel ve komple taşımacılık seçeneklerimiz sayesinde her ölçekte müşteri ihtiyacına uygun çözümler sunuyoruz.',
@@ -107,7 +107,7 @@ const tr = {
   'servicePages.common.ctaWhatsapp': 'WhatsApp ile Yaz',
 
   'servicePages.partial.h1': 'Parsiyel Taşımacılık Hizmeti',
-  'servicePages.partial.intro': 'Parsiyel taşımacılık, araçın kapasitesinin birden fazla yük sahibi tarafından paylaşılmasıyla maliyet avantajı sunan bir modeldir. Altuntaş Lojistik olarak düzenli çıkış planımız ve güçlü operasyon takibimizle parsiyel yüklerinizi Türkiye ve Avrupa hatlarında zamanında teslim ediyoruz.',
+  'servicePages.partial.intro': 'Parsiyel taşımacılık, aracın kapasitesinin birden fazla yük sahibi tarafından paylaşılmasıyla maliyet avantajı sunan bir modeldir. Altuntaş Lojistik olarak düzenli çıkış planımız ve güçlü operasyon takibimizle parsiyel yüklerinizi zamanında teslim ediyoruz.',
   'servicePages.partial.benefitsTitle': 'Parsiyel taşımacılığın avantajları',
   'servicePages.partial.benefit1': 'Yük hacmine göre optimize maliyet ve esnek sevkiyat planı',
   'servicePages.partial.benefit2': 'Düzenli çıkış günleri ile öngörülebilir teslimat süreci',
@@ -161,7 +161,7 @@ const tr = {
   'servicePages.international.ctaText': 'Uluslararası sevkiyat planınızı hızlıca netleştirmek için bizimle iletişime geçin.',
 
   'servicePages.germany.h1': 'Türkiye - Almanya Lojistik Hattı',
-  'servicePages.germany.intro': 'Türkiye - Almanya hattı, düzenli sevkiyat yapan firmalar için en kritik dış ticaret güzergâhlarından biridir. Altuntaş Lojistik olarak bu hatta parsiyel ve komple taşımacılık çözümlerini operasyon odaklı sunuyoruz. Daha işler yapabilir hale getirmek için.',
+  'servicePages.germany.intro': 'Türkiye - Almanya hattı, düzenli sevkiyat yapan firmalar için en kritik dış ticaret güzergahlarından biridir. Altuntaş Lojistik olarak bu hatta parsiyel ve komple taşımacılık çözümlerini operasyon odaklı sunuyoruz.',
   'servicePages.germany.benefitsTitle': 'Almanya hattında öne çıkan hizmetlerimiz',
   'servicePages.germany.benefit1': 'Düzenli çıkış planına uygun parsiyel taşıma organizasyonu',
   'servicePages.germany.benefit2': 'Tek araca özel komple yük sevkiyat planlaması',
@@ -178,25 +178,25 @@ const tr = {
   'servicePages.germany.faq3a': 'Yük ve rota bilgileri iletildikten sonra kısa sürede fiyat ve operasyon planı paylaşılır.',
   'servicePages.germany.ctaText': 'Türkiye - Almanya sevkiyatlarınız için hızlı teklif ve düzenli operasyon desteği alın.',
 
-  'home.page.p1': 'Altuntaş Lojistik - Samsun merkezli, Türkiye genelinde güvenli, hızlı ve profesyonel taşımacılık hizmetleri sunan deneyimli lojistik şirketi. Parsiyel, komple yük ve uluslararası nakliye ihtiyacına çözüm üretiyoruz.',
+  'home.page.p1': 'Altuntaş Lojistik, Türkiye genelinde güvenli, hızlı ve profesyonel taşımacılık hizmetleri sunan deneyimli bir lojistik firmasıdır. Müşteri memnuniyetini esas alan hizmet anlayışımız ile her türlü nakliye ihtiyacına çözüm üretmekteyiz.',
   'home.page.s1.title': 'Güvenli ve Planlı Taşımacılık',
-  'home.page.s1.p1': 'Taşımacılık sürecinde planlama en önemli unsurdur. Altuntaş Lojistik olarak yüklerinizi zamanında ve güvenli şekilde teslim etmek için operasyonlarımızı titizlikle yönetiyoruz. CMR sigortası, takip sistemi ve 24/7 operasyon desteği dahil.',
+  'home.page.s1.p1': 'Taşımacılık sürecinde planlama en önemli unsurdur. Altuntaş Lojistik olarak yüklerinizi zamanında ve güvenli şekilde teslim etmek için operasyonlarımızı titizlikle yönetiyoruz.',
   'home.page.s2.title': 'Türkiye Geneli Hizmet Ağı',
-  'home.page.s2.p1': 'Şehir içi ve şehirler arası nakliye hizmetlerimiz ile Türkiye\'nin tüm bölgelerine lojistik çözümler sunuyoruz. Samsun merkezli düzenli seferler, profesyonel sürücü kadromuz ve modern araç filomuz ile taşımacılık süreçlerini güvenle yörütüyoruz.',
+  'home.page.s2.p1': 'Şehir içi ve şehirler arası nakliye hizmetlerimiz ile Türkiye’nin tüm bölgelerine lojistik çözümler sunuyoruz. Profesyonel sürücü kadromuz ve modern araç filomuz ile taşımacılık süreçlerini güvenle yürütüyoruz.',
 
   'about.page.h1': 'Altuntaş Lojistik Hakkında',
-  'about.page.p1': 'Altuntaş Lojistik - Samsun şehirinde taşımacılık sektöründe güvenilir ve kaliteli hizmet anlayışı ile faaliyet göstermektedir. Kurulduğumuz günden bu yana müşteri memnuniyetini ön planda tutarak lojistik süreçleri profesyonel şekilde yönetiyoruz.',
-  'about.page.mission.title': 'Güvenilir Taşımacılık Misyonu',
-  'about.page.mission.p1': 'Misyonumuz, müşterilerimize güvenli, hızlı ve ekonomik lojistik çözümler sunmaktır. Parsiyel ve komple taşımacılık süreçlerinde şeffaflık ve zamanında teslimat temel prensiplerimizdir.',
-  'about.page.vision.title': 'Uluslararası Lojistik Vizyonu',
-  'about.page.vision.p1': 'Türkiye genelinde ve uluslararası taşımacılık alanında tercih edilen bir lojistik şirketi olmak en büyük hedefimizdir. Parsiyel, komple ve Avrupa hatlarında sürekli gelişim ve yenilikçi yaklaşım ile sektörde fark yaratmayı amaçlıyoruz.',
+  'about.page.p1': 'Altuntaş Lojistik, taşımacılık sektöründe güvenilir ve kaliteli hizmet anlayışı ile faaliyet göstermektedir. Kurulduğumuz günden bu yana müşteri memnuniyetini ön planda tutarak lojistik süreçleri profesyonel şekilde yönetiyoruz.',
+  'about.page.mission.title': 'Misyonumuz',
+  'about.page.mission.p1': 'Misyonumuz, müşterilerimize güvenli, hızlı ve ekonomik lojistik çözümler sunmaktır. Taşımacılık süreçlerinde şeffaflık ve zamanında teslimat temel prensiplerimizdir.',
+  'about.page.vision.title': 'Vizyonumuz',
+  'about.page.vision.p1': 'Türkiye genelinde ve uluslararası taşımacılık alanında tercih edilen bir lojistik firması olmak en büyük hedefimizdir. Sürekli gelişim ve yenilikçi yaklaşım ile sektörde fark yaratmayı amaçlıyoruz.',
   'about.page.team.title': 'Deneyimli Kadro ve Güçlü Filo',
-  'about.page.team.p1': 'Samsun merkezli deneyimli ekibimiz ve modern araç filomuz sayesinde üretim, perakende, dış ticaret gibi farklı sektörlere özel taşımacılık hizmetleri sunabiliyoruz. Güvenli nakliye ve profesyonel süreç yönetimi ile hizmet vermeye devam ediyoruz.',
+  'about.page.team.p1': 'Deneyimli ekibimiz ve modern araç filomuz sayesinde farklı sektörlere özel lojistik hizmetler sunabiliyoruz. Güvenli nakliye ve profesyonel süreç yönetimi ile hizmet vermeye devam ediyoruz.',
 
   'contact.page.h1': 'Lojistik Teklifi & Takip: Samsun Merkezli Operasyon',
-  'contact.page.p1': 'Lojistik ve taşımacılık hizmetleri hakkında teklif almak, operasyon takibi yapabilecek uzman ekibimiz ihtiyacınıza en uygun çözümleri sunmak için hazırdır. Samsun merkezli 24/7 operasyon desteği sağlıyoruz.',
+  'contact.page.p1': 'Lojistik ve taşımacılık hizmetlerimiz hakkında detaylı bilgi almak için bizimle iletişime geçebilirsiniz. Uzman ekibimiz ihtiyaçlarınıza en uygun çözümleri sunmak için hazırdır.',
   'contact.page.s1.title': 'Telefon ve E-posta',
-  'contact.page.s1.p1': 'Telefon, e-posta, WhatsApp veya iletişim formu aracılığıyla bize ulaşabilirsiniz. Lojistik teklifi talepleri en kısa sürede değerlendirilir. +905325511574 - 24/7 operasyon desteği.',
+  'contact.page.s1.p1': 'Telefon, e-posta veya iletişim formu aracılığıyla bize ulaşabilirsiniz. Tüm talepleriniz en kısa sürede değerlendirilir.',
   'contact.page.s2.title': 'Hızlı ve Güvenilir Destek',
   'contact.page.s2.p1': 'Altuntaş Lojistik olarak müşteri memnuniyetine büyük önem veriyoruz. Nakliye süreçleri, fiyat teklifi ve operasyon detayları hakkında destek almak için bizimle iletişime geçebilirsiniz.',
 
@@ -239,10 +239,11 @@ const tr = {
   'form.submit': 'WhatsApp ile Gönder',
 
   'footer.tagline': 'Güvenli ve profesyonel taşımacılık hizmetleri',
-  'footer.copy': '© 2026 Altuntaş Lojistik. Tüm hakları saklıdır.',
   'footer.company': 'Şirketi Keşfet',
   'footer.contact': 'İletişim Bilgileri',
+  'footer.copy': '© 2026 Altuntaş Lojistik. Tüm hakları saklıdır.',
   'whatsapp.tooltip': 'Hemen Yaz',
+  'footer.all_rights_reserved': 'Tüm Hakları Saklıdır.',
 }
 
 export default tr
