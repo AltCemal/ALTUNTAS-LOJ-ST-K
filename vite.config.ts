@@ -1,9 +1,15 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import fs from 'fs'
 
-const routes = [
+interface Route {
+  path: string
+  title: string
+  description: string
+}
+
+const routes: Route[] = [
   { path: '/hizmetler', title: 'Taşımacılık Hizmetleri: Parsiyel, Komple Yük, Uluslararası | Altuntaş', description: 'Lojistik hizmetlerimiz: Parsiyel taşımacılık, komple yük, uluslararası nakliye, Türkiye-Avrupa hatları. Samsun\'dan tüm Türkiye\'ye güvenli sevkiyat.' },
   { path: '/hakkimizda', title: 'Hakkımızda | Altuntaş Lojistik', description: 'Samsun\'da uluslararası nakliye ve lojistik hizmetleri. Altuntaş Lojistik, güvenli taşımacılık, deneyimli ekip ve modern filo.' },
   { path: '/iletisim', title: 'İletişim: Samsun Lojistik Teklifi & Operasyon Takibi | Altuntaş', description: 'Altuntaş Lojistik - Samsun. Telefon +905325511574, WhatsApp ile teklif alın. 24/7 operasyon takibi.' },
@@ -13,17 +19,20 @@ const routes = [
   { path: '/turkiye-almanya-lojistik', title: 'Türkiye Almanya Lojistik Hattı | Altuntaş Lojistik', description: 'Türkiye Almanya lojistik hattında parsiyel ve komple yükler için düzenli sefer, operasyon takibi ve hızlı teklif.' },
 ]
 
-function spaStaticRoutesPlugin() {
+function spaStaticRoutesPlugin(): Plugin {
   return {
     name: 'spa-static-routes',
     apply: 'build',
-    enforce: 'post',
+    enforce: 'post', // spaStaticRoutesPlugin(): Plugin dönüş tipi sayesinde artık burada hata vermez
     closeBundle() {
       const distDir = path.join(process.cwd(), 'dist')
       const indexHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8')
       const baseUrl = 'https://www.altuntaslojistik.com'
+      
       for (const route of routes) {
-        const e = (s) => s.replace(/&/g, '&amp;')
+        // 's' parametresine açıkça string tipi tanımlandı (implicit any çözüldü)
+        const e = (s: string) => s.replace(/&/g, '&amp;')
+        
         const html = indexHtml
           .replace(/<title>[^<]*<\/title>/, `<title>${e(route.title)}</title>`)
           .replace(/(<meta name="title" content=")[^"]*"/, `$1${e(route.title)}"`)
@@ -33,6 +42,7 @@ function spaStaticRoutesPlugin() {
           .replace(/(<meta property="og:url" content=")[^"]*"/, `$1${baseUrl}${route.path}"`)
           .replace(/(<meta property="twitter:title" content=")[^"]*"/, `$1${e(route.title)}"`)
           .replace(/(<meta property="twitter:description" content=")[^"]*"/, `$1${e(route.description)}"`)
+          
         const routeDir = path.join(distDir, route.path)
         fs.mkdirSync(routeDir, { recursive: true })
         fs.writeFileSync(path.join(routeDir, 'index.html'), html)
