@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom'
 import { FaTruck, FaBox, FaCheckCircle, FaMapMarkerAlt, FaTimes } from 'react-icons/fa'
 
 type Locations = { turkeyCities: string[]; europeCountries: string[] }
-type LocationMap = { tr: Locations; en: Locations; de: Locations }
+type LocationMap = { tr: Locations; en: Locations }
 
 interface ServicesProps {
   t: (key: string) => string
-  lang: 'tr' | 'en' | 'de'
+  lang: 'tr' | 'en'
 }
 
 export default function Services({ t, lang }: ServicesProps) {

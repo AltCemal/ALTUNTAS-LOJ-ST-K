@@ -1,4 +1,4 @@
-type Lang = 'tr' | 'en' | 'de'
+type Lang = 'tr' | 'en'
 
 type Locations = {
   turkeyCities: string[]
@@ -23,11 +23,4 @@ const en: Locations = {
   ]
 }
 
-const de: Locations = {
-  turkeyCities: [...en.turkeyCities],
-  europeCountries: [
-    'Deutschland','Albanien','Oesterreich','Belgien','Belarus','Bosnien und Herzegowina','Bulgarien','Tschechische Republik','Daenemark','Estland','Finnland','Frankreich','Georgien','Kroatien','Niederlande','Vereinigtes Koenigreich','Irland','Spanien','Schweden','Schweiz','Italien','Island','Montenegro','Zypern','Kosovo','Lettland','Liechtenstein','Litauen','Luxemburg','Ungarn','Malta','Nordmazedonien','Moldau','Norwegen','Polen','Portugal','Rumaenien','Russland','Serbien','Slowakei','Slowenien','Ukraine','Griechenland','Andorra','Monaco'
-  ]
-}
-
-export const locations: Record<Lang, Locations> = { tr, en, de }
+export const locations: Record<Lang, Locations> = { tr, en }
