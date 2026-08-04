@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { Session } from "@supabase/supabase-js"
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js"
 import { LogOut, Lock, Truck, LayoutDashboard, ArrowRight, Plus, MapPin, Wrench, PlayCircle, Coffee, Disc, Calendar, AlertTriangle, FileText, Landmark, TrendingUp, Droplet } from "lucide-react"
 import { supabase, isSupabaseConfigured } from "./lib/supabase"
 import { AppProvider, useApp } from "./context/AppContext"
@@ -642,8 +642,8 @@ export default function App() {
   useEffect(() => {
     if (!isAdminRoute) { setCheckingAuth(false); return }
     if (!isSupabaseConfigured) { setCheckingAuth(false); return }
-    supabase.auth.getSession().then(({ data }) => { setSession(data.session); setCheckingAuth(false) })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => { setSession(newSession) })
+    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => { setSession(data.session); setCheckingAuth(false) })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => { setSession(newSession) })
     return () => subscription.unsubscribe()
   }, [isAdminRoute])
 

@@ -114,12 +114,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         .channel("tms-realtime")
         .on("postgres_changes", { event: "*", schema: "public", table: "trucks" }, () => {
           // Doğrudan loadData çağırmak yerine sadece tablodaki spesifik değişimleri sessizce çekiyoruz
-          supabase.from("trucks").select("*").order("plate", { ascending: true }).then(({ data }) => {
+          supabase.from("trucks").select("*").order("plate", { ascending: true }).then(({ data }: { data: Truck[] | null }) => {
             if (data) setTrucks(data as Truck[])
           })
         })
         .on("postgres_changes", { event: "*", schema: "public", table: "trips" }, () => {
-          supabase.from("trips").select("*").then(({ data }) => {
+          supabase.from("trips").select("*").then(({ data }: { data: Trip[] | null }) => {
             if (data) setTrips(data as Trip[])
           })
         })
