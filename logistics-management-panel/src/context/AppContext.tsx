@@ -9,6 +9,11 @@ import {
 import { supabase, isSupabaseConfigured } from "../lib/supabase"
 import type { Customer, Trip, TripFilter, Truck, Trailer, FixedExpense } from "../interfaces/types"
 
+type SupabaseLikeError = {
+  code?: string
+  message?: string
+}
+
 interface AppContextValue {
   trucks: Truck[]
   setTrucks: React.Dispatch<React.SetStateAction<Truck[]>> // 🚀 Yeni: App.tsx'teki yerel state değişimini context'e bağlamak için ekledik
@@ -62,6 +67,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const [usingDemoData, setUsingDemoData] = useState(false)
 
+  const isMissingTableError = (err: unknown) => {
+    if (!err || typeof err !== "object") return false
+    const code = (err as SupabaseLikeError).code
+    return code === "42P01"
+  }
+
   // 🚀 Sonsuz döngü yaratmayan izole veri çekme fonksiyonu
   async function loadData() {
     setError(null)
@@ -85,20 +96,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (trucksRes.error) throw trucksRes.error
       if (tripsRes.error) throw tripsRes.error
       if (customersRes.error) throw customersRes.error
-      if (trailersRes.error) throw trailersRes.error
-      if (expensesRes.error) throw expensesRes.error
+      if (trailersRes.error && !isMissingTableError(trailersRes.error)) throw trailersRes.error
+      if (expensesRes.error && !isMissingTableError(expensesRes.error)) throw expensesRes.error
 
       setTrucks((trucksRes.data as Truck[]) ?? [])
       setTrips((tripsRes.data as Trip[]) ?? [])
       setCustomers((customersRes.data as Customer[]) ?? [])
-      setTrailers((trailersRes.data as Trailer[]) ?? [])
-      setFixedExpenses((expensesRes.data as FixedExpense[]) ?? [])
+      setTrailers(trailersRes.error ? [] : ((trailersRes.data as Trailer[]) ?? []))
+      setFixedExpenses(expensesRes.error ? [] : ((expensesRes.data as FixedExpense[]) ?? []))
       setUsingDemoData(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Veriler yüklenirken hata oluştu.")
-      setTrailers(fallbackTrailers)
-      setFixedExpenses(fallbackExpenses)
-      setUsingDemoData(true)
+      setUsingDemoData(false)
     } finally {
       setLoading(false)
     }
