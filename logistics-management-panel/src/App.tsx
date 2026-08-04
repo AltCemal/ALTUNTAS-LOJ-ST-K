@@ -18,6 +18,8 @@ import AddExpenseModal from "./components/AddExpenseModal"
 // Tip tanımlamasını import ediyoruz
 import type { Trailer, FixedExpense } from "./interfaces/types"
 
+const VARIABLE_EXPENSE_PREFIX = "DEGISKEN|"
+
 type ActiveTab = "overview" | "trucks" | "tires" | "maintenance_docs" | "analytics" | "fixed_expenses" | "trailers"
 
 /* ------------------------------------------------------------------ */
@@ -125,6 +127,11 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
   
   const [editingTruckId, setEditingTruckId] = useState<string | null>(null)
   const [tempLocation, setTempLocation] = useState("")
+
+  const fixedExpenseItems = fixedExpenses.filter((exp) => !exp.expense_name.startsWith(VARIABLE_EXPENSE_PREFIX))
+  const variableExpenseItems = fixedExpenses.filter((exp) => exp.expense_name.startsWith(VARIABLE_EXPENSE_PREFIX))
+
+  const totalFixedExpenses = fixedExpenseItems.reduce((sum, e) => sum + e.amount, 0)
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -603,14 +610,14 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                   </div>
                   <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
                     <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Şirket Sabit İşletme Gideri</span>
-                    <p className="text-2xl font-bold font-mono text-red-400 mt-2">-₺{fixedExpenses.reduce((sum, e) => sum + e.amount, 0).toLocaleString("tr-TR")}</p>
+                    <p className="text-2xl font-bold font-mono text-red-400 mt-2">-₺{totalFixedExpenses.toLocaleString("tr-TR")}</p>
                   </div>
                   <div className="rounded-xl border border-emerald-800 bg-emerald-950/10 p-5">
                     <span className="text-xs font-medium text-emerald-400 uppercase tracking-wider flex items-center gap-1">
                       <Landmark className="size-4" /> Kasaya Kalan Net Bakiye
                     </span>
                     <p className="text-2xl font-bold font-mono text-emerald-300 mt-2">
-                      ₺{(filteredTrips.reduce((sum, t) => sum + t.net_profit, 0) - fixedExpenses.reduce((sum, e) => sum + e.amount, 0)).toLocaleString("tr-TR")}
+                      ₺{(filteredTrips.reduce((sum, t) => sum + t.net_profit, 0) - totalFixedExpenses).toLocaleString("tr-TR")}
                     </p>
                   </div>
                 </div>
@@ -618,10 +625,25 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                 <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
                   <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">Aylık Sabit Operasyonel Gider Kayıtları</h3>
                   <div className="divide-y divide-slate-800">
-                    {fixedExpenses.map((exp: FixedExpense) => (
+                    {fixedExpenseItems.map((exp: FixedExpense) => (
                       <div key={exp.id} className="py-3 flex justify-between items-center text-xs font-mono">
                         <span className="text-slate-300">{exp.expense_name}</span>
                         <span className="text-red-400 font-bold">₺{exp.amount.toLocaleString("tr-TR")}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
+                  <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">Değişken Gider Kayıtları (Sabit Toplama Dahil Değil)</h3>
+                  <div className="divide-y divide-slate-800">
+                    {variableExpenseItems.length === 0 && (
+                      <div className="py-3 text-xs text-slate-500">Henüz değişken gider kaydı yok.</div>
+                    )}
+                    {variableExpenseItems.map((exp: FixedExpense) => (
+                      <div key={exp.id} className="py-3 flex justify-between items-center text-xs font-mono">
+                        <span className="text-slate-300">{exp.expense_name.replace(VARIABLE_EXPENSE_PREFIX, "")}</span>
+                        <span className="text-amber-400 font-bold">₺{exp.amount.toLocaleString("tr-TR")}</span>
                       </div>
                     ))}
                   </div>

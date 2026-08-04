@@ -13,6 +13,8 @@ const expenseTypes = [
   "Diğer",
 ] as const
 
+const VARIABLE_EXPENSE_PREFIX = "DEGISKEN|"
+
 export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { refreshData } = useApp()
   const [loading, setLoading] = useState(false)
@@ -21,11 +23,13 @@ export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; 
   const [amount, setAmount] = useState(0)
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split("T")[0])
   const [note, setNote] = useState("")
+  const [isFixedExpense, setIsFixedExpense] = useState(true)
 
   if (!isOpen) return null
 
   const resolvedName = expenseType === "Diğer" ? customName.trim() : expenseType
-  const finalName = note.trim() ? `${resolvedName} - ${note.trim()}` : resolvedName
+  const finalNameRaw = note.trim() ? `${resolvedName} - ${note.trim()}` : resolvedName
+  const finalName = isFixedExpense ? finalNameRaw : `${VARIABLE_EXPENSE_PREFIX}${finalNameRaw}`
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,6 +56,7 @@ export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; 
       setAmount(0)
       setExpenseDate(new Date().toISOString().split("T")[0])
       setNote("")
+      setIsFixedExpense(true)
     } catch (err) {
       alert(err instanceof Error ? err.message : "Gider eklenirken hata oluştu.")
     } finally {
@@ -135,6 +140,18 @@ export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; 
               className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-amber-500"
             />
           </div>
+
+          <label className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2.5 text-slate-300">
+            <input
+              type="checkbox"
+              checked={isFixedExpense}
+              onChange={(e) => setIsFixedExpense(e.target.checked)}
+              className="size-4 rounded border-slate-600 bg-slate-900"
+            />
+            <span className="text-xs">
+              Sabit gider olarak işle (işaretli değilse değişken gider olarak kaydedilir)
+            </span>
+          </label>
 
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" onClick={onClose} className="rounded-lg bg-slate-800 text-slate-300 px-4 py-2 hover:bg-slate-700">
