@@ -13,6 +13,7 @@ import AddTruckModal from "./components/AddTruckModal"
 import AddTrailerModal from "./components/AddTrailerModal"
 import AddCustomerModal from "./components/AddCustomerModal"
 import AddTireModal from "./components/AddTireModal" 
+import AddExpenseModal from "./components/AddExpenseModal"
 
 // Tip tanımlamasını import ediyoruz
 import type { Trailer, FixedExpense } from "./interfaces/types"
@@ -114,6 +115,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
   const [isTruckModalOpen, setIsTruckModalOpen] = useState(false)
   const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false)
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false)
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false)
 
   // Lastik Modalı Kontrol Stateleri
   const [isTireModalOpen, setIsTireModalOpen] = useState(false)
@@ -257,6 +259,9 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
           <div className="flex items-center gap-3">
             <button type="button" onClick={() => setIsModalOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg bg-red-700 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-red-600">
               <Plus className="size-4" /> Yeni Sefer Başlat
+            </button>
+            <button type="button" onClick={() => setIsExpenseModalOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg bg-amber-700 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-amber-600">
+              <Plus className="size-4" /> Yeni Gider Ekle
             </button>
             <button type="button" onClick={onSignOut} className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-300 transition hover:text-white">
               <LogOut className="size-4" />
@@ -578,6 +583,19 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
 
             {activeTab === "fixed_expenses" && (
               <div className="space-y-6">
+                <div className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+                  <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
+                    Bandrol, Mazot, Sanayi gibi gider kayıtlarını buradan ekleyebilirsiniz.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsExpenseModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-amber-700 px-3 py-2 text-xs font-semibold text-white transition hover:bg-amber-600"
+                  >
+                    <Plus className="size-4" /> Gider Ekle
+                  </button>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
                     <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Brüt Sefer Kârı</span>
@@ -615,6 +633,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
       </main>
       
       <AddTripModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <AddExpenseModal isOpen={isExpenseModalOpen} onClose={() => setIsExpenseModalOpen(false)} />
       <AddTruckModal isOpen={isTruckModalOpen} onClose={() => setIsTruckModalOpen(false)} />
       <AddTrailerModal isOpen={isTrailerModalOpen} onClose={() => setIsTrailerModalOpen(false)} />
       <AddCustomerModal isOpen={isCustomerModalOpen} onClose={() => setIsCustomerModalOpen(false)} />
