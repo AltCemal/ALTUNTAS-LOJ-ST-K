@@ -62,7 +62,7 @@ function LoginForm({ onDemoLogin }: { onDemoLogin: () => void }) {
     e.preventDefault()
     setError(null)
     if (!isSupabaseConfigured) {
-      onDemoLogin()
+      setError("Supabase yapılandırması eksik. Lütfen ortam değişkenlerini tanımlayın.")
       return
     }
     setLoading(true)
@@ -651,6 +651,20 @@ export default function App() {
     if (isSupabaseConfigured) await supabase.auth.signOut()
     setDemoAuthed(false)
     setSession(null)
+  }
+
+  if (isAdminRoute && !isSupabaseConfigured) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-slate-950 px-4 text-slate-200">
+        <div className="w-full max-w-lg rounded-2xl border border-amber-500/40 bg-amber-500/10 p-6 text-sm">
+          <h1 className="text-base font-semibold text-amber-300">Admin Panel Yapılandırması Eksik</h1>
+          <p className="mt-2 text-amber-200/90">
+            Demo modu kapatıldı. Devam etmek için dağıtım ortamında <strong>VITE_SUPABASE_URL</strong> ve <strong>VITE_SUPABASE_ANON_KEY</strong>
+            değişkenlerini tanımlayın.
+          </p>
+        </div>
+      </main>
+    )
   }
 
   if (!isAdminRoute) return <LandingPage />

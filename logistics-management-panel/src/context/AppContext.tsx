@@ -45,17 +45,6 @@ const defaultFilter: TripFilter = {
 
 const AppContext = createContext<AppContextValue | undefined>(undefined)
 
-const fallbackTrailers: Trailer[] = [
-  { id: "tr1", plate: "34 DOR 88", trailer_type: "Sal Dorse (Ağır Yük)", status: "ON_ROAD", total_mileage: 184000, next_tuvturk_date: "2027-04-10" },
-  { id: "tr2", plate: "34 TAY 99", trailer_type: "Tenteli Dorse", status: "IDLE", total_mileage: 92500, next_tuvturk_date: "2027-01-05" }
-]
-
-const fallbackExpenses: FixedExpense[] = [
-  { id: "1", expense_name: "Şirket Muhasebe ve Müşavirlik Gideri", amount: 4500, expense_date: "2026-07-01" },
-  { id: "2", expense_name: "Bağkur / SGK İşveren Prim Ödemeleri", amount: 8200, expense_date: "2026-07-01" },
-  { id: "3", expense_name: "Ofis Genel İşletme & Kira Masrafları", amount: 3500, expense_date: "2026-07-01" }
-]
-
 export function AppProvider({ children }: { children: ReactNode }) {
   const [trucks, setTrucks] = useState<Truck[]>([])
   const [trips, setTrips] = useState<Trip[]>([])
@@ -77,9 +66,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   async function loadData() {
     setError(null)
     if (!isSupabaseConfigured) {
-      setTrailers(fallbackTrailers)
-      setFixedExpenses(fallbackExpenses)
-      setUsingDemoData(true)
+      setTrucks([])
+      setTrips([])
+      setCustomers([])
+      setTrailers([])
+      setFixedExpenses([])
+      setError("Supabase yapılandırması eksik. Lütfen VITE_SUPABASE_URL ve VITE_SUPABASE_ANON_KEY değerlerini tanımlayın.")
+      setUsingDemoData(false)
       setLoading(false)
       return
     }
