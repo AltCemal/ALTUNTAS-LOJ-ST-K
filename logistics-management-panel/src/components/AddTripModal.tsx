@@ -2,17 +2,11 @@ import React, { useState } from "react"
 import { Plus, X } from "lucide-react"
 import { useApp } from "../context/AppContext"
 import { supabase } from "../lib/supabase"
-import type { TripStatus, InvoiceStatus, PaymentStatus, Trailer } from "../interfaces/types" // 💡 Trailer tipini import ediyoruz
-
-// 🚛 TS Hatalarını Engellemek ve Seçim Kutusunu Doldurmak İçin Geçici Demo Dorse Verisi
-const localTrailers: Trailer[] = [
-  { id: "tr1", plate: "34 DOR 88", trailer_type: "Sal Dorse (Ağır Yük)", status: "ON_ROAD", total_mileage: 184000, next_tuvturk_date: "2027-04-10" },
-  { id: "tr2", plate: "34 TAY 99", trailer_type: "Tenteli Dorse", status: "IDLE", total_mileage: 92500, next_tuvturk_date: "2027-01-05" }
-]
+import type { TripStatus, InvoiceStatus, PaymentStatus } from "../interfaces/types"
+import { calculateTripNet } from "../lib/finance"
 
 export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  // 💡 Hata Veren trailers değişkenini buradan kaldırıyoruz
-  const { trucks, customers } = useApp()
+  const { trucks, customers, trailers } = useApp()
   const [loading, setLoading] = useState(false)
   
   // Standart Form Alanları
@@ -45,8 +39,16 @@ export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onC
     
     setLoading(true)
 
-    const totalExpenses = fuelExpense + adblueExpense + tollExpense + driverAllowance + driverBonus + fineExpense + extraExpense
-    const netProfit = revenue - totalExpenses
+    const netProfit = calculateTripNet({
+      revenue,
+      fuel_expense: fuelExpense,
+      adblue_expense: adblueExpense,
+      toll_expense: tollExpense,
+      driver_allowance: driverAllowance,
+      extra_expense: extraExpense,
+      fine_expense: fineExpense,
+      driver_bonus: driverBonus,
+    })
 
     const newTrip = {
       truck_id: truckId,
@@ -122,13 +124,12 @@ export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onC
               </select>
             </div>
             
-            {/* 🚛 YENİ SELECT ALANI (Implicit any hatası parametre tipi belirtilerek çözüldü) */}
             <div>
               <label className="block text-xs font-medium text-slate-400 mb-1">Dorse (Treyler)</label>
               <select value={trailerId} onChange={e => setTrailerId(e.target.value)}
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-red-600">
                 <option value="">Dorse Yok (Kuru Çekici)</option>
-                {localTrailers.map((tr: Trailer) => (
+                {trailers.map((tr) => (
                   <option key={tr.id} value={tr.id}>{tr.plate} — {tr.trailer_type}</option>
                 ))}
               </select>

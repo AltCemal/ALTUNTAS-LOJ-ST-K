@@ -18,6 +18,7 @@ interface AppContextValue {
   trucks: Truck[]
   setTrucks: React.Dispatch<React.SetStateAction<Truck[]>> // 🚀 Yeni: App.tsx'teki yerel state değişimini context'e bağlamak için ekledik
   trips: Trip[]
+  setTrips: React.Dispatch<React.SetStateAction<Trip[]>>
   customers: Customer[]
   trailers: Trailer[] 
   fixedExpenses: FixedExpense[] 
@@ -125,6 +126,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
             if (data) setTrips(data as Trip[])
           })
         })
+        .on("postgres_changes", { event: "*", schema: "public", table: "customers" }, () => {
+          supabase.from("customers").select("*").then(({ data }: { data: Customer[] | null }) => {
+            if (data) setCustomers(data as Customer[])
+          })
+        })
+        .on("postgres_changes", { event: "*", schema: "public", table: "trailers" }, () => {
+          supabase.from("trailers").select("*").then(({ data }: { data: Trailer[] | null }) => {
+            if (data) setTrailers(data as Trailer[])
+          })
+        })
+        .on("postgres_changes", { event: "*", schema: "public", table: "fixed_expenses" }, () => {
+          supabase.from("fixed_expenses").select("*").then(({ data }: { data: FixedExpense[] | null }) => {
+            if (data) setFixedExpenses(data as FixedExpense[])
+          })
+        })
         .subscribe()
 
       return () => {
@@ -149,6 +165,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     trucks,
     setTrucks, // State manipülasyon yeteneğini dışarı verdik
     trips,
+    setTrips,
     customers,
     trailers, 
     fixedExpenses, 

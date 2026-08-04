@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js"
-import { LogOut, Lock, Truck, LayoutDashboard, ArrowRight, Plus, MapPin, Wrench, PlayCircle, Coffee, Disc, Calendar, AlertTriangle, FileText, Landmark, TrendingUp, Droplet } from "lucide-react"
+import { LogOut, Lock, Truck, LayoutDashboard, ArrowRight, Plus, MapPin, Wrench, PlayCircle, Coffee, Disc, Calendar, AlertTriangle, Landmark, TrendingUp, Droplet } from "lucide-react"
 import { supabase, isSupabaseConfigured } from "./lib/supabase"
 import { AppProvider, useApp } from "./context/AppContext"
 import FilterPanel from "./components/FilterPanel"
@@ -14,9 +14,11 @@ import AddTrailerModal from "./components/AddTrailerModal"
 import AddCustomerModal from "./components/AddCustomerModal"
 import AddTireModal from "./components/AddTireModal" 
 import AddExpenseModal from "./components/AddExpenseModal"
+import EditTripModal from "./components/EditTripModal"
 
 // Tip tanımlamasını import ediyoruz
-import type { Trailer, FixedExpense } from "./interfaces/types"
+import type { FixedExpense, InvoiceStatus, PaymentStatus, Trailer, Trip, TripStatus } from "./interfaces/types"
+import { calculateTripNet } from "./lib/finance"
 
 const VARIABLE_EXPENSE_PREFIX = "DEGISKEN|"
 
@@ -55,7 +57,7 @@ function LandingPage() {
 /* ------------------------------------------------------------------ */
 /* Giriş Formu                                                        */
 /* ------------------------------------------------------------------ */
-function LoginForm({ onDemoLogin }: { onDemoLogin: () => void }) {
+function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -109,7 +111,7 @@ function LoginForm({ onDemoLogin }: { onDemoLogin: () => void }) {
 /* Admin Panel Düzeni (Layout)                                         */
 /* ------------------------------------------------------------------ */
 function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
-  const { usingDemoData, loading, trucks, setTrucks, filteredTrips, customers, fixedExpenses, trailers } = useApp()
+  const { usingDemoData, loading, trucks, setTrucks, filteredTrips, customers, fixedExpenses, trailers, setTrips } = useApp()
   const [activeTab, setActiveTab] = useState<ActiveTab>("overview")
 
   // Modalların Açık/Kapalı Kontrol Stateleri
@@ -118,6 +120,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
   const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false)
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false)
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false)
+  const [editingTrip, setEditingTrip] = useState<Trip | null>(null)
 
   // Lastik Modalı Kontrol Stateleri
   const [isTireModalOpen, setIsTireModalOpen] = useState(false)
@@ -206,12 +209,50 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
     }
   }
 
-  const handleInvoiceUpdate = async (tripId: string, field: "invoice_status" | "payment_status", value: string) => {
+  const handleTripStatusUpdate = async (tripId: string, status: TripStatus) => {
     try {
-      const { error } = await supabase.from("trips").update({ [field]: value }).eq("id", tripId)
+      const { error } = await supabase.from("trips").update({ status }).eq("id", tripId)
       if (error) throw error
+
+      setTrips((prev) => prev.map((trip) => (trip.id === tripId ? { ...trip, status } : trip)))
     } catch (err) {
       if (usingDemoData) alert("Demo modunda veriler kalıcı olarak değiştirilemez.")
+      alert(err instanceof Error ? err.message : "Sefer durumu güncellenirken hata oluştu.")
+    }
+  }
+
+  const handleInvoiceStatusChange = async (tripId: string, invoiceStatus: InvoiceStatus) => {
+    try {
+      const { error } = await supabase.from("trips").update({ invoice_status: invoiceStatus }).eq("id", tripId)
+      if (error) throw error
+
+      setTrips((prev) => prev.map((trip) => (trip.id === tripId ? { ...trip, invoice_status: invoiceStatus } : trip)))
+    } catch (err) {
+      if (usingDemoData) alert("Demo modunda veriler kalıcı olarak değiştirilemez.")
+      alert(err instanceof Error ? err.message : "Fatura durumu güncellenirken hata oluştu.")
+    }
+  }
+
+  const handlePaymentStatusChange = async (tripId: string, paymentStatus: PaymentStatus) => {
+    try {
+      const { error } = await supabase.from("trips").update({ payment_status: paymentStatus }).eq("id", tripId)
+      if (error) throw error
+
+      setTrips((prev) => prev.map((trip) => (trip.id === tripId ? { ...trip, payment_status: paymentStatus } : trip)))
+    } catch (err) {
+      if (usingDemoData) alert("Demo modunda veriler kalıcı olarak değiştirilemez.")
+      alert(err instanceof Error ? err.message : "Tahsilat durumu güncellenirken hata oluştu.")
+    }
+  }
+
+  const handleTripSave = async (tripId: string, payload: Partial<Trip>) => {
+    try {
+      const { error } = await supabase.from("trips").update(payload).eq("id", tripId)
+      if (error) throw error
+
+      setTrips((prev) => prev.map((trip) => (trip.id === tripId ? { ...trip, ...payload } : trip)))
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Sefer güncellenirken hata oluştu.")
     }
   }
 
@@ -326,7 +367,12 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
               <div className="space-y-6">
                 <FilterPanel />
                 <OverviewCards />
-                <TripTable />
+                <TripTable
+                  onStatusChange={handleTripStatusUpdate}
+                  onInvoiceChange={handleInvoiceStatusChange}
+                  onPaymentChange={handlePaymentStatusChange}
+                  onEditTrip={setEditingTrip}
+                />
               </div>
             )}
 
@@ -568,7 +614,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                       {customers.map(c => {
                         const cTrips = filteredTrips.filter(t => t.customer_id === c.id)
                         const totalRev = cTrips.reduce((sum, t) => sum + t.revenue, 0)
-                        const totalProfit = cTrips.reduce((sum, t) => sum + t.net_profit, 0)
+                        const totalProfit = cTrips.reduce((sum, t) => sum + calculateTripNet(t), 0)
                         const profitMargin = totalRev > 0 ? (totalProfit / totalRev) * 100 : 0
                         return (
                           <div key={c.id} className="p-3 bg-slate-950/40 rounded-lg border border-slate-800 flex justify-between items-center text-xs">
@@ -606,7 +652,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
                     <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Brüt Sefer Kârı</span>
-                    <p className="text-2xl font-bold font-mono text-emerald-400 mt-2">₺{filteredTrips.reduce((sum, t) => sum + t.net_profit, 0).toLocaleString("tr-TR")}</p>
+                    <p className="text-2xl font-bold font-mono text-emerald-400 mt-2">₺{filteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0).toLocaleString("tr-TR")}</p>
                   </div>
                   <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
                     <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Şirket Sabit İşletme Gideri</span>
@@ -617,7 +663,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                       <Landmark className="size-4" /> Kasaya Kalan Net Bakiye
                     </span>
                     <p className="text-2xl font-bold font-mono text-emerald-300 mt-2">
-                      ₺{(filteredTrips.reduce((sum, t) => sum + t.net_profit, 0) - totalFixedExpenses).toLocaleString("tr-TR")}
+                      ₺{(filteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0) - totalFixedExpenses).toLocaleString("tr-TR")}
                     </p>
                   </div>
                 </div>
@@ -659,6 +705,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
       <AddTruckModal isOpen={isTruckModalOpen} onClose={() => setIsTruckModalOpen(false)} />
       <AddTrailerModal isOpen={isTrailerModalOpen} onClose={() => setIsTrailerModalOpen(false)} />
       <AddCustomerModal isOpen={isCustomerModalOpen} onClose={() => setIsCustomerModalOpen(false)} />
+      <EditTripModal isOpen={Boolean(editingTrip)} trip={editingTrip} onClose={() => setEditingTrip(null)} onSave={handleTripSave} />
       
       <AddTireModal 
         isOpen={isTireModalOpen} 
@@ -711,6 +758,6 @@ export default function App() {
   if (!isAdminRoute) return <LandingPage />
   if (checkingAuth) return <div className="grid min-h-screen place-items-center bg-slate-950 text-sm text-slate-500">Yükleniyor...</div>
   const isAuthed = Boolean(session) || demoAuthed
-  if (!isAuthed) return <LoginForm onDemoLogin={() => setDemoAuthed(true)} />
+  if (!isAuthed) return <LoginForm />
   return (<AppProvider><DashboardLayout onSignOut={handleSignOut} /></AppProvider>)
 }

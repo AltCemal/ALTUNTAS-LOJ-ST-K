@@ -1,6 +1,7 @@
 import { useMemo } from "react"
 import { Banknote, Route, TrendingDown, TrendingUp, Truck } from "lucide-react"
 import { useApp } from "../context/AppContext"
+import { calculateTripNet } from "../lib/finance"
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat("tr-TR", {
@@ -22,19 +23,7 @@ export default function OverviewCards() {
     const tripCount = filteredTrips.length
     const totalRevenue = filteredTrips.reduce((sum, t) => sum + (t.revenue || 0), 0)
     
-    // 💸 Formül kantar cezası ve şoför primi dahil edilerek netleştirildi
-    const totalNet = filteredTrips.reduce((sum, t) => {
-      const net =
-        (t.revenue || 0) -
-        (t.fuel_expense || 0) -
-        (t.adblue_expense || 0) -
-        (t.toll_expense || 0) -
-        (t.driver_allowance || 0) -
-        (t.extra_expense || 0) -
-        (t.fine_expense || 0) -
-        (t.driver_bonus || 0)
-      return sum + net
-    }, 0)
+    const totalNet = filteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0)
     return { totalDistance, tripCount, totalRevenue, totalNet }
   }, [filteredTrips])
 
