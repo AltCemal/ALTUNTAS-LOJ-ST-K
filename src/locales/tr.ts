@@ -12,16 +12,12 @@ const tr = {
   'seo.contact.title': 'İletişim: Samsun Lojistik Teklifi & Operasyon Takibi | Altuntaş',
   'seo.partial.title': 'Parsiyel Taşımacılık | Altuntaş Lojistik',
   'seo.full.title': 'Komple Yük Taşımacılığı | Altuntaş Lojistik',
-  'seo.international.title': 'Uluslararası Karayolu Taşımacılığı | Altuntaş Lojistik',
-  'seo.germany.title': 'Türkiye Almanya Lojistik Hattı | Altuntaş Lojistik',
   'seo.home.description': 'Samsun\'da 70 yıl deneyimli taşımacılık. Altuntaş Lojistik - Türkiye geneli parsiyel/komple yük nakliyesi, CMR sigortası, zamanında teslimat. Hemen teklif alın +905325511574',
   'seo.services.description': 'Lojistik hizmetlerimiz: Parsiyel taşımacılık ve komple yük nakliyesi. Samsun\'dan tüm Türkiye\'ye güvenli sevkiyat. CMR sigortası ve takip sistemi dahil.',
   'seo.about.description': 'Samsun\'da yurtiçi nakliye ve lojistik hizmetleri. Altuntaş Lojistik, güvenli taşımacılık, deneyimli ekip ve modern filo ile Türkiye genelinde profesyonel lojistik çözümleri sunar.',
   'seo.contact.description': 'Altuntaş Lojistik - Samsun. Telefon +905325511574, WhatsApp ile teklif alın, lojistik çözümlerimiz hakkında soru sorun. 24/7 operasyon takibi.',
   'seo.partial.description': 'Parsiyel taşımacılık hizmetimiz ile Türkiye genelinde ekonomik, düzenli ve güvenli sevkiyat çözümleri sunuyoruz.',
   'seo.full.description': 'Komple yük taşımacılığı hizmetimizle tek araca özel hızlı çıkış, güvenli taşıma ve zamanında teslimat sağlıyoruz.',
-  'seo.international.description': 'Uluslararası karayolu taşımacılığı çözümlerimizle Türkiye çıkışlı Avrupa sevkiyatlarınızı planlı, güvenli ve takip edilebilir şekilde yönetiyoruz.',
-  'seo.germany.description': 'Türkiye Almanya lojistik hattında parsiyel ve komple yükler için düzenli sefer, operasyon takibi ve hızlı teklif hizmeti sunuyoruz.',
   'seo.notfound.title': 'Sayfa Bulunamadı | Altuntaş Lojistik',
   'seo.notfound.description': 'Aradığınız sayfa bulunamadı. Altuntaş Lojistik ana sayfasına dönerek hizmetlerimize ulaşabilirsiniz.',
 
@@ -96,10 +92,7 @@ const tr = {
   'serviceLinks.partial.description': 'Düzenli çıkışlarla düşük hacimli yükler için ekonomik ve planlı taşıma çözümleri.',
   'serviceLinks.full.title': 'Komple Yük Taşımacılığı',
   'serviceLinks.full.description': 'Tek araca özel yükleme ile daha kısa transit süre ve operasyonel kontrol avantajı.',
-  'serviceLinks.international.title': 'Uluslararası Karayolu Taşımacılığı',
-  'serviceLinks.international.description': 'Türkiye çıkışlı Avrupa sevkiyatlarında uçtan uca planlama ve takip hizmeti.',
-  'serviceLinks.germany.title': 'Türkiye - Almanya Lojistik',
-  'serviceLinks.germany.description': 'Almanya hattına özel düzenli parsiyel ve komple taşımacılık operasyonları.',
+
   'serviceLinks.cta': 'Detaylı bilgi al →',
 
   'servicePages.common.ctaTitle': 'Hızlı Teklif ve Operasyon Planlaması',

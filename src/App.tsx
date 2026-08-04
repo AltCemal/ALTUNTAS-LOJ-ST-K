@@ -115,7 +115,6 @@ function App() {
               <div className="flex items-center border rounded-lg overflow-hidden">
                 <button onClick={() => setLang('tr')} className={`px-3 py-2 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
                 <button onClick={() => setLang('en')} className={`px-3 py-2 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
-                <button onClick={() => setLang('de')} className={`px-3 py-2 text-sm ${lang === 'de' ? 'bg-primary text-white' : 'text-gray-700'}`}>DE</button>
               </div>
               <Link to="/iletisim" className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition">{t('nav.quote')}</Link>
               <a href="https://wa.me/905325511574" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="WhatsApp"><FaWhatsapp className="text-2xl" /></a>
@@ -150,7 +149,6 @@ function App() {
                   <div className="ml-auto flex items-center border rounded-lg overflow-hidden">
                     <button onClick={() => setLang('tr')} className={`px-4 py-3 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
                     <button onClick={() => setLang('en')} className={`px-4 py-3 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
-                    <button onClick={() => setLang('de')} className={`px-4 py-3 text-sm ${lang === 'de' ? 'bg-primary text-white' : 'text-gray-700'}`}>DE</button>
                   </div>
                   <a href="https://www.instagram.com/altuntaslojistik" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="Instagram"><FaInstagram className="text-2xl" /></a>
                   <a href="tel:+905325511574" className="text-gray-700 hover:text-primary transition" aria-label="Telefon"><FaPhone className="text-xl" /></a>
