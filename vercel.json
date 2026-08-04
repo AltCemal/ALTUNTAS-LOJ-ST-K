@@ -1,5 +1,25 @@
 {
+  "redirects": [
+    {
+      "source": "/uluslararasi-karayolu-tasimaciligi",
+      "destination": "/hizmetler",
+      "permanent": true
+    },
+    {
+      "source": "/turkiye-almanya-lojistik",
+      "destination": "/hizmetler",
+      "permanent": true
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/admin",
+      "destination": "/admin/index.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/admin/index.html"
+    },
     {
       "source": "/((?!.*\\..*).*)",
       "destination": "/index.html"

@@ -4,8 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "npm --prefix logistics-management-panel run dev -- --host --port 5175 & vite",
+    "dev:main": "vite",
+    "dev:admin": "npm --prefix logistics-management-panel run dev -- --host --port 5175",
+    "build:admin": "npm --prefix logistics-management-panel run build && rm -rf public/admin && mkdir -p public/admin && cp -R logistics-management-panel/dist/. public/admin/",
+    "build": "npm run build:admin && tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

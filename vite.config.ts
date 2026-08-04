@@ -11,13 +11,11 @@ interface Route {
 }
 
 const routes: Route[] = [
-  { path: '/hizmetler', title: 'Taşımacılık Hizmetleri: Parsiyel, Komple Yük, Uluslararası | Altuntaş', description: 'Lojistik hizmetlerimiz: Parsiyel taşımacılık, komple yük, uluslararası nakliye, Türkiye-Avrupa hatları. Samsun\'dan tüm Türkiye\'ye güvenli sevkiyat.' },
-  { path: '/hakkimizda', title: 'Hakkımızda | Altuntaş Lojistik', description: 'Samsun\'da uluslararası nakliye ve lojistik hizmetleri. Altuntaş Lojistik, güvenli taşımacılık, deneyimli ekip ve modern filo.' },
+  { path: '/hizmetler', title: 'Taşımacılık Hizmetleri: Parsiyel ve Komple Yük | Altuntaş', description: 'Lojistik hizmetlerimiz: Parsiyel taşımacılık ve komple yük nakliyesi. Samsun\'dan tüm Türkiye\'ye güvenli sevkiyat.' },
+  { path: '/hakkimizda', title: 'Hakkımızda | Altuntaş Lojistik', description: 'Samsun merkezli yurtiçi nakliye ve lojistik hizmetleri. Altuntaş Lojistik, güvenli taşımacılık, deneyimli ekip ve modern filo.' },
   { path: '/iletisim', title: 'İletişim: Samsun Lojistik Teklifi & Operasyon Takibi | Altuntaş', description: 'Altuntaş Lojistik - Samsun. Telefon +905325511574, WhatsApp ile teklif alın. 24/7 operasyon takibi.' },
-  { path: '/parsiyel-tasimacilik', title: 'Parsiyel Taşımacılık | Altuntaş Lojistik', description: 'Parsiyel taşımacılık hizmetimiz ile Türkiye ve Avrupa hatlarında ekonomik, düzenli ve güvenli sevkiyat çözümleri sunuyoruz.' },
+  { path: '/parsiyel-tasimacilik', title: 'Parsiyel Taşımacılık | Altuntaş Lojistik', description: 'Parsiyel taşımacılık hizmetimiz ile Türkiye genelinde ekonomik, düzenli ve güvenli sevkiyat çözümleri sunuyoruz.' },
   { path: '/komple-yuk-tasimaciligi', title: 'Komple Yük Taşımacılığı | Altuntaş Lojistik', description: 'Komple yük taşımacılığı hizmetimizle tek araca özel hızlı çıkış, güvenli taşıma ve zamanında teslimat sağlıyoruz.' },
-  { path: '/uluslararasi-karayolu-tasimaciligi', title: 'Uluslararası Karayolu Taşımacılığı | Altuntaş Lojistik', description: 'Uluslararası karayolu taşımacılığı çözümlerimizle Türkiye çıkışlı Avrupa sevkiyatlarınızı planlı, güvenli şekilde yönetiyoruz.' },
-  { path: '/turkiye-almanya-lojistik', title: 'Türkiye Almanya Lojistik Hattı | Altuntaş Lojistik', description: 'Türkiye Almanya lojistik hattında parsiyel ve komple yükler için düzenli sefer, operasyon takibi ogv hızlı teklif.' },
 ]
 
 function spaStaticRoutesPlugin(): Plugin {
@@ -58,6 +56,15 @@ export default defineConfig({
     cssInjectedByJsPlugin(), // CSS'i bundle içine gömer, PageSpeed uyarısını siler
     spaStaticRoutesPlugin()
   ],
+  server: {
+    proxy: {
+      '^/admin($|/)': {
+        target: 'http://localhost:5175',
+        changeOrigin: true,
+        rewrite: (requestPath) => requestPath.replace(/^\/admin/, '') || '/'
+      }
+    }
+  },
   build: { 
     target: 'esnext', 
     minify: 'esbuild' 

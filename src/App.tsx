@@ -25,24 +25,18 @@ function App() {
   const isContact = pathname === '/iletisim'
   const isPartialTransport = pathname === '/parsiyel-tasimacilik'
   const isFullLoadTransport = pathname === '/komple-yuk-tasimaciligi'
-  const isInternationalRoadTransport = pathname === '/uluslararasi-karayolu-tasimaciligi'
-  const isTurkeyGermanyLogistics = pathname === '/turkiye-almanya-lojistik'
-  const isServiceLandingPage = isPartialTransport || isFullLoadTransport || isInternationalRoadTransport || isTurkeyGermanyLogistics
+  const isServiceLandingPage = isPartialTransport || isFullLoadTransport
   const isNotFound = !isHome && !isServices && !isAbout && !isContact && !isServiceLandingPage
 
   const currentServicePageKey = isPartialTransport
     ? 'partial'
     : isFullLoadTransport
       ? 'full'
-      : isInternationalRoadTransport
-        ? 'international'
-        : isTurkeyGermanyLogistics
-          ? 'germany'
-          : null
+      : null
 
   // Dynamic SEO Injector Effect
   useEffect(() => {
-    const seoPrefix = isServices ? 'seo.services' : isAbout ? 'seo.about' : isContact ? 'seo.contact' : isPartialTransport ? 'seo.partial' : isFullLoadTransport ? 'seo.full' : isInternationalRoadTransport ? 'seo.international' : isTurkeyGermanyLogistics ? 'seo.germany' : isNotFound ? 'seo.notfound' : 'seo.home'
+    const seoPrefix = isServices ? 'seo.services' : isAbout ? 'seo.about' : isContact ? 'seo.contact' : isPartialTransport ? 'seo.partial' : isFullLoadTransport ? 'seo.full' : isNotFound ? 'seo.notfound' : 'seo.home'
     const title = t(`${seoPrefix}.title`)
     document.title = title
 
@@ -84,7 +78,7 @@ function App() {
       document.head.appendChild(canonical)
     }
     canonical.setAttribute('href', canonicalUrl)
-  }, [isServices, isAbout, isContact, isPartialTransport, isFullLoadTransport, isInternationalRoadTransport, isTurkeyGermanyLogistics, isNotFound, lang, pathname, t])
+  }, [isServices, isAbout, isContact, isPartialTransport, isFullLoadTransport, isNotFound, lang, pathname, t])
 
   // Deferred loading strategy for home animations
   useEffect(() => {
@@ -133,7 +127,6 @@ function App() {
                 </a>
                 <div className="flex flex-col text-sm">
                   <a href="tel:+905325511574" className="text-gray-700 font-semibold hover:text-primary transition">+90 532 551 15 74</a>
-                  <a href="tel:+905419255561" className="text-gray-700 font-semibold hover:text-primary transition">+90 541 925 55 61</a>
                 </div>
               </div>
             </div>
@@ -197,8 +190,6 @@ function App() {
               <ul className="space-y-2 text-gray-400">
                 <li><Link to="/parsiyel-tasimacilik" className="hover:text-white">{t('serviceLinks.partial.title')}</Link></li>
                 <li><Link to="/komple-yuk-tasimaciligi" className="hover:text-white">{t('serviceLinks.full.title')}</Link></li>
-                <li><Link to="/uluslararasi-karayolu-tasimaciligi" className="hover:text-white">{t('serviceLinks.international.title')}</Link></li>
-                <li><Link to="/turkiye-almanya-lojistik" className="hover:text-white">{t('serviceLinks.germany.title')}</Link></li>
               </ul>
             </div>
             <div>

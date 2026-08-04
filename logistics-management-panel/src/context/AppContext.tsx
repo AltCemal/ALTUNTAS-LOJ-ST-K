@@ -1,0 +1,169 @@
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react"
+import { supabase, isSupabaseConfigured } from "../lib/supabase"
+import type { Customer, Trip, TripFilter, Truck, Trailer, FixedExpense } from "../interfaces/types"
+
+interface AppContextValue {
+  trucks: Truck[]
+  setTrucks: React.Dispatch<React.SetStateAction<Truck[]>> // 🚀 Yeni: App.tsx'teki yerel state değişimini context'e bağlamak için ekledik
+  trips: Trip[]
+  customers: Customer[]
+  trailers: Trailer[] 
+  fixedExpenses: FixedExpense[] 
+  filteredTrips: Trip[]
+  filter: TripFilter
+  setFilter: (filter: TripFilter) => void
+  loading: boolean
+  error: string | null
+  usingDemoData: boolean
+  refreshData: () => Promise<void> // 🚀 Yeni: Manuel tetikleme fonksiyonu açtık
+}
+
+const defaultFilter: TripFilter = {
+  truckId: undefined,
+  dateRange: {
+    // Varsayılan: son 6 ay
+    start: (() => {
+      const d = new Date()
+      d.setMonth(d.getMonth() - 6)
+      return d
+    })(),
+    end: new Date(),
+  },
+}
+
+const AppContext = createContext<AppContextValue | undefined>(undefined)
+
+const fallbackTrailers: Trailer[] = [
+  { id: "tr1", plate: "34 DOR 88", trailer_type: "Sal Dorse (Ağır Yük)", status: "ON_ROAD", total_mileage: 184000, next_tuvturk_date: "2027-04-10" },
+  { id: "tr2", plate: "34 TAY 99", trailer_type: "Tenteli Dorse", status: "IDLE", total_mileage: 92500, next_tuvturk_date: "2027-01-05" }
+]
+
+const fallbackExpenses: FixedExpense[] = [
+  { id: "1", expense_name: "Şirket Muhasebe ve Müşavirlik Gideri", amount: 4500, expense_date: "2026-07-01" },
+  { id: "2", expense_name: "Bağkur / SGK İşveren Prim Ödemeleri", amount: 8200, expense_date: "2026-07-01" },
+  { id: "3", expense_name: "Ofis Genel İşletme & Kira Masrafları", amount: 3500, expense_date: "2026-07-01" }
+]
+
+export function AppProvider({ children }: { children: ReactNode }) {
+  const [trucks, setTrucks] = useState<Truck[]>([])
+  const [trips, setTrips] = useState<Trip[]>([])
+  const [customers, setCustomers] = useState<Customer[]>([])
+  const [trailers, setTrailers] = useState<Trailer[]>([]) 
+  const [fixedExpenses, setFixedExpenses] = useState<FixedExpense[]>([]) 
+  const [filter, setFilter] = useState<TripFilter>(defaultFilter)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [usingDemoData, setUsingDemoData] = useState(false)
+
+  // 🚀 Sonsuz döngü yaratmayan izole veri çekme fonksiyonu
+  async function loadData() {
+    setError(null)
+    if (!isSupabaseConfigured) {
+      setTrailers(fallbackTrailers)
+      setFixedExpenses(fallbackExpenses)
+      setUsingDemoData(true)
+      setLoading(false)
+      return
+    }
+
+    try {
+      const [trucksRes, tripsRes, customersRes, trailersRes, expensesRes] = await Promise.all([
+        supabase.from("trucks").select("*").order("plate", { ascending: true }), // 🎯 Plakaya göre sıralı çekiyoruz ki sayfa yenilenince yerleri kaymasın
+        supabase.from("trips").select("*"),
+        supabase.from("customers").select("*"),
+        supabase.from("trailers").select("*"),
+        supabase.from("fixed_expenses").select("*"),
+      ])
+
+      if (trucksRes.error) throw trucksRes.error
+      if (tripsRes.error) throw tripsRes.error
+      if (customersRes.error) throw customersRes.error
+      if (trailersRes.error) throw trailersRes.error
+      if (expensesRes.error) throw expensesRes.error
+
+      setTrucks((trucksRes.data as Truck[]) ?? [])
+      setTrips((tripsRes.data as Trip[]) ?? [])
+      setCustomers((customersRes.data as Customer[]) ?? [])
+      setTrailers((trailersRes.data as Trailer[]) ?? [])
+      setFixedExpenses((expensesRes.data as FixedExpense[]) ?? [])
+      setUsingDemoData(false)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Veriler yüklenirken hata oluştu.")
+      setTrailers(fallbackTrailers)
+      setFixedExpenses(fallbackExpenses)
+      setUsingDemoData(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    setLoading(true)
+    loadData()
+
+    // 🚨 KİLİT ÇÖZÜM: Sonsuz döngüyü kıran akıllı realtime subscription paketi
+    if (isSupabaseConfigured) {
+      const channel = supabase
+        .channel("tms-realtime")
+        .on("postgres_changes", { event: "*", schema: "public", table: "trucks" }, () => {
+          // Doğrudan loadData çağırmak yerine sadece tablodaki spesifik değişimleri sessizce çekiyoruz
+          supabase.from("trucks").select("*").order("plate", { ascending: true }).then(({ data }) => {
+            if (data) setTrucks(data as Truck[])
+          })
+        })
+        .on("postgres_changes", { event: "*", schema: "public", table: "trips" }, () => {
+          supabase.from("trips").select("*").then(({ data }) => {
+            if (data) setTrips(data as Trip[])
+          })
+        })
+        .subscribe()
+
+      return () => {
+        supabase.removeChannel(channel)
+      }
+    }
+  }, [])
+
+  // Filtre uygulanmış seferler
+  const filteredTrips = useMemo(() => {
+    const startMs = filter.dateRange.start.getTime()
+    const endMs = filter.dateRange.end.getTime()
+
+    return trips.filter((trip) => {
+      if (filter.truckId && trip.truck_id !== filter.truckId) return false
+      const tripMs = new Date(trip.start_date).getTime()
+      return tripMs >= startMs && tripMs <= endMs
+    })
+  }, [trips, filter])
+
+  const value: AppContextValue = {
+    trucks,
+    setTrucks, // State manipülasyon yeteneğini dışarı verdik
+    trips,
+    customers,
+    trailers, 
+    fixedExpenses, 
+    filteredTrips,
+    filter,
+    setFilter,
+    loading,
+    error,
+    usingDemoData,
+    refreshData: loadData // Yenileme tetiğini dışa aktardık
+  }
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>
+}
+
+export function useApp(): AppContextValue {
+  const ctx = useContext(AppContext)
+  if (!ctx) throw new Error("useApp must be used within an AppProvider")
+  return ctx
+}

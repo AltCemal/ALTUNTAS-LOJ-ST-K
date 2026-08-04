@@ -1,0 +1,73 @@
+import React, { useState } from "react"
+import { X, Disc } from "lucide-react"
+import { supabase } from "../lib/supabase"
+
+export default function AddTrailerModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [loading, setLoading] = useState(false)
+  const [plate, setPlate] = useState("")
+  const [trailerType, setTrailerType] = useState("Sal Dorse (Ağır Yük)")
+  const [tuvDate, setTuvDate] = useState(new Date().toISOString().split("T")[0])
+
+  if (!isOpen) return null
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!plate) return alert("Lütfen dorse plakasını girin.")
+    
+    setLoading(true)
+    try {
+      const { error } = await supabase.from("trailers").insert([
+        {
+          plate: plate.toUpperCase().replace(/\s+/g, ""),
+          trailer_type: trailerType,
+          next_tuvturk_date: tuvDate,
+          status: "IDLE",
+          total_mileage: 0
+        }
+      ])
+      if (error) throw error
+      alert("Dorse başarıyla filoya eklendi.")
+      onClose()
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Dorse eklenirken hata oluştu.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="w-full max-w-md rounded-xl border border-slate-800 bg-slate-900 text-slate-100 shadow-2xl p-6 space-y-4">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <h2 className="text-base font-semibold text-white flex items-center gap-2">
+            <Disc className="size-5 text-red-500" /> Yeni Dorse (Treyler) Ekle
+          </h2>
+          <button onClick={onClose} className="text-slate-400 hover:text-white transition"><X className="size-5" /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+          <div>
+            <label className="block text-slate-400 mb-1">Dorse Plakası</label>
+            <input type="text" value={plate} onChange={e => setPlate(e.target.value)} placeholder="Örn: 55DOR55" required className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm uppercase outline-none focus:border-red-600" />
+          </div>
+          <div>
+            <label className="block text-slate-400 mb-1">Dorse Tipi</label>
+            <select value={trailerType} onChange={e => setTrailerType(e.target.value)} className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-red-600">
+              <option value="Sal Dorse (Ağır Yük)">Sal Dorse (Ağır Yük)</option>
+              <option value="Tenteli Dorse">Tenteli Dorse</option>
+              <option value="Damperli Dorse">Damperli Dorse</option>
+              <option value="Lowbed (Ağır Sanayi)">Lowbed (Ağır Sanayi)</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-slate-400 mb-1">Dorse TÜVTÜRK Vadesi</label>
+            <input type="date" value={tuvDate} onChange={e => setTuvDate(e.target.value)} required className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-red-600" />
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <button type="button" onClick={onClose} className="rounded-lg bg-slate-800 text-slate-300 px-4 py-2 hover:bg-slate-700">İptal</button>
+            <button type="submit" disabled={loading} className="rounded-lg bg-red-700 text-white px-5 py-2 hover:bg-red-600">{loading ? "Kaydediliyor..." : "Dorseyi Kaydet"}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}

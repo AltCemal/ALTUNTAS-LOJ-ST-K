@@ -38,7 +38,7 @@ export default function Home({ t, renderDeferredHomeSections }: HomeProps) {
                 <div className="text-xl text-gray-200">{t('stats.customers')}</div>
               </div>
               <div className="text-center">
-                <div className="text-5xl font-bold mb-2">45</div>
+                <div className="text-5xl font-bold mb-2">81</div>
                 <div className="text-xl text-gray-200">{t('stats.countries')}</div>
               </div>
             </div>

@@ -49,7 +49,6 @@ ${formData.message}
                 <div>
                   <h4 className="font-semibold">{t('contact.phone')}</h4>
                   <p className="text-gray-600">+90 532 551 15 74</p>
-                  <p className="text-gray-600">+90 541 925 55 61</p>
                 </div>
               </div>
               <div className="flex items-start">

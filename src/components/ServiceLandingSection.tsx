@@ -1,7 +1,7 @@
 import { FaCheckCircle } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
-type ServicePageKey = 'partial' | 'full' | 'international' | 'germany'
+type ServicePageKey = 'partial' | 'full'
 
 type ServiceLandingSectionProps = {
   servicePageKey: ServicePageKey
