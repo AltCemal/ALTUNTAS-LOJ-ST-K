@@ -118,7 +118,7 @@ function App() {
               </div>
               <Link to="/iletisim" className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition">{t('nav.quote')}</Link>
               <a href="https://wa.me/905325511574" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="WhatsApp"><FaWhatsapp className="text-2xl" /></a>
-              <a href="https://www.instagram.com/altuntaslojistik" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="Instagram"><FaInstagram className="text-2xl" /></a>
+              <a href="https://www.instagram.com/altuntaslojistiksamsun" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="Instagram"><FaInstagram className="text-2xl" /></a>
               
               <div className="hidden xl:flex items-center space-x-2">
                 <a href="tel:+905325511574" className="text-gray-700 hover:text-primary transition">
@@ -150,7 +150,7 @@ function App() {
                     <button onClick={() => setLang('tr')} className={`px-4 py-3 text-sm ${lang === 'tr' ? 'bg-primary text-white' : 'text-gray-700'}`}>TR</button>
                     <button onClick={() => setLang('en')} className={`px-4 py-3 text-sm ${lang === 'en' ? 'bg-primary text-white' : 'text-gray-700'}`}>EN</button>
                   </div>
-                  <a href="https://www.instagram.com/altuntaslojistik" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="Instagram"><FaInstagram className="text-2xl" /></a>
+                  <a href="https://www.instagram.com/altuntaslojistiksamsun" target="_blank" rel="noopener noreferrer" className="text-gray-800 hover:text-black transition" aria-label="Instagram"><FaInstagram className="text-2xl" /></a>
                   <a href="tel:+905325511574" className="text-gray-700 hover:text-primary transition" aria-label="Telefon"><FaPhone className="text-xl" /></a>
                 </div>
               </div>
