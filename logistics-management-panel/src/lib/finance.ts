@@ -44,3 +44,33 @@ export function calculateRevenueWithTax(
     collectibleAmount,
   }
 }
+
+/** Girilen tutar KDV dahildir; KDV hariç ve tevkifatı geri hesaplar. */
+export function calculateRevenueFromIncludingVat(
+  revenueIncludingVat: number,
+  vatRate: number = DEFAULT_VAT_RATE,
+  withholdingRate: number = DEFAULT_WITHHOLDING_RATE,
+): {
+  revenueExcludingVat: number
+  vatAmount: number
+  revenueIncludingVat: number
+  withholdingAmount: number
+  collectibleAmount: number
+} {
+  const safeRevenue = revenueIncludingVat || 0
+  const safeVatRate = Number.isFinite(vatRate) && vatRate >= 0 ? vatRate : DEFAULT_VAT_RATE
+  const safeWithholdingRate = Number.isFinite(withholdingRate) && withholdingRate >= 0 ? withholdingRate : DEFAULT_WITHHOLDING_RATE
+
+  const revenueExcludingVat = safeRevenue / (1 + safeVatRate)
+  const vatAmount = safeRevenue - revenueExcludingVat
+  const withholdingAmount = vatAmount * safeWithholdingRate
+  const collectibleAmount = safeRevenue - withholdingAmount
+
+  return {
+    revenueExcludingVat,
+    vatAmount,
+    revenueIncludingVat: safeRevenue,
+    withholdingAmount,
+    collectibleAmount,
+  }
+}
