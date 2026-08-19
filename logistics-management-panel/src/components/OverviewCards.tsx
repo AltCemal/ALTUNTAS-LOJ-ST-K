@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { Banknote, Route, TrendingDown, TrendingUp, Truck } from "lucide-react"
 import { useApp } from "../context/AppContext"
-import { calculateTripNet } from "../lib/finance"
+import { calculateRevenueWithTax, calculateTripNet } from "../lib/finance"
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat("tr-TR", {
@@ -21,10 +21,19 @@ export default function OverviewCards() {
   const stats = useMemo(() => {
     const totalDistance = filteredTrips.reduce((sum, t) => sum + (t.trip_distance_km || 0), 0)
     const tripCount = filteredTrips.length
-    const totalRevenue = filteredTrips.reduce((sum, t) => sum + (t.revenue || 0), 0)
+    const totalRevenueExcludingVat = filteredTrips.reduce((sum, t) => sum + (t.revenue || 0), 0)
+    const taxSummary = calculateRevenueWithTax(totalRevenueExcludingVat)
     
     const totalNet = filteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0)
-    return { totalDistance, tripCount, totalRevenue, totalNet }
+    return {
+      totalDistance,
+      tripCount,
+      totalRevenueExcludingVat,
+      totalRevenueIncludingVat: taxSummary.revenueIncludingVat,
+      totalWithholding: taxSummary.withholdingAmount,
+      collectibleAmount: taxSummary.collectibleAmount,
+      totalNet,
+    }
   }, [filteredTrips])
 
   const isProfit = stats.totalNet >= 0
@@ -45,11 +54,18 @@ export default function OverviewCards() {
       ring: "bg-amber-500/10",
     },
     {
-      label: "Toplam Ciro",
-      value: formatCurrency(stats.totalRevenue),
+      label: "Toplam Ciro (KDV Hariç)",
+      value: formatCurrency(stats.totalRevenueExcludingVat),
       icon: Banknote,
       accent: "text-slate-100",
       ring: "bg-slate-500/10",
+    },
+    {
+      label: "Toplam Ciro (KDV Dahil)",
+      value: formatCurrency(stats.totalRevenueIncludingVat),
+      icon: Banknote,
+      accent: "text-emerald-300",
+      ring: "bg-emerald-500/10",
     },
   ]
 
@@ -102,6 +118,12 @@ export default function OverviewCards() {
         >
           {formatCurrency(stats.totalNet)}
         </p>
+      </div>
+
+      <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 backdrop-blur transition hover:border-slate-700">
+        <p className="text-sm text-slate-400">Toplam Tevkifat</p>
+        <p className="mt-4 text-2xl font-semibold tracking-tight text-amber-300">{formatCurrency(stats.totalWithholding)}</p>
+        <p className="mt-2 text-xs text-slate-500">Tahsil Edilebilir: {formatCurrency(stats.collectibleAmount)}</p>
       </div>
     </div>
   )

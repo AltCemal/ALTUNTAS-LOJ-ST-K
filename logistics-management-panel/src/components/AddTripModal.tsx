@@ -3,7 +3,12 @@ import { Plus, X } from "lucide-react"
 import { useApp } from "../context/AppContext"
 import { supabase } from "../lib/supabase"
 import type { TripStatus, InvoiceStatus, PaymentStatus } from "../interfaces/types"
-import { calculateTripNet } from "../lib/finance"
+import {
+  DEFAULT_VAT_RATE,
+  DEFAULT_WITHHOLDING_RATE,
+  calculateRevenueWithTax,
+  calculateTripNet,
+} from "../lib/finance"
 import { buildInactiveAssetSet, normalizeAssetName } from "../lib/fleetLogs"
 
 export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -31,6 +36,8 @@ export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onC
   const [tripDistanceKm, setTripDistanceKm] = useState(0)
   const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0])
   const [revenue, setRevenue] = useState(0)
+  const [vatRatePercent, setVatRatePercent] = useState(DEFAULT_VAT_RATE * 100)
+  const [withholdingRatePercent, setWithholdingRatePercent] = useState(DEFAULT_WITHHOLDING_RATE * 100)
   
   // Gider Kalemleri (Yakıt Litresi, Kantar Cezası ve Şoför Primi Dahil)
   const [fuelExpense, setFuelExpense] = useState(0)
@@ -41,6 +48,11 @@ export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onC
   const [driverBonus, setDriverBonus] = useState(0)
   const [fineExpense, setFineExpense] = useState(0)
   const [extraExpense, setExtraExpense] = useState(0)
+
+  const taxSummary = useMemo(
+    () => calculateRevenueWithTax(revenue, vatRatePercent / 100, withholdingRatePercent / 100),
+    [revenue, vatRatePercent, withholdingRatePercent],
+  )
 
   if (!isOpen) return null
 
@@ -200,7 +212,7 @@ export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onC
           {/* Ciro & Yakıt */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Navlun Bedeli (Ciro ₺)</label>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Navlun Bedeli (KDV Hariç ₺)</label>
               <input type="number" value={revenue || ""} onChange={e => setRevenue(Number(e.target.value))} required
                 className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-sm text-slate-100 font-mono outline-none focus:border-red-600" />
             </div>
@@ -213,6 +225,53 @@ export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onC
               <label className="block text-xs font-medium text-slate-400 mb-1">Yakıt Litresi (Lt)</label>
               <input type="number" value={fuelLiters || ""} onChange={e => setFuelLiters(Number(e.target.value))}
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 font-mono outline-none focus:border-red-600" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1">KDV Oranı (%)</label>
+              <input
+                type="number"
+                min={0}
+                step="0.1"
+                value={vatRatePercent || ""}
+                onChange={(e) => setVatRatePercent(Number(e.target.value))}
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 font-mono outline-none focus:border-red-600"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Tevkifat Oranı (KDV içinden %)</label>
+              <input
+                type="number"
+                min={0}
+                step="0.1"
+                value={withholdingRatePercent || ""}
+                onChange={(e) => setWithholdingRatePercent(Number(e.target.value))}
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 font-mono outline-none focus:border-red-600"
+              />
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-4">
+            <p className="text-[11px] uppercase tracking-wide text-slate-500 mb-2">Otomatik Vergi Özeti</p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 text-xs font-mono">
+              <div className="flex items-center justify-between text-slate-300">
+                <span>KDV Tutarı</span>
+                <span>₺{taxSummary.vatAmount.toLocaleString("tr-TR")}</span>
+              </div>
+              <div className="flex items-center justify-between text-emerald-300">
+                <span>KDV Dahil Toplam</span>
+                <span>₺{taxSummary.revenueIncludingVat.toLocaleString("tr-TR")}</span>
+              </div>
+              <div className="flex items-center justify-between text-amber-300">
+                <span>Tevkifat</span>
+                <span>-₺{taxSummary.withholdingAmount.toLocaleString("tr-TR")}</span>
+              </div>
+              <div className="flex items-center justify-between text-sky-300">
+                <span>Tahsil Edilecek</span>
+                <span>₺{taxSummary.collectibleAmount.toLocaleString("tr-TR")}</span>
+              </div>
             </div>
           </div>
 

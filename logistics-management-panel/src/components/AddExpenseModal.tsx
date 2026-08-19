@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { X, Wallet } from "lucide-react"
 import { supabase } from "../lib/supabase"
 import { useApp } from "../context/AppContext"
+import { buildStoredExpenseName } from "../lib/expenseMeta"
 
 const expenseTypes = [
   "Bandrol",
@@ -13,13 +14,12 @@ const expenseTypes = [
   "Diğer",
 ] as const
 
-const VARIABLE_EXPENSE_PREFIX = "DEGISKEN|"
-
 export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const { refreshData } = useApp()
+  const { refreshData, trucks } = useApp()
   const [loading, setLoading] = useState(false)
   const [expenseType, setExpenseType] = useState<(typeof expenseTypes)[number]>("Bandrol")
   const [customName, setCustomName] = useState("")
+  const [truckId, setTruckId] = useState("")
   const [amount, setAmount] = useState(0)
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split("T")[0])
   const [note, setNote] = useState("")
@@ -27,9 +27,17 @@ export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; 
 
   if (!isOpen) return null
 
+  const enforcedMode = expenseType === "Bandrol" ? "fixed" : expenseType === "Mazot" ? "variable" : null
+  const effectiveIsFixedExpense = enforcedMode ? enforcedMode === "fixed" : isFixedExpense
+
   const resolvedName = expenseType === "Diğer" ? customName.trim() : expenseType
   const finalNameRaw = note.trim() ? `${resolvedName} - ${note.trim()}` : resolvedName
-  const finalName = isFixedExpense ? finalNameRaw : `${VARIABLE_EXPENSE_PREFIX}${finalNameRaw}`
+  const selectedTruck = trucks.find((truck) => truck.id === truckId)
+  const finalName = buildStoredExpenseName({
+    name: finalNameRaw,
+    isVariable: !effectiveIsFixedExpense,
+    truckPlate: selectedTruck?.plate,
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,6 +61,7 @@ export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; 
       onClose()
       setExpenseType("Bandrol")
       setCustomName("")
+      setTruckId("")
       setAmount(0)
       setExpenseDate(new Date().toISOString().split("T")[0])
       setNote("")
@@ -81,7 +90,12 @@ export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; 
             <label className="block text-slate-400 mb-1">Gider Türü</label>
             <select
               value={expenseType}
-              onChange={(e) => setExpenseType(e.target.value as (typeof expenseTypes)[number])}
+              onChange={(e) => {
+                const nextType = e.target.value as (typeof expenseTypes)[number]
+                setExpenseType(nextType)
+                if (nextType === "Bandrol") setIsFixedExpense(true)
+                if (nextType === "Mazot") setIsFixedExpense(false)
+              }}
               className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-amber-500"
             >
               {expenseTypes.map((type) => (
@@ -108,6 +122,21 @@ export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; 
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
+              <label className="block text-slate-400 mb-1">Araç (Opsiyonel)</label>
+              <select
+                value={truckId}
+                onChange={(e) => setTruckId(e.target.value)}
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm outline-none focus:border-amber-500"
+              >
+                <option value="">Genel Gider (Araçsız)</option>
+                {trucks.map((truck) => (
+                  <option key={truck.id} value={truck.id}>
+                    {truck.plate} — {truck.brand_model}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label className="block text-slate-400 mb-1">Tutar (₺)</label>
               <input
                 type="number"
@@ -118,6 +147,9 @@ export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; 
                 required
               />
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-slate-400 mb-1">Gider Tarihi</label>
               <input
@@ -144,12 +176,15 @@ export default function AddExpenseModal({ isOpen, onClose }: { isOpen: boolean; 
           <label className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2.5 text-slate-300">
             <input
               type="checkbox"
-              checked={isFixedExpense}
+              checked={effectiveIsFixedExpense}
               onChange={(e) => setIsFixedExpense(e.target.checked)}
+              disabled={Boolean(enforcedMode)}
               className="size-4 rounded border-slate-600 bg-slate-900"
             />
             <span className="text-xs">
-              Sabit gider olarak işle (işaretli değilse değişken gider olarak kaydedilir)
+              Sabit gider olarak işle (işaretli değilse değişken gider olarak kaydedilir).
+              {expenseType === "Bandrol" && " Bandrol otomatik sabit gider olarak kaydedilir."}
+              {expenseType === "Mazot" && " Mazot otomatik değişken gider olarak kaydedilir."}
             </span>
           </label>
 

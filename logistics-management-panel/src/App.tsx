@@ -21,8 +21,7 @@ import AddFleetLogModal from "./components/AddFleetLogModal"
 import type { FixedExpense, InvoiceStatus, PaymentStatus, Trailer, Trip, TripStatus } from "./interfaces/types"
 import { calculateTripNet } from "./lib/finance"
 import { buildInactiveAssetSet, normalizeAssetName } from "./lib/fleetLogs"
-
-const VARIABLE_EXPENSE_PREFIX = "DEGISKEN|"
+import { expenseMatchesTruck, parseStoredExpenseName } from "./lib/expenseMeta"
 
 const inspectionScheduleByPlate: Record<string, string> = {
   "55AUE267": "2026-06-06",
@@ -50,6 +49,13 @@ function toIsoDate(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, "0")
   const day = String(date.getDate()).padStart(2, "0")
   return `${year}-${month}-${day}`
+}
+
+function monthsAgo(months: number): Date {
+  const d = new Date()
+  d.setHours(0, 0, 0, 0)
+  d.setMonth(d.getMonth() - months)
+  return d
 }
 
 function getRolledAnnualDate(dateText?: string): string | undefined {
@@ -187,6 +193,8 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false)
   const [isFleetLogModalOpen, setIsFleetLogModalOpen] = useState(false)
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null)
+  const [expenseMonthsRange, setExpenseMonthsRange] = useState(1)
+  const [expenseTruckId, setExpenseTruckId] = useState("ALL")
 
   // Lastik Modalı Kontrol Stateleri
   const [isTireModalOpen, setIsTireModalOpen] = useState(false)
@@ -207,8 +215,32 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
     [trailers, inactiveAssetSet],
   )
 
-  const fixedExpenseItems = fixedExpenses.filter((exp) => !exp.expense_name.startsWith(VARIABLE_EXPENSE_PREFIX))
-  const variableExpenseItems = fixedExpenses.filter((exp) => exp.expense_name.startsWith(VARIABLE_EXPENSE_PREFIX))
+  const selectedExpenseTruckPlate = useMemo(() => {
+    if (expenseTruckId === "ALL") return undefined
+    const truck = trucks.find((item) => item.id === expenseTruckId)
+    return truck?.plate
+  }, [expenseTruckId, trucks])
+
+  const filteredExpenseRecords = useMemo(() => {
+    const start = monthsAgo(expenseMonthsRange).getTime()
+
+    return fixedExpenses
+      .map((exp) => {
+        const parsed = parseStoredExpenseName(exp.expense_name)
+        return {
+          ...exp,
+          parsed,
+        }
+      })
+      .filter((exp) => {
+        const expenseDateMs = new Date(exp.expense_date).getTime()
+        if (Number.isFinite(expenseDateMs) && expenseDateMs < start) return false
+        return expenseMatchesTruck(exp.parsed.truckPlate, selectedExpenseTruckPlate)
+      })
+  }, [fixedExpenses, expenseMonthsRange, selectedExpenseTruckPlate])
+
+  const fixedExpenseItems = filteredExpenseRecords.filter((exp) => !exp.parsed.isVariable)
+  const variableExpenseItems = filteredExpenseRecords.filter((exp) => exp.parsed.isVariable)
 
   const totalFixedExpenses = fixedExpenseItems.reduce((sum, e) => sum + e.amount, 0)
 
@@ -504,7 +536,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
           <button onClick={() => setActiveTab("maintenance_docs")} className={`px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition ${activeTab === "maintenance_docs" ? "border-brand text-slate-100" : "border-transparent text-slate-500"}`}>Evrak & Motor Bakım</button>
           <button onClick={() => setActiveTab("trailers")} className={`px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition ${activeTab === "trailers" ? "border-brand text-slate-100" : "border-transparent text-slate-500"}`}>Dorse Filosu</button>
           <button onClick={() => setActiveTab("analytics")} className={`px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition ${activeTab === "analytics" ? "border-brand text-slate-100" : "border-transparent text-slate-500"}`}>Performans Analitiği</button>
-          <button onClick={() => setActiveTab("fixed_expenses")} className={`px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition ${activeTab === "fixed_expenses" ? "border-brand text-slate-100" : "border-transparent text-slate-500"}`}>Sabit Giderler</button>
+          <button onClick={() => setActiveTab("fixed_expenses")} className={`px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition ${activeTab === "fixed_expenses" ? "border-brand text-slate-100" : "border-transparent text-slate-500"}`}>Giderler</button>
           <button onClick={() => setActiveTab("fleet_logs")} className={`px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition ${activeTab === "fleet_logs" ? "border-brand text-slate-100" : "border-transparent text-slate-500"}`}>Alım / Satım Logları</button>
         </div>
 
@@ -793,7 +825,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
               <div className="space-y-6">
                 <div className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/40 p-4">
                   <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
-                    Bandrol, Mazot, Sanayi gibi gider kayıtlarını buradan ekleyebilirsiniz.
+                    Bandrol otomatik sabit, mazot otomatik değişken gider olarak kaydedilir.
                   </p>
                   <button
                     type="button"
@@ -802,6 +834,47 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                   >
                     <Plus className="size-4" /> Gider Ekle
                   </button>
+                </div>
+
+                <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    <div>
+                      <span className="mb-2 block text-xs font-medium uppercase tracking-wide text-slate-400">Tarih Filtresi</span>
+                      <div className="flex flex-wrap gap-2">
+                        {[1, 3, 6, 12].map((months) => (
+                          <button
+                            key={months}
+                            type="button"
+                            onClick={() => setExpenseMonthsRange(months)}
+                            className={
+                              "rounded-lg border px-3 py-2 text-xs font-medium transition " +
+                              (expenseMonthsRange === months
+                                ? "border-brand bg-brand text-brand-foreground"
+                                : "border-slate-700 bg-slate-950 text-slate-300 hover:border-slate-500 hover:text-white")
+                            }
+                          >
+                            Son {months === 1 ? "1 Ay" : `${months} Ay`}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="mb-2 block text-xs font-medium uppercase tracking-wide text-slate-400">Araç Filtresi</label>
+                      <select
+                        value={expenseTruckId}
+                        onChange={(e) => setExpenseTruckId(e.target.value)}
+                        className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-brand"
+                      >
+                        <option value="ALL">Tüm Araçlar ve Genel Giderler</option>
+                        {activeTrucks.map((truck) => (
+                          <option key={truck.id} value={truck.id}>
+                            {truck.plate} — {truck.brand_model}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -824,11 +897,19 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                 </div>
 
                 <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
-                  <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">Aylık Sabit Operasyonel Gider Kayıtları</h3>
+                  <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">Sabit Gider Kayıtları</h3>
                   <div className="divide-y divide-slate-800">
-                    {fixedExpenseItems.map((exp: FixedExpense) => (
+                    {fixedExpenseItems.length === 0 && (
+                      <div className="py-3 text-xs text-slate-500">Seçilen filtrelerde sabit gider kaydı yok.</div>
+                    )}
+                    {fixedExpenseItems.map((exp: FixedExpense & { parsed: { displayName: string; truckPlate?: string } }) => (
                       <div key={exp.id} className="py-3 flex justify-between items-center text-xs font-mono">
-                        <span className="text-slate-300">{exp.expense_name}</span>
+                        <div className="space-y-1">
+                          <span className="text-slate-300">{exp.parsed.displayName}</span>
+                          <p className="text-[11px] text-slate-500">
+                            {new Date(exp.expense_date).toLocaleDateString("tr-TR")} • {exp.parsed.truckPlate || "Genel"}
+                          </p>
+                        </div>
                         <span className="text-red-400 font-bold">₺{exp.amount.toLocaleString("tr-TR")}</span>
                       </div>
                     ))}
@@ -839,11 +920,16 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                   <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">Değişken Gider Kayıtları (Sabit Toplama Dahil Değil)</h3>
                   <div className="divide-y divide-slate-800">
                     {variableExpenseItems.length === 0 && (
-                      <div className="py-3 text-xs text-slate-500">Henüz değişken gider kaydı yok.</div>
+                      <div className="py-3 text-xs text-slate-500">Seçilen filtrelerde değişken gider kaydı yok.</div>
                     )}
-                    {variableExpenseItems.map((exp: FixedExpense) => (
+                    {variableExpenseItems.map((exp: FixedExpense & { parsed: { displayName: string; truckPlate?: string } }) => (
                       <div key={exp.id} className="py-3 flex justify-between items-center text-xs font-mono">
-                        <span className="text-slate-300">{exp.expense_name.replace(VARIABLE_EXPENSE_PREFIX, "")}</span>
+                        <div className="space-y-1">
+                          <span className="text-slate-300">{exp.parsed.displayName}</span>
+                          <p className="text-[11px] text-slate-500">
+                            {new Date(exp.expense_date).toLocaleDateString("tr-TR")} • {exp.parsed.truckPlate || "Genel"}
+                          </p>
+                        </div>
                         <span className="text-amber-400 font-bold">₺{exp.amount.toLocaleString("tr-TR")}</span>
                       </div>
                     ))}
