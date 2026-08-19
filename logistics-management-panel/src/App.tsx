@@ -243,6 +243,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
   const variableExpenseItems = filteredExpenseRecords.filter((exp) => exp.parsed.isVariable)
 
   const totalFixedExpenses = fixedExpenseItems.reduce((sum, e) => sum + e.amount, 0)
+  const totalVariableExpenses = variableExpenseItems.reduce((sum, e) => sum + e.amount, 0)
 
   const logActionText: Record<string, string> = {
     ALINDI: "Alındı",
@@ -877,21 +878,25 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
                     <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Brüt Sefer Kârı</span>
                     <p className="text-2xl font-bold font-mono text-emerald-400 mt-2">₺{filteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0).toLocaleString("tr-TR")}</p>
                   </div>
                   <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
-                    <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Şirket Sabit İşletme Gideri</span>
+                    <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Sabit Giderler</span>
                     <p className="text-2xl font-bold font-mono text-red-400 mt-2">-₺{totalFixedExpenses.toLocaleString("tr-TR")}</p>
+                  </div>
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
+                    <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Değişken Giderler</span>
+                    <p className="text-2xl font-bold font-mono text-orange-400 mt-2">-₺{totalVariableExpenses.toLocaleString("tr-TR")}</p>
                   </div>
                   <div className="rounded-xl border border-emerald-800 bg-emerald-950/10 p-5">
                     <span className="text-xs font-medium text-emerald-400 uppercase tracking-wider flex items-center gap-1">
                       <Landmark className="size-4" /> Kasaya Kalan Net Bakiye
                     </span>
                     <p className="text-2xl font-bold font-mono text-emerald-300 mt-2">
-                      ₺{(filteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0) - totalFixedExpenses).toLocaleString("tr-TR")}
+                      ₺{(filteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0) - totalFixedExpenses - totalVariableExpenses).toLocaleString("tr-TR")}
                     </p>
                   </div>
                 </div>
@@ -917,7 +922,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                 </div>
 
                 <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
-                  <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">Değişken Gider Kayıtları (Sabit Toplama Dahil Değil)</h3>
+                  <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">Değişken Gider Kayıtları</h3>
                   <div className="divide-y divide-slate-800">
                     {variableExpenseItems.length === 0 && (
                       <div className="py-3 text-xs text-slate-500">Seçilen filtrelerde değişken gider kaydı yok.</div>
