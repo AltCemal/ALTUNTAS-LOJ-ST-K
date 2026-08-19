@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js"
-import { LogOut, Lock, Truck, LayoutDashboard, ArrowRight, Plus, MapPin, Wrench, PlayCircle, Coffee, Disc, Calendar, AlertTriangle, Landmark, TrendingUp, Droplet } from "lucide-react"
+import { LogOut, Lock, Truck, LayoutDashboard, ArrowRight, Plus, MapPin, Wrench, PlayCircle, Coffee, Disc, Calendar, AlertTriangle, Landmark, TrendingUp, Droplet, ClipboardList } from "lucide-react"
 import { supabase, isSupabaseConfigured } from "./lib/supabase"
 import { AppProvider, useApp } from "./context/AppContext"
 import FilterPanel from "./components/FilterPanel"
@@ -15,14 +15,79 @@ import AddCustomerModal from "./components/AddCustomerModal"
 import AddTireModal from "./components/AddTireModal" 
 import AddExpenseModal from "./components/AddExpenseModal"
 import EditTripModal from "./components/EditTripModal"
+import AddFleetLogModal from "./components/AddFleetLogModal"
 
 // Tip tanımlamasını import ediyoruz
 import type { FixedExpense, InvoiceStatus, PaymentStatus, Trailer, Trip, TripStatus } from "./interfaces/types"
 import { calculateTripNet } from "./lib/finance"
+import { buildInactiveAssetSet, normalizeAssetName } from "./lib/fleetLogs"
 
 const VARIABLE_EXPENSE_PREFIX = "DEGISKEN|"
 
-type ActiveTab = "overview" | "trucks" | "tires" | "maintenance_docs" | "analytics" | "fixed_expenses" | "trailers"
+const inspectionScheduleByPlate: Record<string, string> = {
+  "55AUE267": "2026-06-06",
+  "55ALT974": "2026-10-08",
+  "55AUE147": "2026-12-02",
+  "55ACE135": "2026-12-21",
+  "61ABG687": "2027-04-17",
+  "55AUE143": "2026-12-08",
+  "55ATM336": "2026-10-08",
+}
+
+const transferPolicyDateByPlate: Record<string, string> = {
+  "61ABG687": "2026-08-19",
+  "55ACE135": "2026-08-19",
+  "55AUE143": "2026-08-19",
+  "55ATM336": "2026-08-19",
+}
+
+function normalizePlate(plate: string): string {
+  return plate.toUpperCase().replace(/[^0-9A-Z]/g, "")
+}
+
+function toIsoDate(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
+}
+
+function getRolledAnnualDate(dateText?: string): string | undefined {
+  if (!dateText) return undefined
+  const parsed = new Date(dateText)
+  if (Number.isNaN(parsed.getTime())) return undefined
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  while (parsed.getTime() < today.getTime()) {
+    parsed.setFullYear(parsed.getFullYear() + 1)
+  }
+
+  return toIsoDate(parsed)
+}
+
+function resolveInspectionDate(plate: string, currentDate?: string): string | undefined {
+  const mappedDate = inspectionScheduleByPlate[normalizePlate(plate)]
+  const sourceDate = mappedDate || currentDate
+  return getRolledAnnualDate(sourceDate)
+}
+
+function resolvePolicyDate(plate: string, currentDate?: string): string | undefined {
+  const mappedDate = transferPolicyDateByPlate[normalizePlate(plate)]
+  if (mappedDate) {
+    const parsed = new Date(mappedDate)
+    if (Number.isNaN(parsed.getTime())) return getRolledAnnualDate(currentDate)
+
+    // Devir günü poliçe başlangıcı kabul edilir; bitiş tarihi 1 yıl sonrası olmalıdır.
+    parsed.setFullYear(parsed.getFullYear() + 1)
+    return getRolledAnnualDate(toIsoDate(parsed))
+  }
+
+  return getRolledAnnualDate(currentDate)
+}
+
+type ActiveTab = "overview" | "trucks" | "tires" | "maintenance_docs" | "analytics" | "fixed_expenses" | "trailers" | "fleet_logs"
 
 /* ------------------------------------------------------------------ */
 /* Kurumsal Ön Yüz                                                    */
@@ -111,7 +176,7 @@ function LoginForm() {
 /* Admin Panel Düzeni (Layout)                                         */
 /* ------------------------------------------------------------------ */
 function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
-  const { usingDemoData, loading, trucks, setTrucks, filteredTrips, customers, fixedExpenses, trailers, setTrips } = useApp()
+  const { usingDemoData, loading, trucks, setTrucks, filteredTrips, customers, fixedExpenses, trailers, fleetLogs, setTrips } = useApp()
   const [activeTab, setActiveTab] = useState<ActiveTab>("overview")
 
   // Modalların Açık/Kapalı Kontrol Stateleri
@@ -120,6 +185,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
   const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false)
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false)
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false)
+  const [isFleetLogModalOpen, setIsFleetLogModalOpen] = useState(false)
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null)
 
   // Lastik Modalı Kontrol Stateleri
@@ -131,10 +197,92 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
   const [editingTruckId, setEditingTruckId] = useState<string | null>(null)
   const [tempLocation, setTempLocation] = useState("")
 
+  const inactiveAssetSet = useMemo(() => buildInactiveAssetSet(fleetLogs), [fleetLogs])
+  const activeTrucks = useMemo(
+    () => trucks.filter((truck) => !inactiveAssetSet.has(normalizeAssetName(truck.plate))),
+    [trucks, inactiveAssetSet],
+  )
+  const activeTrailers = useMemo(
+    () => trailers.filter((trailer) => !inactiveAssetSet.has(normalizeAssetName(trailer.plate))),
+    [trailers, inactiveAssetSet],
+  )
+
   const fixedExpenseItems = fixedExpenses.filter((exp) => !exp.expense_name.startsWith(VARIABLE_EXPENSE_PREFIX))
   const variableExpenseItems = fixedExpenses.filter((exp) => exp.expense_name.startsWith(VARIABLE_EXPENSE_PREFIX))
 
   const totalFixedExpenses = fixedExpenseItems.reduce((sum, e) => sum + e.amount, 0)
+
+  const logActionText: Record<string, string> = {
+    ALINDI: "Alındı",
+    SATILDI: "Satıldı",
+    DEVIR_ALINDI: "Devir Alındı",
+  }
+
+  const logActionBadgeClass: Record<string, string> = {
+    ALINDI: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    SATILDI: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+    DEVIR_ALINDI: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+  }
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) return
+
+    const syncInspectionDates = async () => {
+      for (const truck of trucks) {
+        const nextInspection = resolveInspectionDate(truck.plate, truck.next_tuvturk_date)
+        const nextPolicy = resolvePolicyDate(truck.plate, truck.insurance_expiry_date)
+
+        const truckUpdate: { next_tuvturk_date?: string; insurance_expiry_date?: string } = {}
+        if (nextInspection && nextInspection !== truck.next_tuvturk_date) {
+          truckUpdate.next_tuvturk_date = nextInspection
+        }
+        if (nextPolicy && nextPolicy !== truck.insurance_expiry_date) {
+          truckUpdate.insurance_expiry_date = nextPolicy
+        }
+        if (Object.keys(truckUpdate).length === 0) continue
+
+        const { error } = await supabase
+          .from("trucks")
+          .update(truckUpdate)
+          .eq("id", truck.id)
+
+        if (error) {
+          // eslint-disable-next-line no-console
+          console.warn("[TMS] Truck tarihleri güncellenemedi:", error.message)
+        }
+      }
+
+      for (const trailer of trailers) {
+        const nextInspection = resolveInspectionDate(trailer.plate, trailer.next_tuvturk_date)
+        if (nextInspection && nextInspection !== trailer.next_tuvturk_date) {
+          const { error } = await supabase
+            .from("trailers")
+            .update({ next_tuvturk_date: nextInspection })
+            .eq("id", trailer.id)
+
+          if (error) {
+            // eslint-disable-next-line no-console
+            console.warn("[TMS] Trailer muayene tarihi güncellenemedi:", error.message)
+          }
+        }
+
+        const nextPolicy = resolvePolicyDate(trailer.plate)
+        if (nextPolicy) {
+          const { error } = await supabase
+            .from("trailers")
+            .update({ insurance_expiry_date: nextPolicy })
+            .eq("id", trailer.id)
+
+          if (error && error.code !== "42703") {
+            // eslint-disable-next-line no-console
+            console.warn("[TMS] Trailer sigorta/kasko tarihi güncellenemedi:", error.message)
+          }
+        }
+      }
+    }
+
+    void syncInspectionDates()
+  }, [trucks, trailers])
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -263,8 +411,8 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
   }
 
   const alerts: string[] = []
-  trucks.forEach((t) => {
-    const tuv = getDaysRemaining(t.next_tuvturk_date || "2027-02-15")
+  activeTrucks.forEach((t) => {
+    const tuv = getDaysRemaining(resolveInspectionDate(t.plate, t.next_tuvturk_date) || "2027-02-15")
     if (tuv < 30) alerts.push(`${t.plate} plakalı aracın TÜVTÜRK muayenesine son ${tuv} gün kaldı!`)
     
     if (t.oil_change_mileage && t.oil_change_mileage > 0) {
@@ -276,9 +424,10 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
     }
   })
 
-  trailers.forEach((tr) => {
-    if (tr.next_tuvturk_date) {
-      const trTuv = getDaysRemaining(tr.next_tuvturk_date)
+  activeTrailers.forEach((tr) => {
+    const trailerInspectionDate = resolveInspectionDate(tr.plate, tr.next_tuvturk_date)
+    if (trailerInspectionDate) {
+      const trTuv = getDaysRemaining(trailerInspectionDate)
       if (trTuv < 30) alerts.push(`${tr.plate} plakalı dorsenin muayenesine son ${trTuv} gün kaldı!`)
     }
   })
@@ -342,6 +491,9 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
           <button onClick={() => setIsCustomerModalOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-xs font-semibold text-slate-200 hover:text-white hover:border-slate-500 transition">
             <Plus className="size-4 text-red-500" /> Yeni Cari Firma (Müşteri) Ekle
           </button>
+          <button onClick={() => setIsFleetLogModalOpen(true)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-950 px-4 py-2 text-xs font-semibold text-slate-200 hover:text-white hover:border-slate-500 transition">
+            <ClipboardList className="size-4 text-sky-400" /> Log Kaydı Ekle
+          </button>
         </div>
 
         {/* Navigasyon Çubuğu */}
@@ -353,6 +505,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
           <button onClick={() => setActiveTab("trailers")} className={`px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition ${activeTab === "trailers" ? "border-brand text-slate-100" : "border-transparent text-slate-500"}`}>Dorse Filosu</button>
           <button onClick={() => setActiveTab("analytics")} className={`px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition ${activeTab === "analytics" ? "border-brand text-slate-100" : "border-transparent text-slate-500"}`}>Performans Analitiği</button>
           <button onClick={() => setActiveTab("fixed_expenses")} className={`px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition ${activeTab === "fixed_expenses" ? "border-brand text-slate-100" : "border-transparent text-slate-500"}`}>Sabit Giderler</button>
+          <button onClick={() => setActiveTab("fleet_logs")} className={`px-4 py-2 text-sm font-medium border-b-2 whitespace-nowrap transition ${activeTab === "fleet_logs" ? "border-brand text-slate-100" : "border-transparent text-slate-500"}`}>Alım / Satım Logları</button>
         </div>
 
         {usingDemoData && (
@@ -379,7 +532,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
             {activeTab === "trucks" && (
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {trucks.map((truck) => (
+                  {activeTrucks.map((truck) => (
                     <div key={truck.id} className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 backdrop-blur flex flex-col justify-between gap-4">
                       <div className="flex items-start justify-between">
                         <div>
@@ -466,7 +619,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
             {activeTab === "tires" && (
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                  {trucks.map((truck) => (
+                  {activeTrucks.map((truck) => (
                     <div key={truck.id} className="rounded-xl border border-slate-800 bg-slate-900/40 p-5 flex flex-col gap-4">
                       <div className="border-b border-slate-800 pb-2">
                         <h3 className="text-sm font-mono font-bold text-slate-200">{truck.plate} — Lastik Şeması (Düzenlemek İçin Tıklayın)</h3>
@@ -505,8 +658,9 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
             {activeTab === "maintenance_docs" && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {trucks.map((truck) => {
-                    const tuvDays = getDaysRemaining(truck.next_tuvturk_date || "2027-02-15")
+                  {activeTrucks.map((truck) => {
+                    const truckInspectionDate = resolveInspectionDate(truck.plate, truck.next_tuvturk_date)
+                    const tuvDays = getDaysRemaining(truckInspectionDate || "2027-02-15")
                     const insDays = getDaysRemaining(truck.insurance_expiry_date || "2027-05-20")
                     const oilRemaining = truck.oil_change_mileage && truck.oil_change_mileage > 0 
                       ? (truck.oil_change_mileage + (truck.oil_change_interval || 40000)) - truck.current_mileage
@@ -543,8 +697,9 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
               <div className="space-y-4">
                 <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">Dorse Envanteri ve Kilometre/Muayene Durumları</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {trailers.map((trailer: Trailer) => {
-                    const trTuvDays = trailer.next_tuvturk_date ? getDaysRemaining(trailer.next_tuvturk_date) : 365
+                  {activeTrailers.map((trailer: Trailer) => {
+                    const trailerInspectionDate = resolveInspectionDate(trailer.plate, trailer.next_tuvturk_date)
+                    const trTuvDays = trailerInspectionDate ? getDaysRemaining(trailerInspectionDate) : 365
                     return (
                       <div key={trailer.id} className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 space-y-4 backdrop-blur">
                         <div className="flex justify-between items-start">
@@ -565,7 +720,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                           </div>
                           <div className={`p-2 rounded border ${trTuvDays < 30 ? "bg-red-500/10 border-red-500/20 text-red-400" : "bg-slate-950/40 border-slate-800 text-slate-200"}`}>
                             <p className="text-slate-500">Dorse Muayene</p>
-                            <p className="font-semibold mt-0.5">{trailer.next_tuvturk_date ? (trTuvDays > 0 ? `${trTuvDays} Gün` : "Süresi Geçti!") : "Veri Yok"}</p>
+                            <p className="font-semibold mt-0.5">{trailerInspectionDate ? (trTuvDays > 0 ? `${trTuvDays} Gün` : "Süresi Geçti!") : "Veri Yok"}</p>
                           </div>
                         </div>
                       </div>
@@ -696,6 +851,63 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                 </div>
               </div>
             )}
+
+            {activeTab === "fleet_logs" && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/40 p-4">
+                  <p className="text-xs uppercase tracking-wider text-slate-400 font-semibold">
+                    Filoya alınan, satılan veya devirle eklenen varlıklarınızı tarih bazlı kaydedin.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsFleetLogModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-sky-700 px-3 py-2 text-xs font-semibold text-white transition hover:bg-sky-600"
+                  >
+                    <Plus className="size-4" /> Log Ekle
+                  </button>
+                </div>
+
+                <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
+                  <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wide">Varlık Hareket Geçmişi</h3>
+                  {fleetLogs.length === 0 && (
+                    <div className="rounded-lg border border-slate-800 bg-slate-950/60 px-4 py-8 text-center text-sm text-slate-500">
+                      Henüz log kaydı yok. "Log Ekle" butonundan ilk kaydı oluşturabilirsiniz.
+                    </div>
+                  )}
+                  {fleetLogs.length > 0 && (
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[640px] text-left text-xs">
+                        <thead>
+                          <tr className="border-b border-slate-800 text-slate-500 font-medium">
+                            <th className="pb-2">Tarih</th>
+                            <th className="pb-2">Kayıt</th>
+                            <th className="pb-2">İşlem</th>
+                            <th className="pb-2">Not</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {fleetLogs
+                            .slice()
+                            .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
+                            .map((log) => (
+                              <tr key={log.id} className="border-b border-slate-800/40 text-slate-300">
+                                <td className="py-3 font-mono">{new Date(log.event_date).toLocaleDateString("tr-TR")}</td>
+                                <td className="py-3 font-semibold text-slate-100">{log.item_name}</td>
+                                <td className="py-3">
+                                  <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide ${logActionBadgeClass[log.action] || "bg-slate-800 text-slate-300 border-slate-700"}`}>
+                                    {logActionText[log.action] || log.action}
+                                  </span>
+                                </td>
+                                <td className="py-3 text-slate-400">{log.note || "-"}</td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </>
         )}
       </main>
@@ -706,6 +918,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
       <AddTrailerModal isOpen={isTrailerModalOpen} onClose={() => setIsTrailerModalOpen(false)} />
       <AddCustomerModal isOpen={isCustomerModalOpen} onClose={() => setIsCustomerModalOpen(false)} />
       <EditTripModal isOpen={Boolean(editingTrip)} trip={editingTrip} onClose={() => setEditingTrip(null)} onSave={handleTripSave} />
+      <AddFleetLogModal isOpen={isFleetLogModalOpen} onClose={() => setIsFleetLogModalOpen(false)} />
       
       <AddTireModal 
         isOpen={isTireModalOpen} 

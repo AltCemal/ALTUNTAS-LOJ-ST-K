@@ -3,6 +3,7 @@ export type TrailerStatus = "IDLE" | "ON_ROAD" | "MAINTENANCE"
 export type TripStatus = "ACTIVE" | "COMPLETED" | "CANCELLED"
 export type InvoiceStatus = "NOT_INVOICED" | "INVOICED"
 export type PaymentStatus = "PENDING" | "COLLECTED"
+export type FleetLogAction = "ALINDI" | "SATILDI" | "DEVIR_ALINDI"
 
 export interface Truck {
   id: string
@@ -41,6 +42,15 @@ export interface FixedExpense {
   expense_name: string
   amount: number
   expense_date: string
+}
+
+export interface FleetLog {
+  id: string
+  item_name: string
+  action: FleetLogAction
+  event_date: string
+  note?: string | null
+  created_at?: string
 }
 
 export interface Trip {

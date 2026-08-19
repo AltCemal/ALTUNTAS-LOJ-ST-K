@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react"
 import { supabase, isSupabaseConfigured } from "../lib/supabase"
-import type { Customer, Trip, TripFilter, Truck, Trailer, FixedExpense } from "../interfaces/types"
+import type { Customer, Trip, TripFilter, Truck, Trailer, FixedExpense, FleetLog } from "../interfaces/types"
 
 type SupabaseLikeError = {
   code?: string
@@ -22,6 +22,7 @@ interface AppContextValue {
   customers: Customer[]
   trailers: Trailer[] 
   fixedExpenses: FixedExpense[] 
+  fleetLogs: FleetLog[]
   filteredTrips: Trip[]
   filter: TripFilter
   setFilter: (filter: TripFilter) => void
@@ -44,6 +45,114 @@ const defaultFilter: TripFilter = {
   },
 }
 
+const FLEET_LOG_STORAGE_KEY = "tms-fleet-logs"
+
+const defaultFleetLogs: FleetLog[] = [
+  {
+    id: "seed-2025-10-10-55alt974-alindi",
+    item_name: "55 ALT 974",
+    action: "ALINDI",
+    event_date: "2025-10-10",
+    note: "Satın alım",
+  },
+  {
+    id: "seed-2025-10-10-55atm336-alindi",
+    item_name: "55 ATM 336",
+    action: "ALINDI",
+    event_date: "2025-10-10",
+    note: "Satın alım - Açık dorse",
+  },
+  {
+    id: "seed-2025-12-24-55aue147-alindi",
+    item_name: "55 AUE 147",
+    action: "ALINDI",
+    event_date: "2025-12-24",
+    note: "Satın alım",
+  },
+  {
+    id: "seed-2025-12-24-55aue143-alindi",
+    item_name: "55 AUE 143",
+    action: "ALINDI",
+    event_date: "2025-12-24",
+    note: "Satın alım",
+  },
+  {
+    id: "seed-2025-12-25-55aue259-alindi",
+    item_name: "55 AUE 259",
+    action: "ALINDI",
+    event_date: "2025-12-25",
+    note: "Satın alım - Kapalı dorse",
+  },
+  {
+    id: "seed-2025-12-25-55aue267-alindi",
+    item_name: "55 AUE 267",
+    action: "ALINDI",
+    event_date: "2025-12-25",
+    note: "Satın alım - Kapalı dorse",
+  },
+  {
+    id: "seed-2026-08-11-55aue259-satildi",
+    item_name: "55 AUE 259",
+    action: "SATILDI",
+    event_date: "2026-08-11",
+    note: "Satış işlemi",
+  },
+  {
+    id: "seed-2026-08-19-61abg687-devir",
+    item_name: "61 ABG 687",
+    action: "DEVIR_ALINDI",
+    event_date: "2026-08-19",
+    note: "Devir alındı",
+  },
+  {
+    id: "seed-2026-08-19-55ace135-devir",
+    item_name: "55 ACE 135",
+    action: "DEVIR_ALINDI",
+    event_date: "2026-08-19",
+    note: "Devir alındı - Açık dorse",
+  },
+  {
+    id: "seed-2026-08-19-55aue143-devir",
+    item_name: "55 AUE 143",
+    action: "DEVIR_ALINDI",
+    event_date: "2026-08-19",
+    note: "Devir alındı",
+  },
+  {
+    id: "seed-2026-08-19-55atm336-devir",
+    item_name: "55 ATM 336",
+    action: "DEVIR_ALINDI",
+    event_date: "2026-08-19",
+    note: "Devir alındı - Açık dorse",
+  },
+]
+
+function readLocalFleetLogs(): FleetLog[] {
+  try {
+    const raw = window.localStorage.getItem(FLEET_LOG_STORAGE_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return parsed as FleetLog[]
+  } catch {
+    return []
+  }
+}
+
+function getInitialFleetLogs(): FleetLog[] {
+  return defaultFleetLogs
+    .slice()
+    .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
+}
+
+function writeLocalFleetLogs(logs: FleetLog[]) {
+  try {
+    window.localStorage.setItem(FLEET_LOG_STORAGE_KEY, JSON.stringify(logs))
+  } catch {
+    // localStorage erişimi engellenirse sessizce devam ediyoruz.
+  }
+}
+
 const AppContext = createContext<AppContextValue | undefined>(undefined)
 
 export function AppProvider({ children }: { children: ReactNode }) {
@@ -52,6 +161,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [customers, setCustomers] = useState<Customer[]>([])
   const [trailers, setTrailers] = useState<Trailer[]>([]) 
   const [fixedExpenses, setFixedExpenses] = useState<FixedExpense[]>([]) 
+  const [fleetLogs, setFleetLogs] = useState<FleetLog[]>([])
   const [filter, setFilter] = useState<TripFilter>(defaultFilter)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -72,6 +182,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setCustomers([])
       setTrailers([])
       setFixedExpenses([])
+      const localLogs = readLocalFleetLogs()
+      const logsToUse = localLogs.length > 0 ? localLogs : getInitialFleetLogs()
+      setFleetLogs(logsToUse)
+      if (localLogs.length === 0) {
+        writeLocalFleetLogs(logsToUse)
+      }
       setError("Supabase yapılandırması eksik. Lütfen VITE_SUPABASE_URL ve VITE_SUPABASE_ANON_KEY değerlerini tanımlayın.")
       setUsingDemoData(false)
       setLoading(false)
@@ -79,12 +195,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const [trucksRes, tripsRes, customersRes, trailersRes, expensesRes] = await Promise.all([
+      const [trucksRes, tripsRes, customersRes, trailersRes, expensesRes, logsRes] = await Promise.all([
         supabase.from("trucks").select("*").order("plate", { ascending: true }), // 🎯 Plakaya göre sıralı çekiyoruz ki sayfa yenilenince yerleri kaymasın
         supabase.from("trips").select("*"),
         supabase.from("customers").select("*"),
         supabase.from("trailers").select("*"),
         supabase.from("fixed_expenses").select("*"),
+        supabase.from("fleet_logs").select("*").order("event_date", { ascending: false }),
       ])
 
       if (trucksRes.error) throw trucksRes.error
@@ -98,6 +215,37 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setCustomers((customersRes.data as Customer[]) ?? [])
       setTrailers(trailersRes.error ? [] : ((trailersRes.data as Trailer[]) ?? []))
       setFixedExpenses(expensesRes.error ? [] : ((expensesRes.data as FixedExpense[]) ?? []))
+      if (logsRes.error) {
+        const localLogs = readLocalFleetLogs()
+        const logsToUse = localLogs.length > 0 ? localLogs : getInitialFleetLogs()
+        setFleetLogs(logsToUse)
+        if (localLogs.length === 0) {
+          writeLocalFleetLogs(logsToUse)
+        }
+      } else {
+        let remoteLogs = ((logsRes.data as FleetLog[]) ?? [])
+        const toKey = (log: Pick<FleetLog, "item_name" | "action" | "event_date">) => `${log.event_date}|${log.item_name}|${log.action}`
+        const remoteKeySet = new Set(remoteLogs.map((log) => toKey(log)))
+        const missingSeedLogs = getInitialFleetLogs().filter((log) => !remoteKeySet.has(toKey(log)))
+
+        if (missingSeedLogs.length > 0) {
+          const seedPayload = missingSeedLogs.map((log) => ({
+            item_name: log.item_name,
+            action: log.action,
+            event_date: log.event_date,
+            note: log.note ?? null,
+          }))
+          const seedRes = await supabase.from("fleet_logs").insert(seedPayload)
+          if (!seedRes.error) {
+            const refreshedLogsRes = await supabase.from("fleet_logs").select("*").order("event_date", { ascending: false })
+            if (!refreshedLogsRes.error) {
+              remoteLogs = (refreshedLogsRes.data as FleetLog[]) ?? remoteLogs
+            }
+          }
+        }
+        setFleetLogs(remoteLogs)
+        writeLocalFleetLogs(remoteLogs)
+      }
       setUsingDemoData(false)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Veriler yüklenirken hata oluştu.")
@@ -141,6 +289,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
             if (data) setFixedExpenses(data as FixedExpense[])
           })
         })
+        .on("postgres_changes", { event: "*", schema: "public", table: "fleet_logs" }, () => {
+          supabase.from("fleet_logs").select("*").order("event_date", { ascending: false }).then(({ data }: { data: FleetLog[] | null }) => {
+            if (data) {
+              setFleetLogs(data as FleetLog[])
+              writeLocalFleetLogs(data as FleetLog[])
+            }
+          })
+        })
         .subscribe()
 
       return () => {
@@ -169,6 +325,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     customers,
     trailers, 
     fixedExpenses, 
+    fleetLogs,
     filteredTrips,
     filter,
     setFilter,

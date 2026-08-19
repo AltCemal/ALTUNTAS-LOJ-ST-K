@@ -1,13 +1,24 @@
-import React, { useState } from "react"
+import React, { useMemo, useState } from "react"
 import { Plus, X } from "lucide-react"
 import { useApp } from "../context/AppContext"
 import { supabase } from "../lib/supabase"
 import type { TripStatus, InvoiceStatus, PaymentStatus } from "../interfaces/types"
 import { calculateTripNet } from "../lib/finance"
+import { buildInactiveAssetSet, normalizeAssetName } from "../lib/fleetLogs"
 
 export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const { trucks, customers, trailers } = useApp()
+  const { trucks, customers, trailers, fleetLogs } = useApp()
   const [loading, setLoading] = useState(false)
+
+  const inactiveAssetSet = useMemo(() => buildInactiveAssetSet(fleetLogs), [fleetLogs])
+  const availableTrucks = useMemo(
+    () => trucks.filter((truck) => !inactiveAssetSet.has(normalizeAssetName(truck.plate))),
+    [trucks, inactiveAssetSet],
+  )
+  const availableTrailers = useMemo(
+    () => trailers.filter((trailer) => !inactiveAssetSet.has(normalizeAssetName(trailer.plate))),
+    [trailers, inactiveAssetSet],
+  )
   
   // Standart Form Alanları
   const [truckId, setTruckId] = useState("")
@@ -120,7 +131,7 @@ export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onC
               <select value={truckId} onChange={e => setTruckId(e.target.value)} required
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-red-600">
                 <option value="">Araç Seçin</option>
-                {trucks.map(t => <option key={t.id} value={t.id}>{t.plate} — {t.brand_model}</option>)}
+                {availableTrucks.map(t => <option key={t.id} value={t.id}>{t.plate} — {t.brand_model}</option>)}
               </select>
             </div>
             
@@ -129,7 +140,7 @@ export default function AddTripModal({ isOpen, onClose }: { isOpen: boolean; onC
               <select value={trailerId} onChange={e => setTrailerId(e.target.value)}
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-red-600">
                 <option value="">Dorse Yok (Kuru Çekici)</option>
-                {trailers.map((tr) => (
+                {availableTrailers.map((tr) => (
                   <option key={tr.id} value={tr.id}>{tr.plate} — {tr.trailer_type}</option>
                 ))}
               </select>
