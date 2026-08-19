@@ -235,7 +235,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
       .filter((exp) => {
         const expenseDateMs = new Date(exp.expense_date).getTime()
         if (Number.isFinite(expenseDateMs) && expenseDateMs < start) return false
-        return expenseMatchesTruck(exp.parsed.truckPlate, selectedExpenseTruckPlate)
+        return expenseMatchesTruck(exp.parsed.truckPlate, selectedExpenseTruckPlate, exp.parsed.displayName)
       })
   }, [fixedExpenses, expenseMonthsRange, selectedExpenseTruckPlate])
 

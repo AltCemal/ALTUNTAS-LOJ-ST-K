@@ -44,8 +44,15 @@ export function parseStoredExpenseName(rawName: string): {
   return { displayName, isVariable, truckPlate }
 }
 
-export function expenseMatchesTruck(expenseTruckPlate: string | undefined, selectedTruckPlate: string | undefined): boolean {
+export function expenseMatchesTruck(
+  expenseTruckPlate: string | undefined,
+  selectedTruckPlate: string | undefined,
+  displayName?: string,
+): boolean {
   if (!selectedTruckPlate) return true
-  if (!expenseTruckPlate) return false
-  return normalizePlate(expenseTruckPlate) === normalizePlate(selectedTruckPlate)
+  const normalizedSelected = normalizePlate(selectedTruckPlate)
+  if (expenseTruckPlate && normalizePlate(expenseTruckPlate) === normalizedSelected) return true
+  // Eski kayıtlar: plaka doğrudan açıklama metnine yazılmış olabilir
+  if (displayName && normalizePlate(displayName).includes(normalizedSelected)) return true
+  return false
 }
