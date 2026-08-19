@@ -245,6 +245,17 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
   const totalFixedExpenses = fixedExpenseItems.reduce((sum, e) => sum + e.amount, 0)
   const totalVariableExpenses = variableExpenseItems.reduce((sum, e) => sum + e.amount, 0)
 
+  // Giderler sekmesinin kendi tarih + araç filtresine göre hesaplanan sefer kârı
+  const expenseFilteredTrips = useMemo(() => {
+    const start = monthsAgo(expenseMonthsRange).getTime()
+    return trips.filter((trip) => {
+      const tripMs = new Date(trip.start_date).getTime()
+      if (tripMs < start) return false
+      if (expenseTruckId !== "ALL" && trip.truck_id !== expenseTruckId) return false
+      return true
+    })
+  }, [trips, expenseMonthsRange, expenseTruckId])
+
   const logActionText: Record<string, string> = {
     ALINDI: "Alındı",
     SATILDI: "Satıldı",
@@ -881,7 +892,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
                     <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Brüt Sefer Kârı</span>
-                    <p className="text-2xl font-bold font-mono text-emerald-400 mt-2">₺{filteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0).toLocaleString("tr-TR")}</p>
+                    <p className="text-2xl font-bold font-mono text-emerald-400 mt-2">₺{expenseFilteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0).toLocaleString("tr-TR")}</p>
                   </div>
                   <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
                     <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Sabit Giderler</span>
@@ -896,7 +907,7 @@ function DashboardLayout({ onSignOut }: { onSignOut: () => void }) {
                       <Landmark className="size-4" /> Kasaya Kalan Net Bakiye
                     </span>
                     <p className="text-2xl font-bold font-mono text-emerald-300 mt-2">
-                      ₺{(filteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0) - totalFixedExpenses - totalVariableExpenses).toLocaleString("tr-TR")}
+                      ₺{(expenseFilteredTrips.reduce((sum, t) => sum + calculateTripNet(t), 0) - totalFixedExpenses - totalVariableExpenses).toLocaleString("tr-TR")}
                     </p>
                   </div>
                 </div>
